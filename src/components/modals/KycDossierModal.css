@@ -1,0 +1,251 @@
+/* ================= OVERLAY ================= */
+.kyc-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+/* ================= MODAL ================= */
+.kyc-modal {
+  width: 95%;
+  max-width: 1200px;
+  max-height: 95vh;
+  background: #fff;
+  border-radius: 18px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ================= HEADER ================= */
+.kyc-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 1.2rem 1.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.close-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 10px;
+  background: #f3f4f6;
+  cursor: pointer;
+}
+
+/* ================= BODY ================= */
+.kyc-body {
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+/* ================= PROFILE ================= */
+.profile-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg,#4f46e5,#6366f1);
+  color: white;
+  padding: 1.2rem;
+  border-radius: 14px;
+  margin-bottom: 1.5rem;
+}
+
+.avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.score-box {
+  text-align: right;
+}
+
+.score {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.bar {
+  width: 120px;
+  height: 6px;
+  background: rgba(255,255,255,0.3);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  background: #22c55e;
+}
+
+/* ================= GRID ================= */
+.kyc-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.card {
+  background: #f8fafc;
+  border-radius: 14px;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+}
+
+/* ================= IMAGE BLOCKS ================= */
+.image-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.img-block {
+  background: white;
+  border-radius: 12px;
+  padding: 0.5rem;
+  border: 1px solid #e5e7eb;
+}
+
+.img-title {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin-bottom: 0.3rem;
+}
+
+.img-block img {
+  width: 100%;
+  height: 500px; /* 🔥 BIG KYC VIEW */
+  object-fit: contain;
+  background: #0f172a;
+  border-radius: 10px;
+  cursor: zoom-in;
+}
+
+/* ───────────────── ACTIONS ───────────────── */
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 18px;
+  margin-top: 32px;
+  flex-wrap: wrap;
+}
+
+/* Buttons */
+.approve-btn,
+.reject-btn {
+  border: none;
+
+  padding: 16px 28px;   /* bigger */
+  min-width: 160px;     /* wider buttons */
+
+  border-radius: 14px;
+
+  font-size: 16px;      /* larger text */
+  font-weight: 700;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Approve */
+.approve-btn {
+  background: #10b981;
+  color: white;
+}
+
+.approve-btn:hover:not(:disabled) {
+  background: #059669;
+  transform: translateY(-2px) scale(1.02);
+}
+
+/* Reject */
+.reject-btn {
+  background: #ef4444;
+  color: white;
+}
+
+.reject-btn:hover:not(:disabled) {
+  background: #dc2626;
+  transform: translateY(-2px) scale(1.02);
+}
+
+/* Disabled */
+.approve-btn:disabled,
+.reject-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Approved Badge */
+.kyc-approved-badge {
+  background: #dcfce7;
+  color: #166534;
+
+  border: 1px solid #bbf7d0;
+
+  padding: 16px 28px;
+  border-radius: 14px;
+
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* Rejected Badge */
+.kyc-rejected-badge {
+  background: #fee2e2;
+  color: #991b1b;
+
+  border: 1px solid #fecaca;
+
+  padding: 16px 28px;
+  border-radius: 14px;
+
+  font-size: 16px;
+  font-weight: 700;
+}
+/* ================= ZOOM ================= */
+.zoom-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.95);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+}
+
+.zoom-overlay img {
+  max-width: 95%;
+  max-height: 95%;
+  border-radius: 12px;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 768px) {
+  .kyc-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .img-block img {
+    height: 350px;
+  }
+
+  .profile-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+}

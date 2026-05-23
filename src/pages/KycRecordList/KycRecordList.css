@@ -1,0 +1,426 @@
+/* ─────────────────────────────────────────────────
+   KycRecordList.css  –  same design as ClientList
+───────────────────────────────────────────────── */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f9fafb;
+}
+
+.page-layout {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.page-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #f9fafb;
+}
+
+/* ── Page wrapper ─────────────────────────────── */
+.client-list {
+  padding: 2rem;
+  width: 100%;
+}
+
+.client-list-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.client-list-title {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.client-list-sub {
+  margin-top: 0.25rem;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.client-list-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.client-search {
+  width: 260px;
+  max-width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  outline: none;
+  font-size: 0.95rem;
+  background: white;
+}
+
+.client-search:focus {
+  border-color: #6366f1;
+}
+
+/* ── States ───────────────────────────────────── */
+.client-state {
+  padding: 3rem;
+  text-align: center;
+  color: #6b7280;
+}
+
+.client-state.error {
+  color: #ef4444;
+}
+
+/* ── Table wrapper ────────────────────────────── */
+.client-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  background: white;
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
+}
+
+.client-table {
+  width: 100%;
+  min-width: 1100px;
+  border-collapse: collapse;
+}
+
+.kyc-table {
+  min-width: 1200px;
+}
+
+.client-table thead {
+  background: #f3f4f6;
+}
+
+.client-table th {
+  text-align: left;
+  padding: 1rem;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: #6b7280;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.client-table td {
+  padding: 0.85rem 1rem;
+  border-top: 1px solid #f3f4f6;
+  color: #374151;
+  font-size: 0.92rem;
+  vertical-align: middle;
+}
+
+.client-table tbody tr:hover {
+  background: #f9fafb;
+}
+
+.client-empty {
+  text-align: center;
+  padding: 2rem;
+  color: #9ca3af;
+}
+
+/* ── Client cell ──────────────────────────────── */
+.client-name {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.client-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #6366f1;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+.client-name-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.client-fullname {
+  font-weight: 600;
+  color: #111827;
+  font-size: 0.9rem;
+}
+
+.client-email-sub {
+  font-size: 0.78rem;
+  color: #6b7280;
+}
+
+/* ── Status badges ────────────────────────────── */
+.status-badge {
+  display: inline-block;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status-badge.valide {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.status-badge.non-valide {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.status-badge.en-attente {
+  background: #fef3c7;
+  color: #ca8a04;
+}
+
+.status-badge.unknown {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+/* ── Score badge ──────────────────────────────── */
+.score-badge {
+  display: inline-block;
+  padding: 0.3rem 0.65rem;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.score-high {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.score-mid {
+  background: #fef9c3;
+  color: #a16207;
+}
+
+.score-low {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+/* ── CIN details ──────────────────────────────── */
+.cin-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cin-row {
+  font-size: 0.8rem;
+  color: #374151;
+  white-space: nowrap;
+}
+
+.cin-row b {
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.cin-address {
+  color: #9ca3af;
+  font-size: 0.75rem;
+  white-space: normal;
+  max-width: 180px;
+}
+
+/* ── Consulter button ─────────────────────────── */
+.btn-consulter {
+  padding: 0.38rem 0.85rem;
+  background: #eff6ff;
+  color: #2563eb;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, transform 0.1s;
+}
+
+.btn-consulter:hover {
+  background: #dbeafe;
+  transform: translateY(-1px);
+}
+
+/* ── KYC thumbnails ───────────────────────────── */
+.kyc-thumb {
+  width: 56px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.kyc-thumb:hover {
+  transform: scale(1.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.kyc-thumb-round {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.no-img {
+  color: #d1d5db;
+  font-size: 1.1rem;
+}
+
+/* ── Lightbox ─────────────────────────────────── */
+.lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 300;
+  animation: fade-in 0.2s ease;
+}
+
+.lightbox-box {
+  background: white;
+  border-radius: 14px;
+  overflow: hidden;
+  max-width: 90vw;
+  max-height: 90vh;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+}
+
+.lightbox-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #f3f4f6;
+  font-weight: 600;
+  color: #111827;
+  font-size: 0.9rem;
+}
+
+.lightbox-close {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  color: #6b7280;
+  padding: 0.2rem 0.4rem;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+
+.lightbox-close:hover {
+  background: #f3f4f6;
+}
+
+.lightbox-img {
+  max-width: 100%;
+  max-height: 80vh;
+  object-fit: contain;
+  display: block;
+}
+
+/* ── Toast ────────────────────────────────────── */
+.toast {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  padding: 0.85rem 1.25rem;
+  border-radius: 10px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  animation: slide-up 0.3s ease;
+  z-index: 200;
+  max-width: 360px;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.toast-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.toast-success {
+  background: #dcfce7;
+  color: #166534;
+  border-left: 4px solid #22c55e;
+}
+
+.toast-error {
+  background: #fee2e2;
+  color: #991b1b;
+  border-left: 4px solid #ef4444;
+}
+
+/* ── Animations ───────────────────────────────── */
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0);     }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Responsive ───────────────────────────────── */
+@media (max-width: 768px) {
+  .client-list {
+    padding: 1rem;
+  }
+
+  .client-list-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .client-search {
+    width: 100%;
+  }
+  .code-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  align-items: flex-start;
+}
+}
