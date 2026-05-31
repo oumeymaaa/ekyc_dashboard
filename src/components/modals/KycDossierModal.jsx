@@ -6,6 +6,14 @@ import {
   updateKycStatus,
 } from '../../services/kyc.service'
 
+const PYTHON_BASE_URL = 'http://192.168.1.6:8000'
+
+const imgUrl = (path) => {
+  if (!path) return null
+  if (path.startsWith('http://') || path.startsWith('https://')) return path
+  return `${PYTHON_BASE_URL}${path.startsWith('/') ? '' : '/'}${path}`
+}
+
 function KycDossierModal({ clientId, onClose, onUpdated }) {
   const [record, setRecord] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -111,7 +119,6 @@ function KycDossierModal({ clientId, onClose, onUpdated }) {
                         <b>Birth:</b> {record.cinData?.birthDate}
                       </p>
                       <p><b>Place:</b> {record.cinData?.lieu}</p>
-                      <p><b>Address:</b> {record.cinData?.address}</p>
                     </div>
                   </div>
 
@@ -123,19 +130,27 @@ function KycDossierModal({ clientId, onClose, onUpdated }) {
                     {/* CIN */}
                     <div className="img-block">
                       <div className="img-title">CIN Document</div>
-                      <img
-                        src={record.cinImageUrl}
-                        onClick={() => setZoomImage(record.cinImageUrl)}
-                      />
+                      {imgUrl(record.cinImageUrl) ? (
+                        <img
+                          src={imgUrl(record.cinImageUrl)}
+                          onClick={() => setZoomImage(imgUrl(record.cinImageUrl))}
+                        />
+                      ) : (
+                        <div className="no-img-block">Aucune image CIN</div>
+                      )}
                     </div>
 
                     {/* SELFIE */}
                     <div className="img-block">
                       <div className="img-title">Selfie</div>
-                      <img
-                        src={record.selfieImageUrl}
-                        onClick={() => setZoomImage(record.selfieImageUrl)}
-                      />
+                      {imgUrl(record.selfieImageUrl) ? (
+                        <img
+                          src={imgUrl(record.selfieImageUrl)}
+                          onClick={() => setZoomImage(imgUrl(record.selfieImageUrl))}
+                        />
+                      ) : (
+                        <div className="no-img-block">Aucune image selfie</div>
+                      )}
                     </div>
                   </div>
                 </div>

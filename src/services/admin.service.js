@@ -1,5 +1,5 @@
 // src/services/admin.service.js
-const API_URL = 'http://localhost:3000'
+const API_URL = 'http://localhost:3001'
 
 const getHeaders = () => {
   const token =

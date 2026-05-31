@@ -8,7 +8,8 @@ import Sidebar from '../../components/ui/Sidebar/Sidebar'
 import KycDossierModal from '../../components/modals/KycDossierModal'
 import CreateClientModal from '../../components/modals/CreateClientModal'
 
-const BASE_URL = 'http://localhost:3000'
+const BASE_URL = 'http://localhost:3001'
+const PYTHON_BASE_URL = 'http://192.168.1.6:8000'
 
 function KycRecordList({ onNavigate, onLogout }) {
   const [records, setRecords]   = useState([])
@@ -84,7 +85,11 @@ function KycRecordList({ onNavigate, onLogout }) {
     return 'score-low'
   }
 
-  const imgSrc = (path) => path
+  const imgSrc = (path) => {
+    if (!path) return null
+    if (path.startsWith('http://') || path.startsWith('https://')) return path
+    return `${PYTHON_BASE_URL}${path.startsWith('/') ? '' : '/'}${path}`
+  }
 
   const formatDate = (iso) =>
     iso ? new Date(iso).toLocaleDateString('fr-FR') : '-'
@@ -224,8 +229,7 @@ function KycRecordList({ onNavigate, onLogout }) {
                                   ? new Date(cin.birthDate).toLocaleDateString('fr-FR')
                                   : '-'}
                               </span>
-                              <span className="cin-row"><b>Adresse :</b></span>
-                              <span className="cin-row cin-address">{cin.address || '-'}</span>
+
                             </div>
                           </td>
 

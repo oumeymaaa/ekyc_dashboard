@@ -13,7 +13,7 @@ import Sidebar                  from '../../components/ui/Sidebar/Sidebar'
 import OrganisationFormModal    from '../../components/modals/CreateOrganisationModal'
 import OrganisationDetailModal  from '../../components/modals/OrganisationDetailModal'
 
-const BASE_URL  =  'http://localhost:3000'
+const BASE_URL  =  'http://localhost:3001'
 const PAGE_SIZE = 10
 
 function OrganisationList({ onNavigate, onLogout }) {
