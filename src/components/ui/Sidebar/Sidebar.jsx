@@ -1,4 +1,3 @@
-// src/components/ui/Sidebar/Sidebar.jsx
 import './Sidebar.css'
 import { logout, getUser } from '../../../services/auth.service'
 
@@ -14,16 +13,17 @@ const ADMIN_NAV = [
   { key: 'clients',   icon: '🪪', label: 'eKYC'        },
   { key: 'settings',  icon: '⚙️',  label: 'Paramètres' },
 ]
+const BASE_URL = 'http://localhost:3001'
 
-function Sidebar({ activePage, onNavigate, onLogout }) {
-  const user     = getUser()
-  const fullName = user ? `${user.firstName} ${user.lastName}` : 'Super Admin'
-  const initials = user
+function Sidebar({ activePage, onNavigate, onLogout, user: userProp }) {
+  const user         = userProp ?? getUser()
+  const fullName     = user ? `${user.firstName} ${user.lastName}` : 'Super Admin'
+  const initials     = user
     ? `${user.firstName?.[0] ?? ''}${user.lastName?.[0] ?? ''}`.toUpperCase()
     : 'S'
-  const role = user?.role ?? 'super_admin'
-
-  const NAV_ITEMS = role === 'admin' ? ADMIN_NAV : SUPER_ADMIN_NAV
+  const role         = user?.role ?? 'super_admin'
+  const organisation = user?.organisation ?? null
+  const NAV_ITEMS    = role === 'admin' ? ADMIN_NAV : SUPER_ADMIN_NAV
 
   const handleLogout = async () => {
     await logout()
@@ -33,8 +33,21 @@ function Sidebar({ activePage, onNavigate, onLogout }) {
   return (
     <aside className="sidebar">
       <div className="sidebar-logo">
-        <div className="logo-icon">A</div>
-        <span>AdminPanel</span>
+        {role === 'admin' && organisation?.logo_organisation ? (
+          <img
+            src={`${BASE_URL}/${organisation.logo_organisation}`}
+            alt={organisation.name_organisation ?? 'Logo'}
+            className="logo-img"
+          />
+        ) : (
+          <div className="logo-icon">A</div>
+        )}
+        <div className="logo-text">
+          <span className="logo-title">AdminPanel</span>
+          {role === 'admin' && organisation?.name_organisation && (
+            <span className="logo-subtitle">{organisation.name_organisation}</span>
+          )}
+        </div>
       </div>
 
       <nav className="sidebar-nav">

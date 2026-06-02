@@ -31,6 +31,10 @@
   animation: box-in 0.25s cubic-bezier(0.34, 1.36, 0.64, 1);
 }
 
+.modal-box--wide {
+  max-width: 540px;
+}
+
 @keyframes box-in {
   from { opacity: 0; transform: scale(0.92) translateY(12px); }
   to   { opacity: 1; transform: scale(1)    translateY(0);    }
@@ -55,7 +59,6 @@
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: linear-gradient(135deg, #e8f0ff 0%, #d5e4ff 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -63,11 +66,19 @@
   flex-shrink: 0;
 }
 
+.modal-icon--purple {
+  background: linear-gradient(135deg, #EEEDFE 0%, #d5ccfa 100%);
+}
+
+.modal-icon--blue {
+  background: linear-gradient(135deg, #e8f0ff 0%, #d5e4ff 100%);
+}
+
 .modal-title {
   margin: 0;
   font-size: 1.05rem;
   font-weight: 700;
-  color: #8590a6;
+  color: #1a2033;
   letter-spacing: -0.01em;
 }
 
@@ -103,29 +114,29 @@
   gap: 1.1rem;
 }
 
-.form-group {
+/* ── Two-column row ──────────────────────────────────────────────────────── */
+.modal-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.85rem;
+}
+
+/* ── Field ───────────────────────────────────────────────────────────────── */
+.modal-field {
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
 }
 
-.form-group label {
+.modal-field label {
   font-size: 0.8rem;
   font-weight: 600;
   color: #3d4558;
   letter-spacing: 0.01em;
 }
 
-/* ── Password input ──────────────────────────────────────────────────────── */
-.input-password {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.input-password input {
-  width: 100%;
-  padding: 0.65rem 2.8rem 0.65rem 0.85rem;
+.modal-field input {
+  padding: 0.65rem 0.85rem;
   border: 1.5px solid #e3e6ef;
   border-radius: 10px;
   font-size: 0.9rem;
@@ -134,37 +145,20 @@
   outline: none;
   transition: border-color 0.18s, background 0.18s, box-shadow 0.18s;
   box-sizing: border-box;
+  width: 100%;
 }
 
-.input-password input::placeholder {
+.modal-field input::placeholder {
   color: #bcc3d4;
-  letter-spacing: 0.12em;
 }
 
-.input-password input:focus {
+.modal-field input:focus {
   border-color: #4a7cff;
   background: #ffffff;
   box-shadow: 0 0 0 3px rgba(74, 124, 255, 0.12);
 }
 
-.toggle-password {
-  position: absolute;
-  right: 0.65rem;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 1rem;
-  line-height: 1;
-  padding: 0.2rem;
-  opacity: 0.55;
-  transition: opacity 0.15s;
-}
-
-.toggle-password:hover {
-  opacity: 0.9;
-}
-
-/* ── Status message ──────────────────────────────────────────────────────── */
+/* ── Status messages ─────────────────────────────────────────────────────── */
 .form-msg {
   margin: 0;
   padding: 0.65rem 0.85rem;
@@ -254,41 +248,32 @@
     border-radius: 14px;
   }
 
+  .modal-row {
+    grid-template-columns: 1fr;
+  }
+
   .modal-actions {
     flex-direction: column-reverse;
   }
 
- 
-
-  .password-rules li {
-    margin-bottom: 4px;
-  }
-
-  .password-strength {
-    margin-top: 12px;
-  }
-
-  .strength-bars {
-    display: flex;
-    gap: 5px;
-    margin-bottom: 6px;
-  }
-
-  .strength-bar {
-    flex: 1;
-    height: 6px;
-    border-radius: 999px;
-    background: #e5e7eb;
-    transition: background 0.3s ease;
-  }
-
-  .strength-label {
-    font-size: 13px;
-    font-weight: 600;
-  }
   .btn-cancel,
   .btn-submit {
     width: 100%;
     text-align: center;
   }
+
+/* validation */
+
+.input-error {
+  border: 1px solid #ef4444 !important;
+  background: #fef2f2;
+}
+
+.field-error {
+  display: block;
+  margin-top: 6px;
+  font-size: 13px;
+  color: #ef4444;
+  font-weight: 500;
+}
 }

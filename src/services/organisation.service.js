@@ -1,6 +1,6 @@
 // src/services/organisation.service.js
 
-const BASE_URL = 'http://localhost:3001'
+const BASE_URL = import.meta.env.VITE_API_URL 
 
 // ─── LOGO URL HELPER ───────────────────────────────────────────────────────
 // Normalises whatever path Multer stored into a full usable URL.

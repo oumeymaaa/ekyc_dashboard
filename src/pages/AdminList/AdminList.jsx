@@ -138,7 +138,7 @@ function AdminList({ onNavigate, onViewStats, onLogout }) {
                     {/* ← was admin.organization (wrong key), now admin.organisation */}
                     <td>
                       <span className="org-badge">
-                        {admin.organisation}
+                        {admin.organisation?.name_organisation ?? '—'}
                       </span>
                     </td>
 

@@ -1,8 +1,33 @@
-const API_URL = 'http://localhost:3001'
+const API_URL = import.meta.env.VITE_API_URL 
 
-// 👇 helper to support both storage types
 function getStorage() {
   return localStorage.getItem('rememberMe') === 'true' ? localStorage : sessionStorage
+}
+
+// ✅ Normalize the raw API user into the same shape mapAdmin produces
+function normalizeUser(raw) {
+  // If it's already normalized (has firstName), return as-is
+  if (raw.firstName !== undefined) return raw
+
+  return {
+    id:             raw.id,
+    firstName:      raw.first_name,
+    lastName:       raw.last_name,
+    email:          raw.email,
+    phone:          raw.phone,
+    role:           raw.role,
+    createdAt:      raw.created_at,
+    status:         raw.status?.code === 'actif' ? 'active' : 'pending',
+    // ✅ Keep full organisation object
+    organisation:   raw.organisation
+      ? {
+          id:                raw.organisation.id,
+          name_organisation: raw.organisation.name_organisation,
+          logo_organisation: raw.organisation.logo_organisation,
+        }
+      : null,
+    organisationId: raw.organisation?.id ?? null,
+  }
 }
 
 export async function login({ email, password, rememberMe = false }) {
@@ -18,11 +43,10 @@ export async function login({ email, password, rememberMe = false }) {
   }
 
   const data = await response.json()
-  // 👇 store in the right place based on rememberMe
   const storage = rememberMe ? localStorage : sessionStorage
-  localStorage.setItem('rememberMe', rememberMe)   // always track the preference
+  localStorage.setItem('rememberMe', rememberMe)
   storage.setItem('token', data.access_token)
-  storage.setItem('user', JSON.stringify(data.user))
+  storage.setItem('user', JSON.stringify(normalizeUser(data.user)))
 
   return data
 }
@@ -53,6 +77,14 @@ export function getUser() {
   return user ? JSON.parse(user) : null
 }
 
+// ✅ Merge update into stored user — organisation is never overwritten
+export function setUser(updatedUser) {
+  const storage = getStorage()
+  const current = getUser()
+  const merged = { ...current, ...updatedUser }
+  storage.setItem('user', JSON.stringify(merged))
+}
+
 export function isAuthenticated() {
   return !!getToken()
 }
@@ -62,37 +94,48 @@ export async function forgotPassword(email) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email }),
   })
-  
   const data = await res.json()
- console.log('data'  ,res.status)
-
   if (!res.ok) {
-    console.log("message", data.message )
-    // Map common server messages to user-friendly French text
     const msg = data.message || ''
     if (
       msg.toLowerCase().includes('not found') ||
       msg.toLowerCase().includes('introuvable') ||
       res.status === 404
     ) {
-      throw new Error('Email non trouvé. Vérifiez l\'adresse saisie.')
+      throw new Error("Email non trouvé. Vérifiez l'adresse saisie.")
     }
     throw new Error(msg || 'Une erreur est survenue. Veuillez réessayer.')
   }
-
   return data
 }
 
-// ─── Reset Password ───────────────────────────────────────────────────────────
+export async function verifyOtp(token, otp) {
+  const res = await fetch(`${API_URL}/auth/verify-otp`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ token, otp }),
+  })
+  const data = await res.json()
+  if (!res.ok) {
+    const msg = data.message || ''
+    if (
+      msg.toLowerCase().includes('expired') ||
+      msg.toLowerCase().includes('expiré')
+    ) {
+      throw new Error('Code OTP expiré. Veuillez refaire une demande.')
+    }
+    throw new Error(msg || 'Code OTP invalide.')
+  }
+  return data
+}
+
 export async function resetPassword(token, password, confirm_password) {
   const res = await fetch(`${API_URL}/auth/reset-password`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ token, password, confirm_password }),
   })
-
   const data = await res.json()
-  
   if (!res.ok) {
     const msg = data.message || ''
     if (
@@ -111,7 +154,6 @@ export async function resetPassword(token, password, confirm_password) {
     }
     throw new Error(msg || 'Impossible de réinitialiser le mot de passe.')
   }
-
   return data
 }
 export async function activateAccount(token) {

@@ -8,7 +8,6 @@ import Sidebar from '../../components/ui/Sidebar/Sidebar'
 import KycDossierModal from '../../components/modals/KycDossierModal'
 import CreateClientModal from '../../components/modals/CreateClientModal'
 
-const BASE_URL = 'http://localhost:3001'
 const PYTHON_BASE_URL = 'http://192.168.1.6:8000'
 
 function KycRecordList({ onNavigate, onLogout }) {

@@ -92,26 +92,40 @@ export async function deleteAdmin(id) {
   return res.json()
 }
 
-// ── Change password ────────────────────────────────────────────────────────
+// ── Change password (OTP flow) ─────────────────────────────────────────────
 
-export async function changePassword({ current_password, new_password }) {
-  try {
-    const res = await fetch(`${API_URL}/users/change-password`, {
-      method: 'POST',
-      headers: getHeaders(),
-      body: JSON.stringify({ current_password, new_password }),
-    })
-    const data = await res.json().catch(() => ({}))
-    if (res.ok) return { success: true }
-    return {
-      success: false,
-      message:
-        data?.message ||
-        (res.status === 401
-          ? 'Mot de passe actuel incorrect.'
-          : 'Une erreur est survenue. Veuillez réessayer.'),
-    }
-  } catch (err) {
-    return { success: false, message: err.message }
+export async function requestChangePasswordOtp(currentPassword) {
+  const res = await fetch(`${API_URL}/users/change-password/request-otp`, {
+    method: 'POST',
+    headers: getHeaders(),
+    body: JSON.stringify({ current_password: currentPassword }),
+  })
+  const data = await res.json().catch(() => ({}))
+  if (res.ok) return { success: true, message: data.message }
+  return {
+    success: false,
+    message:
+      data?.message ||
+      (res.status === 401
+        ? 'Mot de passe actuel incorrect.'
+        : 'Une erreur est survenue. Veuillez réessayer.'),
+  }
+}
+
+export async function confirmChangePassword(otp, newPassword) {
+  const res = await fetch(`${API_URL}/users/change-password/confirm`, {
+    method: 'POST',
+    headers: getHeaders(),
+    body: JSON.stringify({ otp, new_password: newPassword }),
+  })
+  const data = await res.json().catch(() => ({}))
+  if (res.ok) return { success: true }
+  return {
+    success: false,
+    message:
+      data?.message ||
+      (res.status === 401
+        ? 'Code OTP invalide.'
+        : 'Une erreur est survenue. Veuillez réessayer.'),
   }
 }

@@ -1,7 +1,7 @@
 // kyc.service.js
 import { getToken } from './auth.service'  
 
-const BASE_URL = 'http://localhost:3001'
+const BASE_URL = import.meta.env.VITE_API_URL 
 
 export async function getKycRecords({ page = 1, limit = 50 } = {}) {
   const res = await fetch(

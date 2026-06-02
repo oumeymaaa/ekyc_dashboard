@@ -45,7 +45,7 @@ function CreateAdminModal({ onClose, onSubmit, admin = null }) {
     } else {
       const clean = form.phone.replace(/\s/g, '')
       if (!/^(\+216)?[0-9]{8}$/.test(clean))
-        errs.phone = 'Numéro tunisien invalide (8 chiffres)'
+        errs.phone = 'Numéro invalide (8 chiffres)'
     }
     return errs
   }
