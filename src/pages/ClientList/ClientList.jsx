@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import './ClientList.css'
 
-import { getClients, createClient } from '../../services/client.service'
+import { getClients, createClient, updateClient, deleteClient } from '../../services/client.service'
 
 import Sidebar from '../../components/ui/Sidebar/Sidebar'
 import CreateClientModal from '../../components/modals/CreateClientModal'
@@ -19,7 +19,16 @@ function ClientList({ onNavigate, onLogout }) {
   const [toast,   setToast]   = useState(null)
   const [page,    setPage]    = useState(1)      // ← current page
 
-  useEffect(() => { fetchClients() }, [])
+  useEffect(() => {
+    fetchClients()
+    const interval = setInterval(fetchClients, 30000)
+    const onFocus = () => { fetchClients() }
+    window.addEventListener('focus', onFocus)
+    return () => {
+      clearInterval(interval)
+      window.removeEventListener('focus', onFocus)
+    }
+  }, [])
 
   // Reset to page 1 whenever search changes
   useEffect(() => { setPage(1) }, [search])
@@ -46,10 +55,7 @@ function ClientList({ onNavigate, onLogout }) {
   const handleCreate = async (form) => {
   try {
     await createClient(form)
-
-    // Refresh clients from API
     await fetchClients()
-
     setModal(null)
     showToast('Client créé avec succès.', 'success')
   } catch (err) {
@@ -57,6 +63,32 @@ function ClientList({ onNavigate, onLogout }) {
     showToast(err.message || 'Erreur lors de la création du client.', 'error')
   }
 }
+
+  const handleUpdate = async (id, form) => {
+    try {
+      await updateClient(id, form)
+      await fetchClients()
+      setModal(null)
+      showToast('Client modifié avec succès.', 'success')
+    } catch (err) {
+      setModal(null)
+      showToast(err.message || 'Erreur lors de la modification du client.', 'error')
+    }
+  }
+
+  const handleDelete = async (client) => {
+    const confirmed = window.confirm(
+      `Supprimer définitivement ${client.firstName} ${client.lastName} et son dossier KYC ?`
+    )
+    if (!confirmed) return
+    try {
+      await deleteClient(client.id)
+      await fetchClients()
+      showToast('Client supprimé avec succès.', 'success')
+    } catch (err) {
+      showToast(err.message || 'Erreur lors de la suppression du client.', 'error')
+    }
+  }
 
   /* ── Filter ───────────────────────────────────── */
   const filtered = clients.filter((client) => {
@@ -196,16 +228,34 @@ function ClientList({ onNavigate, onLogout }) {
                               : '-'}
                           </td>
 
-                          {/* Actions column — show "Consulter" for ALL kyc statuses including non_valide */}
+                          {/* Actions column */}
                             <td>
-                              {client.kyc && (
-                                <button
-                                  className="btn-consulter"
-                                  onClick={() => setDossier({ clientId: client.id })}
-                                >
-                                  🔍 Consulter dossier
-                                </button>
-                              )}
+                              <div className="client-actions">
+                                {!client.isCodeUsed && !client.kyc && (
+                                  <>
+                                    <button
+                                      className="btn-edit"
+                                      onClick={() => setModal({ mode: 'edit', client })}
+                                    >
+                                      ✏️ Modifier
+                                    </button>
+                                    <button
+                                      className="btn-delete"
+                                      onClick={() => handleDelete(client)}
+                                    >
+                                      🗑️ Supprimer
+                                    </button>
+                                  </>
+                                )}
+                                {client.kyc && (
+                                  <button
+                                    className="btn-consulter"
+                                    onClick={() => setDossier({ clientId: client.id })}
+                                  >
+                                    🔍 Consulter
+                                  </button>
+                                )}
+                              </div>
                             </td>
 
                         </tr>
@@ -281,11 +331,18 @@ function ClientList({ onNavigate, onLogout }) {
         </div>
       </main>
 
-      {/* Create client modal */}
+      {/* Create / Edit client modal */}
       {modal?.mode === 'create' && (
         <CreateClientModal
           onClose={() => setModal(null)}
           onSubmit={handleCreate}
+        />
+      )}
+      {modal?.mode === 'edit' && (
+        <CreateClientModal
+          client={modal.client}
+          onClose={() => setModal(null)}
+          onSubmit={(form) => handleUpdate(modal.client.id, form)}
         />
       )}
 

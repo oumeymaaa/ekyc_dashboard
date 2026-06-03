@@ -58,15 +58,36 @@ export async function createClient(form) {
       last_name: form.lastName,
       email: form.email,
       phone: form.phone,
-      send_via: form.sendVia, // 1 = email, 2 = SMS, etc.
+      send_via: form.sendVia,
     }),
   })
-
   const data = await res.json()
-
-  if (!res.ok) {
-    throw new Error(data?.message || 'Erreur lors de la création du client.')
-  }
-
+  if (!res.ok) throw new Error(data?.message || 'Erreur lors de la création du client.')
   return mapClient(data)
+}
+
+export async function updateClient(id, form) {
+  const res = await fetch(`${API_URL}/clients/${id}`, {
+    method: 'PATCH',
+    headers: getHeaders(),
+    body: JSON.stringify({
+      first_name: form.firstName,
+      last_name: form.lastName,
+      email: form.email,
+      phone: form.phone,
+    }),
+  })
+  const data = await res.json()
+  if (!res.ok) throw new Error(data?.message || 'Erreur lors de la modification du client.')
+  return data
+}
+
+export async function deleteClient(id) {
+  const res = await fetch(`${API_URL}/clients/${id}`, {
+    method: 'DELETE',
+    headers: getHeaders(),
+  })
+  const data = await res.json()
+  if (!res.ok) throw new Error(data?.message || 'Erreur lors de la suppression du client.')
+  return data
 }
