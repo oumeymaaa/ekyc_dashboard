@@ -269,14 +269,12 @@ function KycRecordList({ onNavigate, onLogout }) {
 
                           {/* Actions */}
                           <td>
-                            {r.status === 'en_attente' && (
-                              <button
-                                className="btn-consulter"
-                                onClick={() => setDossier({ clientId: r.client?.id })}
-                              >
-                                🔍 Consulter dossier
-                              </button>
-                            )}
+                            <button
+                              className="btn-consulter"
+                              onClick={() => setDossier({ clientId: r.client?.id })}
+                            >
+                              {r.status === 'en_attente' ? '🔍 Consulter' : '📋 Historique'}
+                            </button>
                           </td>
 
                         </tr>
