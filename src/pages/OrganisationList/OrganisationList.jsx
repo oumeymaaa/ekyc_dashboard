@@ -110,7 +110,7 @@ function OrganisationList({ onNavigate, onLogout }) {
 
   /* ── Logo helper ──────────────────────────── */
   const logoSrc = (org) =>
-    org.logo_organisation ? `${BASE_URL}/${org.logo_organisation}` : null
+    org.logo_url ? `${BASE_URL}${org.logo_url}` : null
 
   /* ── Render ───────────────────────────────── */
   return (

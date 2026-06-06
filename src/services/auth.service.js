@@ -24,6 +24,7 @@ function normalizeUser(raw) {
           id:                raw.organisation.id,
           name_organisation: raw.organisation.name_organisation,
           logo_organisation: raw.organisation.logo_organisation,
+          logo_url: raw.organisation.logo_url,
         }
       : null,
     organisationId: raw.organisation?.id ?? null,

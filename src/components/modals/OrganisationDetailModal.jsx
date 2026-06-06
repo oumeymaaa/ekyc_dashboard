@@ -11,8 +11,8 @@ const BASE_URL = 'http://localhost:3001'
  *   onDelete     – () => void   (triggers delete confirmation)
  */
 function OrganisationDetailModal({ organisation, onClose, onEdit, onDelete }) {
-  const logoSrc = organisation.logo_organisation
-    ? `${BASE_URL}/${organisation.logo_organisation}`
+  const logoSrc = organisation.logo_url
+    ? `${BASE_URL}${organisation.logo_url}`
     : null
 
   const fmt = (dateStr) =>

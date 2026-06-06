@@ -3,15 +3,11 @@
 const BASE_URL = import.meta.env.VITE_API_URL 
 
 // ─── LOGO URL HELPER ───────────────────────────────────────────────────────
-// Normalises whatever path Multer stored into a full usable URL.
-// Handles: "uploads/logos/x.png" | "./uploads/logos/x.png" | "uploads\\logos\\x.png"
+// Uses the logo_url computed field from the backend (already a relative URL like /uploads/logos/x.png)
 
-export function getLogoUrl(path) {
-  if (!path) return null
-  const clean = path
-    .replace(/\\/g, '/')   // Windows backslashes → forward slashes
-    .replace(/^\.\//, '')  // strip leading "./"
-  return `${BASE_URL}/${clean}`
+export function getLogoUrl(org) {
+  if (!org?.logo_url) return null
+  return `${BASE_URL}${org.logo_url}`
 }
 
 // ─── HEADERS ───────────────────────────────────────────────────────────────

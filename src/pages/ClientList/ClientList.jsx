@@ -17,7 +17,8 @@ function ClientList({ onNavigate, onLogout }) {
   const [modal,   setModal]   = useState(null)
   const [dossier, setDossier] = useState(null)
   const [toast,   setToast]   = useState(null)
-  const [page,    setPage]    = useState(1)      // ← current page
+  const [filterKyc, setFilterKyc] = useState('all')
+  const [page,      setPage]      = useState(1)
 
   useEffect(() => {
     fetchClients()
@@ -91,13 +92,22 @@ function ClientList({ onNavigate, onLogout }) {
   }
 
   /* ── Filter ───────────────────────────────────── */
+  const getKycStatus = (client) => {
+    if (!client.kyc) return 'none'
+    return client.kyc.deletedAt ? 'non_valide' : client.kyc.status
+  }
+
   const filtered = clients.filter((client) => {
     const q = search.toLowerCase()
-    return (
+    const matchesSearch = (
       `${client.firstName || ''} ${client.lastName || ''}`.toLowerCase().includes(q) ||
       (client.email      || '').toLowerCase().includes(q) ||
       (client.accessCode || '').toLowerCase().includes(q)
     )
+    if (!matchesSearch) return false
+
+    if (filterKyc === 'all') return true
+    return getKycStatus(client) === filterKyc
   })
 
   /* ── Pagination ───────────────────────────────── */
@@ -168,6 +178,25 @@ function ClientList({ onNavigate, onLogout }) {
                 + Nouveau client
               </button>
             </div>
+          </div>
+
+          {/* KYC Status filter */}
+          <div className="kyc-filter-bar">
+            {[
+              { value: 'all',        label: 'Tous' },
+              { value: 'en_attente', label: 'En attente' },
+              { value: 'valide',     label: 'Validé' },
+              { value: 'non_valide', label: 'Non valide' },
+              { value: 'none',       label: 'Aucun KYC' },
+            ].map((f) => (
+              <button
+                key={f.value}
+                className={`kyc-filter-btn ${filterKyc === f.value ? 'active' : ''}`}
+                onClick={() => { setFilterKyc(f.value); setPage(1) }}
+              >
+                {f.label}
+              </button>
+            ))}
           </div>
 
           {loading && <div className="client-state">Chargement...</div>}

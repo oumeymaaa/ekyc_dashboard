@@ -33,9 +33,9 @@ function Sidebar({ activePage, onNavigate, onLogout, user: userProp }) {
   return (
     <aside className="sidebar">
       <div className="sidebar-logo">
-        {role === 'admin' && organisation?.logo_organisation ? (
+        {role === 'admin' && organisation?.logo_url ? (
           <img
-            src={`${BASE_URL}/${organisation.logo_organisation}`}
+            src={`${BASE_URL}${organisation.logo_url}`}
             alt={organisation.name_organisation ?? 'Logo'}
             className="logo-img"
           />
