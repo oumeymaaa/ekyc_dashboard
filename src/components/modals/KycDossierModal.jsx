@@ -6,12 +6,12 @@ import {
   updateKycStatus,
 } from '../../services/kyc.service'
 
-const PYTHON_BASE_URL = 'http://192.168.1.6:8000'
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
 const imgUrl = (path) => {
   if (!path) return null
   if (path.startsWith('http://') || path.startsWith('https://')) return path
-  return `${PYTHON_BASE_URL}${path.startsWith('/') ? '' : '/'}${path}`
+  return `${API_BASE}${path.startsWith('/') ? '' : '/'}${path}`
 }
 
 const statusLabel = (status, deletedAt) => {
@@ -185,6 +185,14 @@ function KycDossierModal({ clientId, onClose, onUpdated }) {
                           <img src={imgUrl(record.selfieImageUrl)} onClick={() => setZoomImage(imgUrl(record.selfieImageUrl))} />
                         ) : (
                           <div className="no-img-block">Aucune image selfie</div>
+                        )}
+                      </div>
+                      <div className="img-block">
+                        <div className="img-title">Visage détecté</div>
+                        {imgUrl(record.faceImageUrl) ? (
+                          <img src={imgUrl(record.faceImageUrl)} onClick={() => setZoomImage(imgUrl(record.faceImageUrl))} />
+                        ) : (
+                          <div className="no-img-block">Aucun visage détecté</div>
                         )}
                       </div>
                     </div>
