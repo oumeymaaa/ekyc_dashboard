@@ -22,10 +22,16 @@ function CreateAdminModal({ onClose, onSubmit, admin = null }) {
   const [loading, setLoading] = useState(false)
   const [errors,  setErrors]  = useState({})
 
-  // Load organisations for the select
+  // Load organisations for the select (only those without an admin)
   useEffect(() => {
     getOrganisations()
-      .then(setOrganisations)
+      .then((data) => {
+        const orgs = Array.isArray(data) ? data : []
+        // In create mode: show only orgs without an admin
+        // In edit mode: show all orgs
+        const filtered = isEdit ? orgs : orgs.filter((o) => !o.admin)
+        setOrganisations(filtered)
+      })
       .catch(() => setOrgError('Impossible de charger les organisations.'))
       .finally(() => setOrgLoading(false))
   }, [])
@@ -108,34 +114,38 @@ function CreateAdminModal({ onClose, onSubmit, admin = null }) {
           />
 
           {/* Organisation select */}
-          <div className="field">
-            <label htmlFor="organisationId">Organisation</label>
+      <div className="field">
+        <label htmlFor="organisationId">Organisation</label>
 
-            {orgLoading ? (
-              <div className="org-select-loading">Chargement des organisations...</div>
-            ) : orgError ? (
-              <div className="org-select-error">{orgError}</div>
-            ) : (
-              <select
-                id="organisationId"
-                name="organisationId"
-                value={form.organisationId}
-                onChange={handleChange}
-                className={errors.organisationId ? 'input-error' : ''}
-              >
-                <option value="">— Sélectionner une organisation —</option>
-                {organisations.map((org) => (
-                  <option key={org.id} value={org.id}>
-                    {org.name_organisation}
-                  </option>
-                ))}
-              </select>
-            )}
-
-            {errors.organisationId && (
-              <span className="field-error">{errors.organisationId}</span>
-            )}
+        {orgLoading ? (
+          <div className="org-select-loading">Chargement des organisations...</div>
+        ) : organisations.length === 0 && !isEdit ? (
+          <div className="org-select-error">
+            Toutes les organisations ont déjà un administrateur.
           </div>
+        ) : orgError ? (
+          <div className="org-select-error">{orgError}</div>
+        ) : (
+          <select
+            id="organisationId"
+            name="organisationId"
+            value={form.organisationId}
+            onChange={handleChange}
+            className={errors.organisationId ? 'input-error' : ''}
+          >
+            <option value="">— Sélectionner une organisation —</option>
+            {organisations.map((org) => (
+              <option key={org.id} value={org.id}>
+                {org.name_organisation}
+              </option>
+            ))}
+          </select>
+        )}
+
+        {errors.organisationId && (
+          <span className="field-error">{errors.organisationId}</span>
+        )}
+      </div>
 
           {/* Info banner (create only) */}
           {!isEdit && (

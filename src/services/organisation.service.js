@@ -61,6 +61,19 @@ export async function createOrganisation(data) {
   return body
 }
 
+// ─── CREATE WITH ADMIN ─────────────────────────────────────────────────────
+
+export async function createOrganisationWithAdmin(data) {
+  const res = await fetch(`${BASE_URL}/organisations/create-with-admin`, {
+    method: 'POST',
+    headers: getMultipartHeaders(),
+    body: data,
+  })
+  const body = await res.json()
+  if (!res.ok) throw new Error(body?.message ?? 'Erreur lors de la création.')
+  return body
+}
+
 // ─── UPDATE ────────────────────────────────────────────────────────────────
 
 export async function updateOrganisation(id, data) {

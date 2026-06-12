@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import './CreateOrganisationModal.css'
 import { getLogoUrl } from '../../services/organisation.service'
+import MapPicker from '../ui/MapPicker/MapPicker'
 
 function CreateOrganisationModal({ mode, initial, onClose, onSubmit }) {
   const isEdit = mode === 'edit'
@@ -9,6 +10,11 @@ function CreateOrganisationModal({ mode, initial, onClose, onSubmit }) {
     name_organisation:    initial?.name_organisation    ?? '',
     adresse_organisation: initial?.adresse_organisation ?? '',
     phone_organisation:   initial?.phone_organisation   ?? '',
+    // Admin fields
+    admin_first_name: initial?.admin_first_name ?? '',
+    admin_last_name:  initial?.admin_last_name  ?? '',
+    admin_email:      initial?.admin_email      ?? '',
+    admin_phone:      initial?.admin_phone      ?? '',
   })
   const [logoFile,    setLogoFile]    = useState(null)
   const [logoPreview, setLogoPreview] = useState(
@@ -54,13 +60,41 @@ function CreateOrganisationModal({ mode, initial, onClose, onSubmit }) {
       }
     }
 
+    // ✅ Admin fields (only required when creating)
+    if (!isEdit) {
+      if (!form.admin_first_name.trim()) {
+        errs.admin_first_name = 'Le prénom de l\'admin est obligatoire.'
+      }
+      if (!form.admin_last_name.trim()) {
+        errs.admin_last_name = 'Le nom de l\'admin est obligatoire.'
+      }
+      if (!form.admin_email.trim()) {
+        errs.admin_email = 'L\'email de l\'admin est obligatoire.'
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.admin_email.trim())) {
+        errs.admin_email = 'Email invalide.'
+      }
+      if (!form.admin_phone.trim()) {
+        errs.admin_phone = 'Le téléphone de l\'admin est obligatoire.'
+      } else {
+        const clean = form.admin_phone.replace(/\s/g, '')
+        if (!/^(\+216)?[0-9]{8}$/.test(clean)) {
+          errs.admin_phone = 'Numéro invalide (8 chiffres)'
+        }
+      }
+    }
+
     return errs
   }
 
   const handleChange = (e) => {
     const { name, value } = e.target
     setForm((f) => ({ ...f, [name]: value }))
-    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: undefined }))
+    setErrors((prev) => ({ ...prev, [name]: undefined, submit: undefined }))
+  }
+
+  const handleAddressChange = (addr) => {
+    setForm((f) => ({ ...f, adresse_organisation: addr }))
+    setErrors((prev) => ({ ...prev, adresse_organisation: undefined, submit: undefined }))
   }
 
   const handleFile = (e) => {
@@ -90,6 +124,12 @@ function CreateOrganisationModal({ mode, initial, onClose, onSubmit }) {
     fd.append('adresse_organisation', form.adresse_organisation.trim())
     fd.append('phone_organisation',   form.phone_organisation.trim())
     if (logoFile) fd.append('logo_organisation', logoFile)
+    if (!isEdit) {
+      fd.append('admin_first_name', form.admin_first_name.trim())
+      fd.append('admin_last_name',  form.admin_last_name.trim())
+      fd.append('admin_email',      form.admin_email.trim())
+      fd.append('admin_phone',      form.admin_phone.trim())
+    }
 
     try {
       setLoading(true)
@@ -148,16 +188,14 @@ function CreateOrganisationModal({ mode, initial, onClose, onSubmit }) {
             {errors.name_organisation && <span className="field-error">{errors.name_organisation}</span>}
           </div>
 
-          {/* Adresse */}
+          {/* Adresse — MapPicker */}
           <div className="org-field">
             <label className="org-label">
               Adresse <span className="required">*</span>
             </label>
-            <input
-              className={`org-input ${errors.adresse_organisation ? 'input-error' : ''}`}
-              type="text" name="adresse_organisation"
-              value={form.adresse_organisation} onChange={handleChange}
-              placeholder="Ex: 12 Rue de la Paix, Paris"
+            <MapPicker
+              address={form.adresse_organisation}
+              onAddressChange={handleAddressChange}
             />
             {errors.adresse_organisation && <span className="field-error">{errors.adresse_organisation}</span>}
           </div>
@@ -175,6 +213,65 @@ function CreateOrganisationModal({ mode, initial, onClose, onSubmit }) {
             />
             {errors.phone_organisation && <span className="field-error">{errors.phone_organisation}</span>}
           </div>
+
+          {!isEdit && (
+            <>
+              <hr className="org-divider" />
+              <h4 className="org-section-title">👤 Admin de l'organisation</h4>
+
+              <div className="org-field">
+                <label className="org-label">
+                  Prénom de l'admin <span className="required">*</span>
+                </label>
+                <input
+                  className={`org-input ${errors.admin_first_name ? 'input-error' : ''}`}
+                  type="text" name="admin_first_name"
+                  value={form.admin_first_name} onChange={handleChange}
+                  placeholder="Ex: Ahmed"
+                />
+                {errors.admin_first_name && <span className="field-error">{errors.admin_first_name}</span>}
+              </div>
+
+              <div className="org-field">
+                <label className="org-label">
+                  Nom de l'admin <span className="required">*</span>
+                </label>
+                <input
+                  className={`org-input ${errors.admin_last_name ? 'input-error' : ''}`}
+                  type="text" name="admin_last_name"
+                  value={form.admin_last_name} onChange={handleChange}
+                  placeholder="Ex: Ben Ali"
+                />
+                {errors.admin_last_name && <span className="field-error">{errors.admin_last_name}</span>}
+              </div>
+
+              <div className="org-field">
+                <label className="org-label">
+                  Email de l'admin <span className="required">*</span>
+                </label>
+                <input
+                  className={`org-input ${errors.admin_email ? 'input-error' : ''}`}
+                  type="email" name="admin_email"
+                  value={form.admin_email} onChange={handleChange}
+                  placeholder="Ex: admin@example.com"
+                />
+                {errors.admin_email && <span className="field-error">{errors.admin_email}</span>}
+              </div>
+
+              <div className="org-field">
+                <label className="org-label">
+                  Téléphone de l'admin <span className="required">*</span>
+                </label>
+                <input
+                  className={`org-input ${errors.admin_phone ? 'input-error' : ''}`}
+                  type="tel" name="admin_phone"
+                  value={form.admin_phone} onChange={handleChange}
+                  placeholder="Ex: +21622333444"
+                />
+                {errors.admin_phone && <span className="field-error">{errors.admin_phone}</span>}
+              </div>
+            </>
+          )}
 
           {errors.submit && <p className="org-error">{errors.submit}</p>}
 

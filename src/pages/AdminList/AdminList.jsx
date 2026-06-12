@@ -135,10 +135,9 @@ function AdminList({ onNavigate, onViewStats, onLogout }) {
 
                     <td className="cell-email">{admin.email}</td>
 
-                    {/* ← was admin.organization (wrong key), now admin.organisation */}
                     <td>
                       <span className="org-badge">
-                        {admin.organisation?.name_organisation ?? '—'}
+                        {admin.organisation ?? '—'}
                       </span>
                     </td>
 

@@ -4,7 +4,7 @@ import './OrganisationList.css'
 
 import {
   getOrganisations,
-  createOrganisation,
+  createOrganisationWithAdmin,
   updateOrganisation,
   deleteOrganisation,
 } from '../../services/organisation.service'
@@ -12,6 +12,7 @@ import {
 import Sidebar                  from '../../components/ui/Sidebar/Sidebar'
 import OrganisationFormModal    from '../../components/modals/CreateOrganisationModal'
 import OrganisationDetailModal  from '../../components/modals/OrganisationDetailModal'
+import AdminDetailModal         from '../../components/modals/AdminDetailModal'
 
 const BASE_URL  =  'http://localhost:3001'
 const PAGE_SIZE = 10
@@ -51,10 +52,10 @@ function OrganisationList({ onNavigate, onLogout }) {
 
   /* ── Create ───────────────────────────────── */
   const handleCreate = async (formData) => {
-    await createOrganisation(formData)
+    await createOrganisationWithAdmin(formData)
     await fetchOrganisations()
     setModal(null)
-    showToast('Organisation créée avec succès.')
+    showToast('Organisation & admin créés avec succès.')
   }
 
   /* ── Update ───────────────────────────────── */
@@ -82,10 +83,14 @@ function OrganisationList({ onNavigate, onLogout }) {
   /* ── Filter ───────────────────────────────── */
   const filtered = organisations.filter((org) => {
     const q = search.toLowerCase()
+    const adminName = org.admin
+      ? `${org.admin.first_name} ${org.admin.last_name}`.toLowerCase()
+      : ''
     return (
       (org.name_organisation    || '').toLowerCase().includes(q) ||
       (org.adresse_organisation || '').toLowerCase().includes(q) ||
-      (org.phone_organisation   || '').toLowerCase().includes(q)
+      (org.phone_organisation   || '').toLowerCase().includes(q) ||
+      adminName.includes(q)
     )
   })
 
@@ -159,6 +164,7 @@ function OrganisationList({ onNavigate, onLogout }) {
                       <th>Adresse</th>
                       <th>Téléphone</th>
                       <th>Créée le</th>
+                      <th>Admin</th>
                       <th>Actions</th>
                     </tr>
                   </thead>
@@ -166,7 +172,7 @@ function OrganisationList({ onNavigate, onLogout }) {
                   <tbody>
                     {paginated.length === 0 ? (
                       <tr>
-                        <td colSpan={5} className="client-empty">
+                        <td colSpan={6} className="client-empty">
                           Aucune organisation trouvée.
                         </td>
                       </tr>
@@ -196,6 +202,18 @@ function OrganisationList({ onNavigate, onLogout }) {
                               {org.created_at
                                 ? new Date(org.created_at).toLocaleDateString('fr-FR')
                                 : '—'}
+                            </td>
+
+                            <td>
+                              {org.admin
+                                ? <span
+                                    className="admin-link"
+                                    onClick={() => setModal({ mode: 'admin-detail', org })}
+                                    title="Voir les détails de l'admin"
+                                  >
+                                    {org.admin.first_name} {org.admin.last_name}
+                                  </span>
+                                : <span className="org-empty-cell">—</span>}
                             </td>
 
                             {/* Actions */}
@@ -291,6 +309,14 @@ function OrganisationList({ onNavigate, onLogout }) {
           onClose={() => setModal(null)}
           onEdit={() => setModal({ mode: 'edit', org: modal.org })}
           onDelete={() => setModal({ mode: 'delete', org: modal.org })}
+        />
+      )}
+
+      {/* ── Admin detail modal ── */}
+      {modal?.mode === 'admin-detail' && (
+        <AdminDetailModal
+          admin={modal.org.admin}
+          onClose={() => setModal(null)}
         />
       )}
 

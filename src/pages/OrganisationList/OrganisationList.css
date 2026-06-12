@@ -131,3 +131,18 @@
   opacity: 0.9;
   transform: translateY(-1px);
 }
+
+/* ── Admin link in table ─────────────────────── */
+
+.admin-link {
+  color: #6366f1;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.admin-link:hover {
+  color: #4f46e5;
+  text-decoration: underline;
+}
