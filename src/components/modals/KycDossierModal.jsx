@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import './KycDossierModal.css'
 
-import {
-  getKycRecordByClient,
-  updateKycStatus,
-} from '../../services/kyc.service'
+import { getKycRecordByClient, updateKycStatus } from '../../services/kyc.service'
+
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
@@ -25,6 +24,7 @@ const statusLabel = (status, deletedAt) => {
 }
 
 function KycDossierModal({ clientId, onClose, onUpdated }) {
+  const { t } = useTranslation()
   const [records, setRecords]     = useState([])
   const [selectedIdx, setSelectedIdx] = useState(0)
   const [loading, setLoading]     = useState(true)
@@ -75,15 +75,15 @@ function KycDossierModal({ clientId, onClose, onUpdated }) {
 
           <div className="kyc-header">
             <div>
-              <h2>KYC Verification</h2>
-              <p>Identity validation & document comparison</p>
+              <h2>{t('kycDossierModal.title')}</h2>
+              <p>{t('kycDossierModal.subtitle')}</p>
             </div>
             <button className="close-btn" onClick={onClose}>✕</button>
           </div>
 
           <div className="kyc-body">
-            {loading && <div className="kyc-state">Loading...</div>}
-            {error && <div className="kyc-error">{error}</div>}
+            {loading && <div className="kyc-state">{t('kycDossierModal.loading')}</div>}
+            {error   && <div className="kyc-error">{error}</div>}
 
             {!loading && records.length === 0 && (
               <div className="kyc-state">Aucun dossier KYC trouvé pour ce client.</div>
@@ -136,11 +136,11 @@ function KycDossierModal({ clientId, onClose, onUpdated }) {
                       {record.client?.lastName?.[0]}
                     </div>
                     <div className="profile-info">
-                      <h3>{record.client?.firstName} {record.client?.lastName}</h3>
+                    <h3>{record.client?.firstName} {record.client?.lastName}</h3>
                       <p>{record.client?.email}</p>
                     </div>
                     <div className="score-box">
-                      <span>Face Match</span>
+                    <span>{t('kycDossierModal.faceMatch')}</span>
                       <div className="score">
                         {record.facialMatchingScore != null
                           ? `${Math.round(record.facialMatchingScore * 100)}%`
@@ -160,17 +160,17 @@ function KycDossierModal({ clientId, onClose, onUpdated }) {
                   {/* Grid */}
                   <div className="kyc-grid">
                     <div className="card">
-                      <h4>CIN Data</h4>
+                    <h4>{t('kycDossierModal.cinData')}</h4>
                       <div className="info">
-                        <p><b>CIN:</b> {record.cinData?.cin}</p>
-                        <p><b>Name:</b> {record.cinData?.firstName} {record.cinData?.lastName}</p>
-                        <p><b>Birth:</b> {record.cinData?.birthDate}</p>
-                        <p><b>Place:</b> {record.cinData?.lieu}</p>
-                      </div>
+                      <p><b>{t('kycDossierModal.cin')}:</b> {record.cinData?.cin}</p>
+                      <p><b>{t('kycDossierModal.name')}:</b> {record.cinData?.firstName} {record.cinData?.lastName}</p>
+                      <p><b>{t('kycDossierModal.birth')}:</b> {record.cinData?.birthDate}</p>
+                      <p><b>{t('kycDossierModal.place')}:</b> {record.cinData?.lieu}</p>
+                       </div>
                     </div>
 
                     <div className="card image-card">
-                      <h4>Identity Comparison</h4>
+                    <h4>{t('kycDossierModal.identityComparison')}</h4>
                       <div className="img-block">
                         <div className="img-title">CIN Document</div>
                         {imgUrl(record.cinImageUrl) ? (
@@ -210,10 +210,10 @@ function KycDossierModal({ clientId, onClose, onUpdated }) {
                     </div>
                   )}
                   {record.status === 'valide' && (
-                    <div className="kyc-approved-badge">Approuvé</div>
+                    <div className="kyc-approved-badge">{t('kycDossierModal.approved')}</div>
                   )}
                   {record.status === 'non_valide' && (
-                    <div className="kyc-rejected-badge">Rejeté</div>
+                    <div className="kyc-rejected-badge">{t('kycDossierModal.rejected')}</div>
                   )}
                 </div>
               </div>

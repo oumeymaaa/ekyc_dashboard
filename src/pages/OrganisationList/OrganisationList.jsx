@@ -1,5 +1,5 @@
-// src/pages/OrganisationList/OrganisationList.jsx
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import './OrganisationList.css'
 
 import {
@@ -9,23 +9,25 @@ import {
   deleteOrganisation,
 } from '../../services/organisation.service'
 
-import Sidebar                  from '../../components/ui/Sidebar/Sidebar'
-import OrganisationFormModal    from '../../components/modals/CreateOrganisationModal'
-import OrganisationDetailModal  from '../../components/modals/OrganisationDetailModal'
-import AdminDetailModal         from '../../components/modals/AdminDetailModal'
+import Sidebar from '../../components/ui/Sidebar/Sidebar'
+import OrganisationFormModal from '../../components/modals/CreateOrganisationModal'
+import OrganisationDetailModal from '../../components/modals/OrganisationDetailModal'
+import AdminDetailModal from '../../components/modals/AdminDetailModal'
 
-const BASE_URL  =  'http://localhost:3001'
+const BASE_URL = import.meta.env.VITE_API_URL
 const PAGE_SIZE = 10
 
 function OrganisationList({ onNavigate, onLogout }) {
-  const [organisations, setOrganisations] = useState([])
-  const [loading,       setLoading]       = useState(true)
-  const [error,         setError]         = useState('')
-  const [search,        setSearch]        = useState('')
-  const [page,          setPage]          = useState(1)
-  const [toast,         setToast]         = useState(null)
+  const { t, i18n } = useTranslation()
+  const locale = i18n.language === 'ar' ? 'ar-TN' : i18n.language === 'en' ? 'en-GB' : 'fr-FR'
 
-  // modal state: null | { mode: 'create' } | { mode: 'edit', org } | { mode: 'detail', org } | { mode: 'delete', org }
+  const [organisations, setOrganisations] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [search, setSearch] = useState('')
+  const [page, setPage] = useState(1)
+  const [toast, setToast] = useState(null)
+
   const [modal, setModal] = useState(null)
 
   useEffect(() => { fetchOrganisations() }, [])
@@ -44,7 +46,7 @@ function OrganisationList({ onNavigate, onLogout }) {
       const data = await getOrganisations()
       setOrganisations(Array.isArray(data) ? data : [])
     } catch (err) {
-      setError(err.message || 'Erreur lors du chargement.')
+      setError(err.message || t('organisationList.toast.loadError'))
     } finally {
       setLoading(false)
     }
@@ -55,7 +57,7 @@ function OrganisationList({ onNavigate, onLogout }) {
     await createOrganisationWithAdmin(formData)
     await fetchOrganisations()
     setModal(null)
-    showToast('Organisation & admin créés avec succès.')
+    showToast(t('organisationList.toast.created'))
   }
 
   /* ── Update ───────────────────────────────── */
@@ -63,7 +65,7 @@ function OrganisationList({ onNavigate, onLogout }) {
     await updateOrganisation(modal.org.id, formData)
     await fetchOrganisations()
     setModal(null)
-    showToast('Organisation mise à jour.')
+    showToast(t('organisationList.toast.updated'))
   }
 
   /* ── Delete (with confirm) ────────────────── */
@@ -73,9 +75,9 @@ function OrganisationList({ onNavigate, onLogout }) {
       await deleteOrganisation(modal.org.id)
       await fetchOrganisations()
       setModal(null)
-      showToast('Organisation supprimée.')
+      showToast(t('organisationList.toast.deleted'))
     } catch (err) {
-      showToast(err.message || 'Erreur lors de la suppression.', 'error')
+      showToast(err.message || t('organisationList.toast.deleteError'), 'error')
       setModal(null)
     }
   }
@@ -87,18 +89,18 @@ function OrganisationList({ onNavigate, onLogout }) {
       ? `${org.admin.first_name} ${org.admin.last_name}`.toLowerCase()
       : ''
     return (
-      (org.name_organisation    || '').toLowerCase().includes(q) ||
+      (org.name_organisation || '').toLowerCase().includes(q) ||
       (org.adresse_organisation || '').toLowerCase().includes(q) ||
-      (org.phone_organisation   || '').toLowerCase().includes(q) ||
+      (org.phone_organisation || '').toLowerCase().includes(q) ||
       adminName.includes(q)
     )
   })
 
   /* ── Pagination ───────────────────────────── */
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
-  const safePage   = Math.min(page, totalPages)
-  const paginated  = filtered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE)
-  const goTo       = (p) => setPage(Math.max(1, Math.min(p, totalPages)))
+  const safePage = Math.min(page, totalPages)
+  const paginated = filtered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE)
+  const goTo = (p) => setPage(Math.max(1, Math.min(p, totalPages)))
 
   const pageNumbers = () => {
     if (totalPages <= 7) return Array.from({ length: totalPages }, (_, i) => i + 1)
@@ -119,7 +121,7 @@ function OrganisationList({ onNavigate, onLogout }) {
 
   /* ── Render ───────────────────────────────── */
   return (
-    <div className="page-layout">
+    <div className="page-layout" dir={i18n.language === 'ar' ? 'rtl' : 'ltr'} style={{ flexDirection: i18n.language === 'ar' ? 'row-reverse' : 'row' }}>
       <Sidebar activePage="organisations" onNavigate={onNavigate} onLogout={onLogout} />
 
       <main className="page-content">
@@ -128,9 +130,9 @@ function OrganisationList({ onNavigate, onLogout }) {
           {/* Header */}
           <div className="client-list-header">
             <div>
-              <h2 className="client-list-title">Organisations</h2>
+              <h2 className="client-list-title">{t('organisationList.title')}</h2>
               <p className="client-list-sub">
-                {filtered.length} organisation{filtered.length !== 1 ? 's' : ''} au total
+                {t(filtered.length !== 1 ? 'organisationList.total_other' : 'organisationList.total_one', { count: filtered.length })}
               </p>
             </div>
 
@@ -138,21 +140,18 @@ function OrganisationList({ onNavigate, onLogout }) {
               <input
                 className="client-search"
                 type="text"
-                placeholder="Rechercher..."
+                placeholder={t('organisationList.search')}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
-              <button
-                className="btn-primary"
-                onClick={() => setModal({ mode: 'create' })}
-              >
-                + Nouvelle organisation
+              <button className="btn-primary" onClick={() => setModal({ mode: 'create' })}>
+                {t('organisationList.newOrganisation')}
               </button>
             </div>
           </div>
 
-          {loading && <div className="client-state">Chargement...</div>}
-          {error   && <div className="client-state error">{error}</div>}
+          {loading && <div className="client-state">{t('common.loading')}</div>}
+          {error && <div className="client-state error">{error}</div>}
 
           {!loading && !error && (
             <>
@@ -160,12 +159,12 @@ function OrganisationList({ onNavigate, onLogout }) {
                 <table className="client-table">
                   <thead>
                     <tr>
-                      <th>Organisation</th>
-                      <th>Adresse</th>
-                      <th>Téléphone</th>
-                      <th>Créée le</th>
-                      <th>Admin</th>
-                      <th>Actions</th>
+                      <th>{t('organisationList.columns.name')}</th>
+                      <th>{t('organisationList.columns.address')}</th>
+                      <th>{t('organisationList.columns.phone')}</th>
+                      <th>{t('organisationList.columns.createdAt')}</th>
+                      <th>{t('organisationList.columns.admin')}</th>
+                      <th>{t('organisationList.columns.actions')}</th>
                     </tr>
                   </thead>
 
@@ -173,7 +172,7 @@ function OrganisationList({ onNavigate, onLogout }) {
                     {paginated.length === 0 ? (
                       <tr>
                         <td colSpan={6} className="client-empty">
-                          Aucune organisation trouvée.
+                          {t('organisationList.empty')}
                         </td>
                       </tr>
                     ) : (
@@ -195,49 +194,40 @@ function OrganisationList({ onNavigate, onLogout }) {
                               </div>
                             </td>
 
-                            <td>{org.adresse_organisation || <span className="org-empty-cell">—</span>}</td>
-                            <td>{org.phone_organisation   || <span className="org-empty-cell">—</span>}</td>
+                            <td>{org.adresse_organisation || <span className="org-empty-cell">{t('common.noData')}</span>}</td>
+                            <td>{org.phone_organisation || <span className="org-empty-cell">{t('common.noData')}</span>}</td>
 
                             <td>
                               {org.created_at
-                                ? new Date(org.created_at).toLocaleDateString('fr-FR')
-                                : '—'}
+                                ? new Date(org.created_at).toLocaleDateString(locale)
+                                : <span className="org-empty-cell">{t('common.noData')}</span>}
                             </td>
 
                             <td>
                               {org.admin
                                 ? <span
-                                    className="admin-link"
-                                    onClick={() => setModal({ mode: 'admin-detail', org })}
-                                    title="Voir les détails de l'admin"
-                                  >
-                                    {org.admin.first_name} {org.admin.last_name}
-                                  </span>
-                                : <span className="org-empty-cell">—</span>}
+                                  className="admin-link"
+                                  onClick={() => setModal({ mode: 'admin-detail', org })}
+                                  title={t('organisationList.adminViewDetail')}
+                                >
+                                  {org.admin.first_name} {org.admin.last_name}
+                                </span>
+                                : <span className="org-empty-cell">{t('common.noData')}</span>}
                             </td>
 
                             {/* Actions */}
                             <td>
                               <div className="org-actions">
-                                <button
-                                  className="btn-consulter"
-                                  onClick={() => setModal({ mode: 'detail', org })}
-                                  title="Voir les détails"
-                                >
-                                  🔍 Détails
+                                <button className="btn-consulter"
+                                  onClick={() => setModal({ mode: 'detail', org })}>
+                                  {t('organisationList.actions.details')}
                                 </button>
-                                <button
-                                  className="btn-edit"
-                                  onClick={() => setModal({ mode: 'edit', org })}
-                                  title="Modifier"
-                                >
-                                  ✏️ Modifier
+                                <button className="btn-edit"
+                                  onClick={() => setModal({ mode: 'edit', org })}>
+                                  {t('organisationList.actions.edit')}
                                 </button>
-                                <button
-                                  className="btn-delete"
-                                  onClick={() => setModal({ mode: 'delete', org })}
-                                  title="Supprimer"
-                                >
+                                <button className="btn-delete"
+                                  onClick={() => setModal({ mode: 'delete', org })}>
                                   🗑️
                                 </button>
                               </div>
@@ -258,7 +248,9 @@ function OrganisationList({ onNavigate, onLogout }) {
                     <span className="pagination-count">
                       {(safePage - 1) * PAGE_SIZE + 1}–{Math.min(safePage * PAGE_SIZE, filtered.length)}
                     </span>
-                    <span className="pagination-total">sur {filtered.length} organisations</span>
+                    <span className="pagination-total">
+                      {t('organisationList.pagination.of')} {filtered.length} {t('organisationList.pagination.organisations')}
+                    </span>
                   </div>
 
                   <div className="pagination-controls">
@@ -267,11 +259,8 @@ function OrganisationList({ onNavigate, onLogout }) {
                     {pageNumbers().map((p, i) =>
                       p === '...'
                         ? <span key={`e-${i}`} className="page-ellipsis">…</span>
-                        : <button
-                            key={p}
-                            className={`page-btn ${p === safePage ? 'page-active' : ''}`}
-                            onClick={() => goTo(p)}
-                          >{p}</button>
+                        : <button key={p} className={`page-btn ${p === safePage ? 'page-active' : ''}`} onClick={() => goTo(p)}>{p}</button>
+
                     )}
 
                     <button className="page-btn page-nav" onClick={() => goTo(safePage + 1)} disabled={safePage === totalPages}>›</button>
@@ -285,21 +274,14 @@ function OrganisationList({ onNavigate, onLogout }) {
 
       {/* ── Create modal ── */}
       {modal?.mode === 'create' && (
-        <OrganisationFormModal
-          mode="create"
-          onClose={() => setModal(null)}
-          onSubmit={handleCreate}
-        />
+        <OrganisationFormModal mode="create" onClose={() => setModal(null)} onSubmit={handleCreate} />
+
       )}
 
       {/* ── Edit modal ── */}
       {modal?.mode === 'edit' && (
-        <OrganisationFormModal
-          mode="edit"
-          initial={modal.org}
-          onClose={() => setModal(null)}
-          onSubmit={handleUpdate}
-        />
+        <OrganisationFormModal mode="edit" initial={modal.org} onClose={() => setModal(null)} onSubmit={handleUpdate} />
+
       )}
 
       {/* ── Detail modal ── */}
@@ -325,21 +307,24 @@ function OrganisationList({ onNavigate, onLogout }) {
         <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && setModal(null)}>
           <div className="modal-box org-confirm-modal">
             <div className="modal-header">
-              <h3 className="modal-title">🗑️ Confirmer la suppression</h3>
+              <h3 className="modal-title">{t('organisationList.confirmDelete.title')}</h3>
               <button className="modal-close" onClick={() => setModal(null)}>✕</button>
             </div>
             <div className="org-confirm-body">
               <p>
-                Êtes-vous sûr de vouloir supprimer l'organisation{' '}
-                <strong>{modal.org.name_organisation}</strong> ?
-                Cette action est irréversible.
+                {t('organisationList.confirmDelete.text', { name: modal.org.name_organisation })}
+
               </p>
             </div>
             <div className="org-detail-footer">
               <span />
               <div className="org-detail-footer-right">
-                <button className="btn-cancel" onClick={() => setModal(null)}>Annuler</button>
-                <button className="btn-danger" onClick={handleDelete}>Supprimer</button>
+                <button className="btn-cancel" onClick={() => setModal(null)}>
+                  {t('organisationList.confirmDelete.cancel')}
+                </button>
+                <button className="btn-danger" onClick={handleDelete}>
+                  {t('organisationList.confirmDelete.confirm')}
+                </button>
               </div>
             </div>
           </div>

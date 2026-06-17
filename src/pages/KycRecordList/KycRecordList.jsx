@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import './KycRecordList.css'
 
 import { getKycRecords } from '../../services/kyc.service'
@@ -8,9 +9,12 @@ import Sidebar from '../../components/ui/Sidebar/Sidebar'
 import KycDossierModal from '../../components/modals/KycDossierModal'
 import CreateClientModal from '../../components/modals/CreateClientModal'
 
-const PYTHON_BASE_URL = 'http://192.168.1.98:8000'
+const PYTHON_BASE_URL = 'http://192.168.1.9:8000'
 
 function KycRecordList({ onNavigate, onLogout }) {
+    const { t, i18n } = useTranslation()
+  const locale = i18n.language === 'ar' ? 'ar-TN' : i18n.language === 'en' ? 'en-GB' : 'fr-FR'
+
   const [records, setRecords]   = useState([])
   const [loading, setLoading]   = useState(true)
   const [error, setError]       = useState('')
@@ -35,7 +39,7 @@ function KycRecordList({ onNavigate, onLogout }) {
       const data = await getKycRecords()
       setRecords(Array.isArray(data) ? data : [])
     } catch (err) {
-      setError(err.message || 'Erreur lors du chargement des dossiers KYC.')
+      setError(err.message || t('kycRecordList.loadError'))
     } finally {
       setLoading(false)
     }
@@ -47,10 +51,10 @@ function KycRecordList({ onNavigate, onLogout }) {
       await createClient(form)
       await fetchRecords()
       setModal(null)
-      showToast('Compte client créé et email envoyé.', 'success')
+      showToast(t('kycRecordList.toast.created'), 'success')
     } catch (err) {
       setModal(null)
-      showToast(err.message || 'Erreur lors de la création du client.', 'error')
+      showToast(err.message || t('kycRecordList.toast.createError'), 'error')
     }
   }
 
@@ -91,16 +95,13 @@ function KycRecordList({ onNavigate, onLogout }) {
   }
 
   const formatDate = (iso) =>
-    iso ? new Date(iso).toLocaleDateString('fr-FR') : '-'
+    iso ? new Date(iso).toLocaleDateString(locale) : '-'
 
   /* ── Render ──────────────────────────────────────── */
   return (
-    <div className="page-layout">
-      <Sidebar
-        activePage="kyc"
-        onNavigate={onNavigate}
-        onLogout={onLogout}
-      />
+    <div className="page-layout" dir={i18n.language === 'ar' ? 'rtl' : 'ltr'} style={{ flexDirection: i18n.language === 'ar' ? 'row-reverse' : 'row' }}>
+      <Sidebar activePage="kyc" onNavigate={onNavigate} onLogout={onLogout} />
+
 
       <main className="page-content">
         <div className="client-list">
@@ -108,9 +109,9 @@ function KycRecordList({ onNavigate, onLogout }) {
           {/* Header */}
           <div className="client-list-header">
             <div>
-              <h2 className="client-list-title">Dossiers eKYC</h2>
+              <h2 className="client-list-title">{t('kycRecordList.title')}</h2>
               <p className="client-list-sub">
-                {filtered.length} dossier{filtered.length !== 1 ? 's' : ''} au total
+                {t(filtered.length !== 1 ? 'kycRecordList.total_other' : 'kycRecordList.total_one', { count: filtered.length })}
               </p>
             </div>
 
@@ -118,23 +119,20 @@ function KycRecordList({ onNavigate, onLogout }) {
               <input
                 className="client-search"
                 type="text"
-                placeholder="Rechercher…"
+                placeholder={t('kycRecordList.search')}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
 
               {/* ✅ Create client button */}
-              <button
-                className="btn-primary"
-                onClick={() => setModal({ mode: 'create' })}
-              >
-                + Nouveau client
+              <button className="btn-primary" onClick={() => setModal({ mode: 'create' })}>
+                {t('kycRecordList.newClient')}
               </button>
             </div>
           </div>
 
           {/* States */}
-          {loading && <div className="client-state">Chargement…</div>}
+          {loading && <div className="client-state">{t('common.loading')}</div>}
           {error   && <div className="client-state error">{error}</div>}
 
           {/* Table */}
@@ -143,22 +141,22 @@ function KycRecordList({ onNavigate, onLogout }) {
               <table className="client-table kyc-table">
                 <thead>
                   <tr>
-                    <th>Client</th>
-                    <th>Téléphone</th>       
-                    <th>Code d'accès</th>    
-                    <th>Statut KYC</th>
-                    <th>Score</th>
-                    <th>Selfie</th>
-                    <th>Créé le</th>
-                    <th>Actions</th>
-                  </tr>
+                    <th>{t('kycRecordList.columns.client')}</th>
+                    <th>{t('kycRecordList.columns.phone')}</th>
+                    <th>{t('kycRecordList.columns.accessCode')}</th>
+                    <th>{t('kycRecordList.columns.kycStatus')}</th>
+                    <th>{t('kycRecordList.columns.score')}</th>
+                    <th>{t('kycRecordList.columns.selfie')}</th>
+                    <th>{t('kycRecordList.columns.createdAt')}</th>
+                    <th>{t('kycRecordList.columns.actions')}</th>
+              </tr>
                 </thead>
 
                 <tbody>
                   {filtered.length === 0 ? (
                     <tr>
                       <td colSpan={10} className="client-empty">
-                        Aucun dossier KYC trouvé.
+                        {t('kycRecordList.empty')}
                       </td>
                     </tr>
                   ) : (
@@ -196,7 +194,7 @@ function KycRecordList({ onNavigate, onLogout }) {
                             <div className="code-cell">
                             
                               <span className={`status-badge ${client.isCodeUsed ? 'used' : 'unused'}`}>
-                                {client.isCodeUsed ? 'Utilisé' : 'Non utilisé'}
+                                {client.isCodeUsed ? t('kycRecordList.codeStatus.used') : t('kycRecordList.codeStatus.unused')}
                               </span>
                             </div>
                           </td>
@@ -220,13 +218,11 @@ function KycRecordList({ onNavigate, onLogout }) {
                           {/* CIN data */}
                           <td>
                             <div className="cin-details">
-                              <span className="cin-row"><b>CIN :</b> {cin.cin || '-'}</span>
-                              <span className="cin-row"><b>Nom :</b> {cin.firstName} {cin.lastName}</span>
+                              <span className="cin-row"><b>{t('kycDossierModal.cin')} :</b> {cin.cin || '-'}</span>
+                              <span className="cin-row"><b>{t('kycDossierModal.name')} :</b> {cin.firstName} {cin.lastName}</span>
                               <span className="cin-row">
-                                <b>Naissance :</b>{' '}
-                                {cin.birthDate
-                                  ? new Date(cin.birthDate).toLocaleDateString('fr-FR')
-                                  : '-'}
+                                <b>{t('kycDossierModal.birth')} :</b>{' '}
+                                {cin.birthDate ? new Date(cin.birthDate).toLocaleDateString(locale) : '-'}
                               </span>
 
                             </div>

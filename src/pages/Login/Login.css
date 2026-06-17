@@ -194,6 +194,12 @@
   transform: translateY(0);
 }
 
+.btn-login:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
 /* ── Responsive ────────────────────────────────── */
 @media (max-width: 480px) {
   .login-card {

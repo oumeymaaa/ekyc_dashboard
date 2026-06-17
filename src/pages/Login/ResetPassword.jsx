@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import './ResetPassword.css'
 import { resetPassword, verifyOtp } from '../../services/auth.service.js'
 
 function ResetPassword({ onSuccess, tokenProp }) {
+    const { t } = useTranslation()
   const [step, setStep] = useState('otp')
   const [token, setToken] = useState(tokenProp || '')
   const [otp, setOtp] = useState('')
@@ -65,10 +67,10 @@ function ResetPassword({ onSuccess, tokenProp }) {
     const errors = {}
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>_\-+=\\[\]\/~`]).{8,}$/
     if (!passwordRegex.test(password)) {
-      errors.password = 'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.'
+      errors.password = t('resetPassword.passwordInvalid')
     }
     if (password !== confirmPassword) {
-      errors.confirmPassword = 'Les mots de passe ne correspondent pas.'
+      errors.confirm_password = t('resetPassword.passwordMismatch')
     }
     return errors
   }
@@ -86,7 +88,7 @@ function ResetPassword({ onSuccess, tokenProp }) {
       await resetPassword(token, password, confirmPassword)
       setSuccess(true)
     } catch (err) {
-      setError(err.message || 'Une erreur est survenue. Le lien est peut-être expiré.')
+      setError(err.message || t('resetPassword.errorDefault'))
     } finally {
       setLoading(false)
     }
@@ -104,13 +106,10 @@ function ResetPassword({ onSuccess, tokenProp }) {
         <div className="rp-card">
           <div className="rp-header">
             <div className="rp-logo">A</div>
-            <h1 className="rp-title">Mot de passe mis à jour !</h1>
-            <p className="rp-subtitle">Votre mot de passe a été réinitialisé avec succès.</p>
-          </div>
-          <div className="rp-success-box">
-            <div className="rp-success-icon">✅</div>
+             <h2 className="rp-success-title">{t('resetPassword.successTitle')}</h2>
+            <p className="rp-success-text">{t('resetPassword.successText')}</p>
             <button className="btn-login-redirect" onClick={onSuccess}>
-              Se connecter →
+              {t('resetPassword.loginRedirect')}
             </button>
           </div>
         </div>
@@ -132,10 +131,8 @@ function ResetPassword({ onSuccess, tokenProp }) {
             </>
           ) : (
             <>
-              <h1 className="rp-title">Nouveau mot de passe</h1>
-              <p className="rp-subtitle">
-                Choisissez un mot de passe sécurisé pour votre compte
-              </p>
+              <h1 className="rp-title">{t('resetPassword.title')}</h1>
+          <p className="rp-subtitle">{t('resetPassword.subtitle')}</p>
             </>
           )}
         </div>

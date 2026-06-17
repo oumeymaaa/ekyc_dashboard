@@ -93,7 +93,7 @@
   border: none;
   cursor: pointer;
   width: 100%;
-  text-align: left;
+  text-align: start;
   transition: background 0.15s, color 0.15s;
 }
 
@@ -159,4 +159,32 @@
 
 @media (max-width: 768px) {
   .sidebar { display: none; }
+}
+.sidebar[dir="rtl"] {
+  border-right: none;
+  border-left: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.sidebar[dir="rtl"] .sidebar-logo {
+  flex-direction: row-reverse;
+}
+
+.sidebar[dir="rtl"] .logo-text {
+  text-align: right;
+}
+
+.sidebar[dir="rtl"] .nav-item {
+  flex-direction: row-reverse;
+}
+
+.sidebar[dir="rtl"] .sidebar-footer {
+  flex-direction: row-reverse;
+}
+
+.sidebar[dir="rtl"] .user-info {
+  text-align: right;
+}
+
+.sidebar[dir="rtl"] .btn-logout {
+  direction: rtl;
 }

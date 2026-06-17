@@ -1,12 +1,19 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import './Login.css'
 import { login } from '../../services/auth.service.js'
 
 function Login({ onLogin, onForgotPassword }) {
-  const [form, setForm] = useState({ email: '', password: '' })
-  const [showPassword, setShowPassword] = useState(false)
-  const [rememberMe, setRememberMe] = useState(false)
-  const [error, setError] = useState('')
+  const { t } = useTranslation()
+  const [form, setForm] = useState(() => {
+    const email = localStorage.getItem('rememberedEmail') || ''
+    return { email, password: '' }
+  })
+    const [showPassword, setShowPassword] = useState(false)
+ const [rememberMe, setRememberMe] = useState(
+    () => !!localStorage.getItem('rememberedEmail')
+  )
+  const [error, setError]     = useState('')
   const [loading, setLoading] = useState(false)
 
   const handleChange = (e) => {
@@ -21,9 +28,14 @@ function Login({ onLogin, onForgotPassword }) {
 
     try {
       await login({ email: form.email, password: form.password, rememberMe })
+           if (rememberMe) {
+        localStorage.setItem('rememberedEmail', form.email)
+      } else {
+        localStorage.removeItem('rememberedEmail')
+      }
       onLogin()
     } catch (err) {
-      setError(err.message || 'Email ou mot de passe incorrect.')
+      setError(err.message || t('login.invalidCredentials'))
     } finally {
       setLoading(false)
     }
@@ -34,13 +46,13 @@ function Login({ onLogin, onForgotPassword }) {
       <div className="login-card">
         <div className="login-header">
           <div className="login-logo">A</div>
-          <h1 className="login-title">Admin Panel</h1>
-          <p className="login-subtitle">Sign in to your account</p>
+          <h1 className="login-title">{t('login.title')}</h1>
+          <p className="login-subtitle">{t('login.subtitle')}</p>
         </div>
 
         <form className="login-form" onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="email">Email</label>
+            <label htmlFor="email">{t('login.email')}</label>
             <input
               id="email"
               name="email"
@@ -54,7 +66,7 @@ function Login({ onLogin, onForgotPassword }) {
           </div>
 
           <div className="form-group">
-            <label htmlFor="password">Password</label>
+            <label htmlFor="password">{t('login.password')}</label>
             <div className="input-password">
               <input
                 id="password"
@@ -70,7 +82,7 @@ function Login({ onLogin, onForgotPassword }) {
                 type="button"
                 className="toggle-password"
                 onClick={() => setShowPassword(!showPassword)}
-                aria-label="Toggle password visibility"
+                aria-label={t('resetPassword.showHidePassword')}
               >
                 {showPassword ? '🙈' : '👁️'}
               </button>
@@ -84,24 +96,24 @@ function Login({ onLogin, onForgotPassword }) {
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
               />
-              <span>Remember me</span>
+              <span>{t('login.rememberMe')}</span>
             </label>
               <a
                 href="#"
                 className="forgot-link"
                 onClick={(e) => {
-                  e.preventDefault();
-                  onForgotPassword();
+                e.preventDefault()
+                onForgotPassword()
                 }}
               >
-                Mot de passe oublié ?
+              {t('login.forgotPassword')}
               </a>
           </div>
 
           {error && <p className="login-error">{error}</p>}
 
           <button type="submit" className="btn-login" disabled={loading}>
-            {loading ? 'Connexion...' : 'Se connecter'}
+            {loading ? t('login.signingIn') : t('login.signIn')}
           </button>
         </form>
       </div>

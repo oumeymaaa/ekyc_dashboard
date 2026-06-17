@@ -1,8 +1,12 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+
 import { requestChangePasswordOtp, confirmChangePassword } from '../../services/admin.service'
 import './ChangePasswordModal.css'
 
 function ChangePasswordModal({ onClose }) {
+    const { t } = useTranslation()
+
   const [step, setStep] = useState('password') // 'password' | 'otp'
   const [form, setForm] = useState({
     current_password: '',

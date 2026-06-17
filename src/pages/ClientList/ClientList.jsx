@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import './ClientList.css'
 
 import { getClients, createClient, updateClient, deleteClient } from '../../services/client.service'
@@ -10,6 +11,9 @@ import KycDossierModal   from '../../components/modals/KycDossierModal'
 const PAGE_SIZE = 10
 
 function ClientList({ onNavigate, onLogout }) {
+  const { t, i18n } = useTranslation()
+  const locale = i18n.language === 'ar' ? 'ar-TN' : i18n.language === 'en' ? 'en-GB' : 'fr-FR'
+
   const [clients, setClients] = useState([])
   const [loading, setLoading] = useState(true)
   const [error,   setError]   = useState('')
@@ -47,7 +51,7 @@ function ClientList({ onNavigate, onLogout }) {
       const data = await getClients()
       setClients(Array.isArray(data) ? data : [])
     } catch (err) {
-      setError(err.message || 'Erreur lors du chargement des clients.')
+      setError(err.message || t('clientList.loadError'))
     } finally {
       setLoading(false)
     }
@@ -58,10 +62,10 @@ function ClientList({ onNavigate, onLogout }) {
     await createClient(form)
     await fetchClients()
     setModal(null)
-    showToast('Client créé avec succès.', 'success')
+      showToast(t('clientList.toast.created'), 'success')
   } catch (err) {
     setModal(null)
-    showToast(err.message || 'Erreur lors de la création du client.', 'error')
+      showToast(err.message || t('clientList.toast.createError'), 'error')
   }
 }
 
@@ -111,11 +115,10 @@ function ClientList({ onNavigate, onLogout }) {
   })
 
   /* ── Pagination ───────────────────────────────── */
-  const totalPages  = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
-  const safePage    = Math.min(page, totalPages)
-  const paginated   = filtered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE)
-
-  const goTo  = (p) => setPage(Math.max(1, Math.min(p, totalPages)))
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
+  const safePage   = Math.min(page, totalPages)
+  const paginated  = filtered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE)
+  const goTo       = (p) => setPage(Math.max(1, Math.min(p, totalPages)))
 
   // Build page number array with ellipsis: [1, '...', 4, 5, 6, '...', 12]
   const pageNumbers = () => {
@@ -135,12 +138,13 @@ function ClientList({ onNavigate, onLogout }) {
     if (!kyc) return <span className="status-badge unused">Aucun KYC</span>
 
     // Safety: if deletedAt is present, always show non_valide
+    if (!kyc) return <span className="status-badge unused">{t('clientList.kycStatus.noKyc')}</span>
     const status = kyc.deletedAt ? 'non_valide' : kyc.status
 
     const map = {
-      en_attente: { label: 'En attente', cls: 'en-attente' },
-      valide:     { label: 'Validé',     cls: 'valide'     },
-      non_valide: { label: 'Non valide', cls: 'non-valide' },
+      en_attente: { label: t('clientList.kycStatus.pending'), cls: 'en-attente' },
+      valide:     { label: t('clientList.kycStatus.valid'),   cls: 'valide'     },
+      non_valide: { label: t('clientList.kycStatus.invalid'), cls: 'non-valide' },
     }
     const { label, cls } = map[status] ?? { label: status, cls: 'unknown' }
     return <span className={`status-badge ${cls}`}>{label}</span>
@@ -148,7 +152,7 @@ function ClientList({ onNavigate, onLogout }) {
 
   /* ── Render ───────────────────────────────────── */
   return (
-    <div className="page-layout">
+    <div className="page-layout" dir={i18n.language === 'ar' ? 'rtl' : 'ltr'} style={{ flexDirection: i18n.language === 'ar' ? 'row-reverse' : 'row' }}>
       <Sidebar activePage="clients" onNavigate={onNavigate} onLogout={onLogout} />
 
       <main className="page-content">
@@ -157,9 +161,9 @@ function ClientList({ onNavigate, onLogout }) {
           {/* Header */}
           <div className="client-list-header">
             <div>
-              <h2 className="client-list-title">Dossiers eKYC</h2>
+              <h2 className="client-list-title">{t('clientList.title')}</h2>
               <p className="client-list-sub">
-                {filtered.length} client{filtered.length !== 1 ? 's' : ''} au total
+                {t(filtered.length !== 1 ? 'clientList.total_other' : 'clientList.total_one', { count: filtered.length })}
               </p>
             </div>
 
@@ -167,15 +171,12 @@ function ClientList({ onNavigate, onLogout }) {
               <input
                 className="client-search"
                 type="text"
-                placeholder="Rechercher..."
+                placeholder={t('clientList.search')}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
-              <button
-                className="btn-primary"
-                onClick={() => setModal({ mode: 'create' })}
-              >
-                + Nouveau client
+              <button className="btn-primary" onClick={() => setModal({ mode: 'create' })}>
+                {t('clientList.newClient')}
               </button>
             </div>
           </div>
@@ -199,7 +200,7 @@ function ClientList({ onNavigate, onLogout }) {
             ))}
           </div>
 
-          {loading && <div className="client-state">Chargement...</div>}
+          {loading && <div className="client-state">{t('common.loading')}</div>}
           {error   && <div className="client-state error">{error}</div>}
 
           {!loading && !error && (
@@ -208,13 +209,14 @@ function ClientList({ onNavigate, onLogout }) {
                 <table className="client-table">
                   <thead>
                     <tr>
-                      <th>Nom</th>
-                      <th>Email</th>
-                      <th>Téléphone</th>
-                      <th>Statut code</th>
-                      <th>KYC</th>
-                      <th>Créé le</th>
-                      <th>Actions</th>
+                      <th>{t('clientList.columns.name')}</th>
+                      <th>{t('clientList.columns.email')}</th>
+                      <th>{t('clientList.columns.phone')}</th>
+                      <th>{t('clientList.columns.codeStatus')}</th>
+                      <th>{t('clientList.columns.kyc')}</th>
+                      <th>{t('clientList.columns.createdAt')}</th>
+                      <th>{t('clientList.columns.actions')}</th>
+
                     </tr>
                   </thead>
 
@@ -222,7 +224,7 @@ function ClientList({ onNavigate, onLogout }) {
                     {paginated.length === 0 ? (
                       <tr>
                         <td colSpan={8} className="client-empty">
-                          Aucun client trouvé.
+                          {t('clientList.empty')}
                         </td>
                       </tr>
                     ) : (
@@ -245,7 +247,7 @@ function ClientList({ onNavigate, onLogout }) {
 
                           <td>
                             <span className={`status-badge ${client.isCodeUsed ? 'used' : 'unused'}`}>
-                              {client.isCodeUsed ? 'Utilisé' : 'Non utilisé'}
+                              {client.isCodeUsed ? t('clientList.codeStatus.used') : t('clientList.codeStatus.unused')}
                             </span>
                           </td>
 
@@ -253,7 +255,7 @@ function ClientList({ onNavigate, onLogout }) {
 
                           <td>
                             {client.createdAt
-                              ? new Date(client.createdAt).toLocaleDateString('fr-FR')
+                              ? new Date(client.createdAt).toLocaleDateString(locale)
                               : '-'}
                           </td>
 
@@ -281,7 +283,7 @@ function ClientList({ onNavigate, onLogout }) {
                                     className="btn-consulter"
                                     onClick={() => setDossier({ clientId: client.id })}
                                   >
-                                    🔍 Consulter
+                                {t('clientList.consultFile')}
                                   </button>
                                 )}
                               </div>
@@ -300,57 +302,27 @@ function ClientList({ onNavigate, onLogout }) {
 
     <div className="pagination-info">
       <span className="pagination-count">
-        {(safePage - 1) * PAGE_SIZE + 1}
-        -
-        {Math.min(safePage * PAGE_SIZE, filtered.length)}
+       {(safePage - 1) * PAGE_SIZE + 1}–{Math.min(safePage * PAGE_SIZE, filtered.length)}
+
       </span>
 
       <span className="pagination-total">
-        sur {filtered.length} clients
+                      {t('clientList.pagination.of')} {filtered.length} {t('clientList.pagination.clients')}
       </span>
     </div>
 
     <div className="pagination-controls">
 
-      {/* Previous */}
-      <button
-        className="page-btn page-nav"
-        onClick={() => goTo(safePage - 1)}
-        disabled={safePage === 1}
-      >
-        ‹
-      </button>
 
       {/* Pages */}
+      <button className="page-btn page-nav" onClick={() => goTo(safePage - 1)} disabled={safePage === 1}>‹</button>
       {pageNumbers().map((p, i) =>
-        p === '...' ? (
-          <span
-            key={`ellipsis-${i}`}
-            className="page-ellipsis"
-          >
-            …
-          </span>
-        ) : (
-          <button
-            key={p}
-            className={`page-btn ${
-              p === safePage ? 'page-active' : ''
-            }`}
-            onClick={() => goTo(p)}
-          >
-            {p}
-          </button>
-        )
-      )}
+                      p === '...'
+                        ? <span key={`ellipsis-${i}`} className="page-ellipsis">…</span>
+                        : <button key={p} className={`page-btn ${p === safePage ? 'page-active' : ''}`} onClick={() => goTo(p)}>{p}</button>
+                    )}
+                    <button className="page-btn page-nav" onClick={() => goTo(safePage + 1)} disabled={safePage === totalPages}>›</button>
 
-      {/* Next */}
-      <button
-        className="page-btn page-nav"
-        onClick={() => goTo(safePage + 1)}
-        disabled={safePage === totalPages}
-      >
-        ›
-      </button>
 
     </div>
   </div>
@@ -362,10 +334,8 @@ function ClientList({ onNavigate, onLogout }) {
 
       {/* Create / Edit client modal */}
       {modal?.mode === 'create' && (
-        <CreateClientModal
-          onClose={() => setModal(null)}
-          onSubmit={handleCreate}
-        />
+        <CreateClientModal onClose={() => setModal(null)} onSubmit={handleCreate} />
+
       )}
       {modal?.mode === 'edit' && (
         <CreateClientModal
@@ -383,7 +353,7 @@ function ClientList({ onNavigate, onLogout }) {
           onUpdated={() => {
             setDossier(null)
             fetchClients()
-            showToast('Statut mis à jour avec succès.', 'success')
+            showToast(t('clientList.toast.statusUpdated'), 'success')
           }}
         />
       )}

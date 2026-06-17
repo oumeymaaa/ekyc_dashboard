@@ -1,21 +1,14 @@
+import { useTranslation } from 'react-i18next'
 import './Sidebar.css'
 import { logout, getUser } from '../../../services/auth.service'
 
-const SUPER_ADMIN_NAV = [
-  { key: 'dashboard',     icon: '📊', label: 'Dashboard'      },
-  { key: 'admins',        icon: '👥', label: 'Admins'         },
-  { key: 'organisations', icon: '🏢', label: 'Organisations'  },
-  { key: 'settings',      icon: '⚙️',  label: 'Paramètres'    },
-]
 
-const ADMIN_NAV = [
-  { key: 'dashboard', icon: '📊', label: 'Dashboard'   },
-  { key: 'clients',   icon: '🪪', label: 'eKYC'        },
-  { key: 'settings',  icon: '⚙️',  label: 'Paramètres' },
-]
 const BASE_URL = 'http://localhost:3001'
 
 function Sidebar({ activePage, onNavigate, onLogout, user: userProp }) {
+    const { t, i18n } = useTranslation()
+  const dir = i18n.language === 'ar' ? 'rtl' : 'ltr'
+
   const user         = userProp ?? getUser()
   const fullName     = user ? `${user.firstName} ${user.lastName}` : 'Super Admin'
   const initials     = user
@@ -23,7 +16,20 @@ function Sidebar({ activePage, onNavigate, onLogout, user: userProp }) {
     : 'S'
   const role         = user?.role ?? 'super_admin'
   const organisation = user?.organisation ?? null
-  const NAV_ITEMS    = role === 'admin' ? ADMIN_NAV : SUPER_ADMIN_NAV
+
+  const SUPER_ADMIN_NAV = [
+    { key: 'dashboard',     icon: '📊', label: t('sidebar.dashboard')     },
+    { key: 'admins',        icon: '👥', label: t('sidebar.admins')         },
+    { key: 'organisations', icon: '🏢', label: t('sidebar.organisations')  },
+    { key: 'settings',      icon: '⚙️',  label: t('sidebar.settings')      },
+  ]
+
+  const ADMIN_NAV = [
+    { key: 'dashboard', icon: '📊', label: t('sidebar.dashboard') },
+    { key: 'clients',   icon: '🪪', label: t('sidebar.ekyc')      },
+    { key: 'settings',  icon: '⚙️',  label: t('sidebar.settings') },
+  ]
+  const NAV_ITEMS = role === 'admin' ? ADMIN_NAV : SUPER_ADMIN_NAV
 
   const handleLogout = async () => {
     await logout()
@@ -31,7 +37,7 @@ function Sidebar({ activePage, onNavigate, onLogout, user: userProp }) {
   }
 
   return (
-    <aside className="sidebar">
+    <aside className="sidebar" dir={dir}>
       <div className="sidebar-logo">
         {role === 'admin' && organisation?.logo_url ? (
           <img
@@ -72,7 +78,7 @@ function Sidebar({ activePage, onNavigate, onLogout, user: userProp }) {
       </div>
 
       <button className="btn-logout" onClick={handleLogout}>
-        🚪 Logout
+        🚪 {t('sidebar.logout')}
       </button>
     </aside>
   )

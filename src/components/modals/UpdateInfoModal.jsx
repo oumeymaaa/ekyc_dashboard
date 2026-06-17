@@ -1,9 +1,13 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+
 import { updateAdmin } from '../../services/admin.service'
 import { getUser } from '../../services/auth.service'
 import './UpdateInfoModal.css'
 
 function UpdateInfoModal({ onClose, onUpdated }) {
+    const { t } = useTranslation()
+
   const user = getUser()
 
   const [form, setForm] = useState({
@@ -19,20 +23,19 @@ function UpdateInfoModal({ onClose, onUpdated }) {
 
   const validate = () => {
     const errs = {}
-    if (!form.firstName.trim()) errs.firstName = 'Champ requis'
-    if (!form.lastName.trim())  errs.lastName  = 'Champ requis'
+    if (!form.firstName.trim()) errs.firstName = t('common.required')
+    if (!form.lastName.trim())  errs.lastName  = t('common.required')
     if (!form.email.trim()) {
-      errs.email = 'Champ requis'
+      errs.email = t('common.required')
     } else if (!/\S+@\S+\.\S+/.test(form.email)) {
-      errs.email = 'Email invalide'
+      errs.email = t('common.invalidEmail')
     }
     if (!form.phone.trim()) {
-      errs.phone = 'Champ requis'
+      errs.phone = t('common.required')
     } else {
       const clean = form.phone.replace(/\s/g, '')
-      if (!/^(\+216)?[0-9]{8}$/.test(clean)) {
-        errs.phone = 'Numéro invalide (8 chiffres)'
-      }
+      if (!/^(\+216)?[0-9]{8}$/.test(clean)) errs.phone = t('common.invalidPhone')
+
     }
     return errs
   }
@@ -48,10 +51,8 @@ function UpdateInfoModal({ onClose, onUpdated }) {
     e.preventDefault()
     setErrors({})
     const validationErrors = validate()
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors)
-      return
-    }
+    if (Object.keys(validationErrors).length > 0) { setErrors(validationErrors); return }
+
     try {
       setLoading(true)
       const updated = await updateAdmin(user.id, form)
@@ -71,27 +72,27 @@ function UpdateInfoModal({ onClose, onUpdated }) {
           <div className="modal-header-left">
             <div className="modal-icon modal-icon--purple">✏️</div>
             <div>
-              <h2 className="modal-title">Modifier mes informations</h2>
-              <p className="modal-subtitle">Mettez à jour vos informations personnelles</p>
+               <h2 className="modal-title">{t('updateInfoModal.title')}</h2>
+              <p className="modal-subtitle">{t('updateInfoModal.subtitle')}</p>
             </div>
           </div>
-          <button className="modal-close" onClick={onClose} aria-label="Fermer">✕</button>
+          <button className="modal-close" onClick={onClose} aria-label={t('updateInfoModal.close')}>✕</button>
         </div>
 
         <form className="modal-form" onSubmit={handleSubmit} noValidate>
           <div className="modal-row">
-            <Field label="Prénom"  name="firstName" value={form.firstName} onChange={handleChange} error={errors.firstName} placeholder="Prénom" />
-            <Field label="Nom"     name="lastName"  value={form.lastName}  onChange={handleChange} error={errors.lastName}  placeholder="Nom" />
+            <Field label={t('updateInfoModal.firstName')} name="firstName" value={form.firstName} onChange={handleChange} error={errors.firstName} placeholder={t('updateInfoModal.firstName')} />
+            <Field label={t('updateInfoModal.lastName')}  name="lastName"  value={form.lastName}  onChange={handleChange} error={errors.lastName}  placeholder={t('updateInfoModal.lastName')} />
           </div>
-          <Field label="Email"     name="email" type="email" value={form.email} onChange={handleChange} error={errors.email} placeholder="email@example.com" />
-          <Field label="Téléphone" name="phone" type="tel"   value={form.phone} onChange={handleChange} error={errors.phone} placeholder="22333444" />
+           <Field label={t('updateInfoModal.email')} name="email" type="email" value={form.email} onChange={handleChange} error={errors.email} placeholder="email@example.com" />
+          <Field label={t('updateInfoModal.phone')} name="phone" type="tel"   value={form.phone} onChange={handleChange} error={errors.phone} placeholder="22333444" />
 
           <div className="modal-actions">
             <button type="button" className="btn-cancel" onClick={onClose} disabled={loading}>
-              Annuler
+              {t('updateInfoModal.btnCancel')}
             </button>
             <button type="submit" className="btn-submit" disabled={loading}>
-              {loading ? 'Enregistrement...' : 'Enregistrer'}
+              {loading ? t('updateInfoModal.btnSaving') : t('updateInfoModal.btnSave')}
             </button>
           </div>
         </form>

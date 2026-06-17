@@ -1,22 +1,18 @@
-// src/components/modals/OrganisationDetailModal.jsx
+import { useTranslation } from 'react-i18next'
 import './OrganisationDetailModal.css'
 
 const BASE_URL = 'http://localhost:3001'
 
-/**
- * Props:
- *   organisation – Organisation object
- *   onClose      – () => void
- *   onEdit       – () => void   (switches to edit modal)
- *   onDelete     – () => void   (triggers delete confirmation)
- */
 function OrganisationDetailModal({ organisation, onClose, onEdit, onDelete }) {
+  const { t, i18n } = useTranslation()
+  const locale = i18n.language === 'ar' ? 'ar-TN' : i18n.language === 'en' ? 'en-GB' : 'fr-FR'
+
   const logoSrc = organisation.logo_url
     ? `${BASE_URL}${organisation.logo_url}`
     : null
 
   const fmt = (dateStr) =>
-    dateStr ? new Date(dateStr).toLocaleDateString('fr-FR', {
+    dateStr ? new Date(dateStr).toLocaleDateString(locale, {
       day: '2-digit', month: 'long', year: 'numeric',
     }) : '—'
 
@@ -26,7 +22,7 @@ function OrganisationDetailModal({ organisation, onClose, onEdit, onDelete }) {
 
         {/* Header */}
         <div className="modal-header">
-          <h3 className="modal-title">🏢 Détails de l'organisation</h3>
+          <h3 className="modal-title">{t('organisationDetailModal.title')}</h3>
           <button className="modal-close" onClick={onClose}>✕</button>
         </div>
 
@@ -37,8 +33,8 @@ function OrganisationDetailModal({ organisation, onClose, onEdit, onDelete }) {
             {logoSrc
               ? <img src={logoSrc} alt="logo" className="org-detail-logo" />
               : <div className="org-detail-avatar">
-                  {organisation.name_organisation?.[0]?.toUpperCase() ?? '?'}
-                </div>
+                {organisation.name_organisation?.[0]?.toUpperCase() ?? '?'}
+              </div>
             }
             <div>
               <p className="org-detail-name">{organisation.name_organisation}</p>
@@ -51,23 +47,19 @@ function OrganisationDetailModal({ organisation, onClose, onEdit, onDelete }) {
           {/* Info grid */}
           <div className="org-detail-grid">
             <div className="org-detail-field">
-              <span className="org-detail-label">📍 Adresse</span>
-              <span className="org-detail-value">
-                {organisation.adresse_organisation || '—'}
-              </span>
+              <span className="org-detail-label">{t('organisationDetailModal.address')}</span>
+              <span className="org-detail-value">{organisation.adresse_organisation || '—'}</span>
             </div>
             <div className="org-detail-field">
-              <span className="org-detail-label">📞 Téléphone</span>
-              <span className="org-detail-value">
-                {organisation.phone_organisation || '—'}
-              </span>
+              <span className="org-detail-label">{t('organisationDetailModal.phone')}</span>
+              <span className="org-detail-value">{organisation.phone_organisation || '—'}</span>
             </div>
             <div className="org-detail-field">
-              <span className="org-detail-label">📅 Créée le</span>
+              <span className="org-detail-label">{t('organisationDetailModal.createdAt')}</span>
               <span className="org-detail-value">{fmt(organisation.created_at)}</span>
             </div>
             <div className="org-detail-field">
-              <span className="org-detail-label">🔄 Mise à jour</span>
+              <span className="org-detail-label">{t('organisationDetailModal.updatedAt')}</span>
               <span className="org-detail-value">{fmt(organisation.updated_at)}</span>
             </div>
           </div>
@@ -77,11 +69,15 @@ function OrganisationDetailModal({ organisation, onClose, onEdit, onDelete }) {
         {/* Footer actions */}
         <div className="org-detail-footer">
           <button className="btn-delete-outline" onClick={onDelete}>
-            🗑️ Supprimer
+            {t('organisationDetailModal.btnDelete')}
           </button>
           <div className="org-detail-footer-right">
-            <button className="btn-cancel" onClick={onClose}>Fermer</button>
-            <button className="btn-submit" onClick={onEdit}>✏️ Modifier</button>
+            <button className="btn-cancel" onClick={onClose}>
+              {t('organisationDetailModal.btnClose')}
+            </button>
+            <button className="btn-submit" onClick={onEdit}>
+              {t('organisationDetailModal.btnEdit')}
+            </button>
           </div>
         </div>
 

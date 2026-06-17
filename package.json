@@ -11,9 +11,11 @@
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
+    "i18next": "^26.3.1",
     "leaflet": "^1.9.4",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
+    "react-i18next": "^17.0.8",
     "react-leaflet": "^5.0.0",
     "recharts": "^3.8.1"
   },

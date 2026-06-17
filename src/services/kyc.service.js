@@ -1,22 +1,18 @@
 // kyc.service.js
-import { getToken } from './auth.service'  
-
+import { getHeaders } from './api'
+import i18n from '../i18n/index.js'
 const BASE_URL = import.meta.env.VITE_API_URL 
 
 export async function getKycRecords({ page = 1, limit = 50 } = {}) {
   const res = await fetch(
     `${BASE_URL}/kyc-records?page=${page}&limit=${limit}`,
-    {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${getToken()}`,   
-      },
-    },
+       { headers: getHeaders() },
+
   )
 
   if (!res.ok) {
     const body = await res.json().catch(() => ({}))
-    throw new Error(body.message || `Erreur ${res.status}`)
+    throw new Error(body.message || i18n.t('errors.httpError', { status: res.status }))
   }
 
   const json = await res.json()
@@ -28,16 +24,12 @@ export async function getKycRecords({ page = 1, limit = 50 } = {}) {
 export async function getKycRecordByClient(clientId) {
   const res = await fetch(
     `${BASE_URL}/kyc-records/client/${clientId}`,
-    {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${getToken()}`,   
-      },
-    }
+       { headers: getHeaders() }
+
   )
   if (!res.ok) {
     const body = await res.json().catch(() => ({}))
-    throw new Error(body.message || `Erreur ${res.status}`)
+    throw new Error(body.message || i18n.t('errors.httpError', { status: res.status }))
   }
   return res.json()
 }
@@ -50,17 +42,15 @@ export async function updateKycStatus(recordId, status) {
     {
       method: 'PATCH',
      
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${getToken()}`,   
-      },
+      headers: getHeaders(),
+
     
       body: JSON.stringify({ status }),
     }
   )
   if (!res.ok) {
     const body = await res.json().catch(() => ({}))
-    throw new Error(body.message || `Erreur ${res.status}`)
+    throw new Error(body.message || i18n.t('errors.httpError', { status: res.status }))
   }
   return res.json()
 }

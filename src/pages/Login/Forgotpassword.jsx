@@ -1,8 +1,10 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import './ForgotPassword.css'
 import { forgotPassword } from '../../services/auth.service.js'
 
 function ForgotPassword({ onBack }) {
+  const { t } = useTranslation()
   const [email, setEmail] = useState('')
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
@@ -17,7 +19,7 @@ function ForgotPassword({ onBack }) {
       await forgotPassword(email)
       setSuccess(true)
     } catch (err) {
-      setError(err.message || 'Une erreur est survenue. Veuillez réessayer.')
+      setError(err.message || t('forgotPassword.errorDefault'))
     } finally {
       setLoading(false)
     }
@@ -28,28 +30,27 @@ function ForgotPassword({ onBack }) {
       <div className="fp-card">
         <div className="fp-header">
           <div className="fp-logo">A</div>
-          <h1 className="fp-title">Mot de passe oublié</h1>
-          <p className="fp-subtitle">
-            Saisissez votre adresse email pour recevoir un lien de réinitialisation
-          </p>
+          <h1 className="fp-title">{t('forgotPassword.title')}</h1>
+          <p className="fp-subtitle">{t('forgotPassword.subtitle')}</p>
+
         </div>
 
         {success ? (
           <div className="fp-success-box">
             <div className="fp-success-icon">✉️</div>
-            <h2 className="fp-success-title">Email envoyé !</h2>
+            <h2 className="fp-success-title">{t('forgotPassword.successTitle')}</h2>
             <p className="fp-success-text">
-              Un lien de réinitialisation a été envoyé à <strong>{email}</strong>.
-              Veuillez vérifier votre boîte de réception.
+                            {t('forgotPassword.successText', { email })}
+
             </p>
             <button className="btn-back" onClick={onBack}>
-              ← Retour à la connexion
+              {t('forgotPassword.backToLogin')}
             </button>
           </div>
         ) : (
           <form className="fp-form" onSubmit={handleSubmit}>
             <div className="form-group">
-              <label htmlFor="email">Adresse email</label>
+              <label htmlFor="email">{t('forgotPassword.emailLabel')}</label>
               <div className="input-icon-wrapper">
                 <input
                   id="email"
@@ -78,15 +79,15 @@ function ForgotPassword({ onBack }) {
               {loading ? (
                 <span className="btn-loading">
                   <span className="spinner" />
-                  Envoi en cours...
+                  {t('forgotPassword.sending')}
                 </span>
               ) : (
-                'Envoyer le lien de réinitialisation'
+                t('forgotPassword.sendLink')
               )}
             </button>
 
             <button type="button" className="btn-back-link" onClick={onBack}>
-              ← Retour à la connexion
+              {t('forgotPassword.backToLogin')}
             </button>
           </form>
         )}

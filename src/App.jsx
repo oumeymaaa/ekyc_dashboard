@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useLayoutEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import Login from './pages/Login/Login'
 import AdminList from './pages/AdminList/AdminList'
 import AdminStats from './pages/AdminStats/AdminStats'
@@ -40,6 +41,13 @@ function clearResetPasswordUrl() {
 // ── App ──────────────────────────────────────────────────────────────────────
 
 function App() {
+    const { i18n } = useTranslation()
+
+  useLayoutEffect(() => {
+    document.documentElement.dir  = i18n.language === 'ar' ? 'rtl' : 'ltr'
+    document.documentElement.lang = i18n.language
+  }, [i18n.language])
+
   const user = getUser()
   const role = user?.role
 

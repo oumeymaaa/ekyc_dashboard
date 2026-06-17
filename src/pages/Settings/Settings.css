@@ -140,6 +140,37 @@
   background: #f3f4f6;
 }
 
+/* Language selector */
+
+.settings-lang-options {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.6rem;
+}
+
+.settings-lang-btn {
+  padding: 0.3rem 0.75rem;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fff;
+  color: #374151;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.settings-lang-btn:hover {
+  border-color: #c7d2fe;
+  background: #f5f7ff;
+}
+
+.settings-lang-btn.active {
+  border-color: #0f3460;
+  background: #0f3460;
+  color: #fff;
+}
+
 /* Card body */
 
 .settings-card-body {

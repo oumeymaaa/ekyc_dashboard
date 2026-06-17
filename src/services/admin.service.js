@@ -1,14 +1,8 @@
-// src/services/admin.service.js
-const API_URL = 'http://localhost:3001'
+import { getHeaders } from './api'
+import i18n from '../i18n/index.js'
 
-const getHeaders = () => {
-  const token =
-    localStorage.getItem('token') || sessionStorage.getItem('token')
-  return {
-    'Content-Type': 'application/json',
-    Authorization: `Bearer ${token}`,
-  }
-}
+const API_URL = import.meta.env.VITE_API_URL
+
 
 const mapAdmin = (admin) => ({
   id:              admin.id,
@@ -28,7 +22,7 @@ export async function getAdmins() {
     headers: getHeaders(),
   })
   if (!res.ok) {
-    let errorMessage = 'Failed to fetch admins'
+    let errorMessage = i18n.t('errors.fetchAdminsFailed')
     try {
       const errorBody = await res.json()
       errorMessage = errorBody.message || errorMessage
@@ -55,7 +49,7 @@ export async function createAdmin({ firstName, lastName, email, organisationId, 
   })
   if (!res.ok) {
     const err = await res.json()
-    throw new Error(err.message || 'Failed to create admin')
+    throw new Error(err.message || i18n.t('errors.createAdminFailed'))
   }
   return res.json()
 }
@@ -74,7 +68,7 @@ export async function updateAdmin(id, { firstName, lastName, email, organisation
   })
   if (!res.ok) {
     const err = await res.json()
-    throw new Error(err.message || 'Failed to update admin')
+    throw new Error(err.message || i18n.t('errors.updateAdminFailed'))
   }
   const data = await res.json()
   return mapAdmin(data.data)
@@ -87,7 +81,7 @@ export async function deleteAdmin(id) {
   })
   if (!res.ok) {
     const err = await res.json()
-    throw new Error(err.message || 'Failed to delete admin')
+    throw new Error(err.message || i18n.t('errors.deleteAdminFailed'))
   }
   return res.json()
 }
@@ -107,8 +101,8 @@ export async function requestChangePasswordOtp(currentPassword) {
     message:
       data?.message ||
       (res.status === 401
-        ? 'Mot de passe actuel incorrect.'
-        : 'Une erreur est survenue. Veuillez réessayer.'),
+         ? i18n.t('errors.wrongCurrentPassword')
+          : i18n.t('errors.generic')),
   }
 }
 
@@ -120,12 +114,12 @@ export async function confirmChangePassword(otp, newPassword) {
   })
   const data = await res.json().catch(() => ({}))
   if (res.ok) return { success: true }
-  return {
-    success: false,
-    message:
-      data?.message ||
-      (res.status === 401
-        ? 'Code OTP invalide.'
-        : 'Une erreur est survenue. Veuillez réessayer.'),
-  }
+    return {
+      success: false,
+      message:
+        data?.message ||
+        (res.status === 401
+          ? i18n.t('errors.wrongCurrentPassword')
+          : i18n.t('errors.generic')),
+    }
 }

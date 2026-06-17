@@ -1,4 +1,8 @@
+import i18n from '../i18n/index.js'
+
 const API_URL = import.meta.env.VITE_API_URL 
+const getLang = () => localStorage.getItem('lang') || 'fr'
+
 
 function getStorage() {
   return localStorage.getItem('rememberMe') === 'true' ? localStorage : sessionStorage
@@ -34,13 +38,13 @@ function normalizeUser(raw) {
 export async function login({ email, password, rememberMe = false }) {
   const response = await fetch(`${API_URL}/auth/login`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', 'Accept-Language': getLang() },
     body: JSON.stringify({ email, password }),
   })
 
   if (!response.ok) {
     const err = await response.json()
-    throw new Error(err.message || 'Email ou mot de passe incorrect.')
+    throw new Error(err.message || i18n.t('errors.invalidCredentials'))
   }
 
   const data = await response.json()
@@ -92,7 +96,7 @@ export function isAuthenticated() {
 export async function forgotPassword(email) {
   const res = await fetch(`${API_URL}/auth/forgot-password`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', 'Accept-Language': getLang() },
     body: JSON.stringify({ email }),
   })
   const data = await res.json()
@@ -103,9 +107,9 @@ export async function forgotPassword(email) {
       msg.toLowerCase().includes('introuvable') ||
       res.status === 404
     ) {
-      throw new Error("Email non trouvé. Vérifiez l'adresse saisie.")
+      throw new Error(i18n.t('errors.emailNotFound'))
     }
-    throw new Error(msg || 'Une erreur est survenue. Veuillez réessayer.')
+    throw new Error(msg || i18n.t('errors.generic'))
   }
   return data
 }
@@ -133,7 +137,7 @@ export async function verifyOtp(token, otp) {
 export async function resetPassword(token, password, confirm_password) {
   const res = await fetch(`${API_URL}/auth/reset-password`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', 'Accept-Language': getLang() },
     body: JSON.stringify({ token, password, confirm_password }),
   })
   const data = await res.json()
@@ -144,22 +148,24 @@ export async function resetPassword(token, password, confirm_password) {
       msg.toLowerCase().includes('expiré') ||
       res.status === 410
     ) {
-      throw new Error('Ce lien de réinitialisation a expiré. Faites une nouvelle demande.')
+      throw new Error(i18n.t('errors.resetLinkExpired'))
     }
     if (
       msg.toLowerCase().includes('invalid') ||
       msg.toLowerCase().includes('invalide') ||
       res.status === 400
     ) {
-      throw new Error('Token invalide. Vérifiez le lien reçu par email.')
+      throw new Error(i18n.t('errors.invalidToken'))
     }
-    throw new Error(msg || 'Impossible de réinitialiser le mot de passe.')
+    throw new Error(msg || i18n.t('errors.resetPasswordFailed'))
   }
   return data
 }
 export async function activateAccount(token) {
-  const res = await fetch(`${API_URL}/auth/activate?token=${token}`)
-  const data = await res.json()
-  if (!res.ok) throw new Error(data.message || 'Lien invalide ou expiré.')
+ const res = await fetch(`${API_URL}/auth/activate?token=${token}`, {
+    headers: { 'Accept-Language': getLang() },
+  })
+    const data = await res.json()
+  if (!res.ok) throw new Error(data.message || i18n.t('errors.invalidOrExpiredLink'))
   return data
 }

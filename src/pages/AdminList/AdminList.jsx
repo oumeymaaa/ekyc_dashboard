@@ -1,25 +1,30 @@
 // src/pages/AdminList/AdminList.jsx
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { getAdmins, createAdmin, updateAdmin, deleteAdmin } from '../../services/admin.service'
 import CreateAdminModal from '../../components/modals/CreateAdminModal'
 import Sidebar from '../../components/ui/Sidebar/Sidebar'
 import './AdminList.css'
 
-function formatDate(iso) {
-  return new Date(iso).toLocaleDateString('fr-FR', {
+function formatDate(iso, locale) {
+  return new Date(iso).toLocaleDateString(locale, {
     day: '2-digit', month: 'short', year: 'numeric',
   })
 }
 
 function StatusBadge({ status }) {
+    const { t } = useTranslation()
   return (
     <span className={`status-badge status-${status}`}>
-      {status === 'active' ? '● Actif' : '○ En attente'}
+      {status === 'active' ? t('adminList.status.active') : t('adminList.status.pending')}
     </span>
   )
 }
 
 function AdminList({ onNavigate, onViewStats, onLogout }) {
+    const { t, i18n } = useTranslation()
+  const locale = i18n.language === 'ar' ? 'ar-TN' : i18n.language === 'en' ? 'en-GB' : 'fr-FR'
+
   const [admins,    setAdmins]    = useState([])
   const [loading,   setLoading]   = useState(true)
   const [modal,     setModal]     = useState(null)
@@ -42,10 +47,10 @@ function AdminList({ onNavigate, onViewStats, onLogout }) {
       const updated = await getAdmins()
       setAdmins(updated)
       setModal(null)
-      showToast('Compte admin créé et email envoyé.')
+      showToast(t('adminList.toast.created'))
     } catch (err) {
       setModal(null)
-      showToast(err.message || 'Erreur lors de la création.', 'error')
+      showToast(err.message || t('adminList.toast.createError'), 'error')
     }
   }
 
@@ -55,10 +60,10 @@ function AdminList({ onNavigate, onViewStats, onLogout }) {
       const updated = await updateAdmin(id, formData)
       setAdmins((prev) => prev.map((a) => (a.id === id ? { ...a, ...updated } : a)))
       setModal(null)
-      showToast(`Compte de ${updated.firstName} ${updated.lastName} mis à jour.`)
+      showToast(t('adminList.toast.updated', { name: `${updated.firstName} ${updated.lastName}` }))
     } catch (err) {
       setModal(null)
-      showToast(err.message || 'Erreur lors de la mise à jour.', 'error')
+      showToast(err.message || t('adminList.toast.updateError'), 'error')
     }
   }
 
@@ -67,9 +72,9 @@ function AdminList({ onNavigate, onViewStats, onLogout }) {
     try {
       await deleteAdmin(id)
       setAdmins((prev) => prev.filter((a) => a.id !== id))
-      showToast('Compte admin supprimé.')
+      showToast(t('adminList.toast.deleted'))
     } catch (err) {
-      showToast(err.message || 'Erreur lors de la suppression.', 'error')
+      showToast(err.message || t('adminList.toast.deleteError'), 'error')
     } finally {
       setBusyId(null)
       setConfirmId(null)
@@ -77,19 +82,19 @@ function AdminList({ onNavigate, onViewStats, onLogout }) {
   }
 
   return (
-    <div className="admin-page">
+    <div className="admin-page" dir={i18n.language === 'ar' ? 'rtl' : 'ltr'} style={{ flexDirection: i18n.language === 'ar' ? 'row-reverse' : 'row' }}>
       <Sidebar activePage="admins" onNavigate={onNavigate} onLogout={onLogout} />
 
       <main className="main-content">
         <div className="page-header">
           <div>
-            <h1>Gestion des admins</h1>
+            <h1>{t('adminList.title')}</h1>
             <p className="page-subtitle">
-              {loading ? '—' : `${admins.length} compte${admins.length !== 1 ? 's' : ''}`}
+              {loading ? '—' : t(admins.length !== 1 ? 'adminList.accounts_other' : 'adminList.accounts_one', { count: admins.length })}
             </p>
           </div>
           <button className="btn-primary" onClick={() => setModal({ mode: 'create' })}>
-            + Créer un admin
+            {t('adminList.createAdmin')}
           </button>
         </div>
 
@@ -97,28 +102,28 @@ function AdminList({ onNavigate, onViewStats, onLogout }) {
           {loading ? (
             <div className="state-center">
               <div className="spinner" />
-              <p>Chargement...</p>
+              <p>{t('common.loading')}</p>
             </div>
           ) : admins.length === 0 ? (
             <div className="state-center">
               <div className="empty-icon">👤</div>
-              <p className="empty-title">Aucun admin trouvé</p>
-              <p className="empty-sub">Créez le premier compte admin pour commencer.</p>
-              <button className="btn-primary" onClick={() => setModal({ mode: 'create' })}>
-                + Créer un admin
+              <p className="empty-title">{t('adminList.empty.title')}</p>
+              <p className="empty-sub">{t('adminList.empty.sub')}</p>
+               <button className="btn-primary" onClick={() => setModal({ mode: 'create' })}>
+                {t('adminList.createAdmin')}
               </button>
             </div>
           ) : (
             <table className="admin-table">
               <thead>
                 <tr>
-                  <th>Nom &amp; Prénom</th>
-                  <th>Email</th>
-                  <th>Organisation</th>
-                  <th>Téléphone</th>
-                  <th>Statut</th>
-                  <th>Date de création</th>
-                  <th>Actions</th>
+                  <th>{t('adminList.columns.name')}</th>
+                  <th>{t('adminList.columns.email')}</th>
+                  <th>{t('adminList.columns.organisation')}</th>
+                  <th>{t('adminList.columns.phone')}</th>
+                  <th>{t('adminList.columns.status')}</th>
+                  <th>{t('adminList.columns.createdAt')}</th>
+                  <th>{t('adminList.columns.actions')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -137,45 +142,52 @@ function AdminList({ onNavigate, onViewStats, onLogout }) {
 
                     <td>
                       <span className="org-badge">
-                        {admin.organisation ?? '—'}
+                        {admin.organisation ?? t('common.noData')}
                       </span>
                     </td>
 
-                    <td>
-                      <span className="org-badge">{admin.phone}</span>
-                    </td>
+                    <td><span className="org-badge">{admin.phone || t('common.noData')}</span></td>
+
 
                     <td><StatusBadge status={admin.status} /></td>
-                    <td className="cell-date">{formatDate(admin.createdAt)}</td>
+                    <td className="cell-date">{formatDate(admin.createdAt, locale)}</td>
 
                     <td>
                       {confirmId === admin.id ? (
                         <div className="confirm-delete">
-                          <span className="confirm-text">Supprimer ?</span>
-                          <button className="btn-action btn-confirm"
+                          <span className="confirm-text">{t('adminList.actions.confirmDelete')}</span>
+                          <button
+                            className="btn-action btn-confirm"
                             onClick={() => handleDelete(admin.id)}
-                            disabled={busyId === admin.id}>
-                            {busyId === admin.id ? '...' : 'Oui'}
-                          </button>
-                          <button className="btn-action btn-cancel-inline"
-                            onClick={() => setConfirmId(null)}
-                            disabled={busyId === admin.id}>
-                            Non
+                                 disabled={busyId === admin.id}
+                          >
+                            {busyId === admin.id ? '...' : t('adminList.actions.yes')}
+                                </button>
+                          <button
+                            className="btn-action btn-cancel-inline"
+                             onClick={() => setConfirmId(null)}
+                            disabled={busyId === admin.id}
+                          >
+                            {t('adminList.actions.no')}
                           </button>
                         </div>
                       ) : (
                         <div className="action-buttons">
                           <button className="btn-action btn-stats"
-                            onClick={() => onViewStats(admin)} title="Statistiques">
-                            📊 Stats
+                           onClick={() => onViewStats(admin)}
+                            title={t('adminList.actions.stats')}
+                            disabled={admin?.status !== 'active'}>
+                            {t('adminList.actions.stats')}
+
                           </button>
                           <button className="btn-action btn-edit"
-                            onClick={() => setModal({ mode: 'edit', admin })} title="Modifier">
-                            ✏️ Modifier
+                            onClick={() => setModal({ mode: 'edit', admin })} title={t('adminList.actions.edit')}>
+                            {t('adminList.actions.edit')}
                           </button>
                           <button className="btn-action btn-delete"
-                            onClick={() => setConfirmId(admin.id)} title="Supprimer">
-                            🗑️ Supprimer
+                           onClick={() => setConfirmId(admin.id)} title={t('adminList.actions.delete')}>
+                            {t('adminList.actions.delete')}
+
                           </button>
                         </div>
                       )}

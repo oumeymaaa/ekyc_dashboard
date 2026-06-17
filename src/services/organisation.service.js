@@ -13,20 +13,8 @@ export function getLogoUrl(org) {
 // ─── HEADERS ───────────────────────────────────────────────────────────────
 
 // JSON headers — for GET / DELETE (no body) and future JSON endpoints
-const getHeaders = () => ({
-  'Content-Type': 'application/json',
-  Authorization: `Bearer ${
-    localStorage.getItem('token') || sessionStorage.getItem('token')
-  }`,
-})
-
-// Multipart headers — Content-Type intentionally omitted so the browser
-// sets it automatically with the correct multipart boundary
-const getMultipartHeaders = () => ({
-  Authorization: `Bearer ${
-    localStorage.getItem('token') || sessionStorage.getItem('token')
-  }`,
-})
+import { getHeaders, getMultipartHeaders } from './api'
+import i18n from '../i18n/index.js'
 
 // ─── LIST ──────────────────────────────────────────────────────────────────
 
@@ -34,7 +22,7 @@ export async function getOrganisations() {
   const res = await fetch(`${BASE_URL}/organisations/get-list`, {
     headers: getHeaders(),
   })
-  if (!res.ok) throw new Error('Erreur lors du chargement des organisations.')
+  if (!res.ok) throw new Error(i18n.t('errors.fetchOrgsFailed'))
   return res.json()
 }
 
@@ -44,7 +32,7 @@ export async function getOrganisation(id) {
   const res = await fetch(`${BASE_URL}/organisations/get-organisation/${id}`, {
     headers: getHeaders(),
   })
-  if (!res.ok) throw new Error(`Organisation #${id} introuvable.`)
+  if (!res.ok) throw new Error(i18n.t('errors.orgNotFound', { id }))
   return res.json()
 }
 
@@ -57,7 +45,7 @@ export async function createOrganisation(data) {
     body: data,
   })
   const body = await res.json()
-  if (!res.ok) throw new Error(body?.message ?? 'Erreur lors de la création.')
+  if (!res.ok) throw new Error(body?.message ?? i18n.t('errors.createFailed'))
   return body
 }
 
@@ -83,7 +71,7 @@ export async function updateOrganisation(id, data) {
     body: data,
   })
   const body = await res.json()
-  if (!res.ok) throw new Error(body?.message ?? 'Erreur lors de la mise à jour.')
+  if (!res.ok) throw new Error(body?.message ?? i18n.t('errors.updateFailed'))
   return body
 }
 
@@ -95,6 +83,6 @@ export async function deleteOrganisation(id) {
     headers: getHeaders(),
   })
   const body = await res.json()
-  if (!res.ok) throw new Error(body?.message ?? 'Erreur lors de la suppression.')
+  if (!res.ok) throw new Error(body?.message ?? i18n.t('errors.deleteFailed'))
   return body
 }

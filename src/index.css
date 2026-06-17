@@ -20,3 +20,114 @@ body {
 #root {
   min-height: 100vh;
 }
+
+/* ── Arabic RTL support ──────────────────────────────────────────────────────
+   Each page container receives dir="rtl" directly as a React prop when
+   i18n.language === 'ar'. All selectors use [dir='rtl'] (no html prefix)
+   so they match on the page div itself or any descendant relationship.
+   ────────────────────────────────────────────────────────────────────────── */
+
+/* Page containers — matched on the element itself */
+.page-layout[dir='rtl'],
+.dash-page[dir='rtl'],
+.admin-page[dir='rtl'],
+.as-page[dir='rtl'] {
+  flex-direction: row-reverse;
+}
+
+/* All children — matched via ancestor relationship */
+[dir='rtl'] .sidebar-footer {
+  flex-direction: row-reverse;
+}
+
+[dir='rtl'] .modal-header,
+[dir='rtl'] .modal-header-left {
+  flex-direction: row-reverse;
+}
+
+[dir='rtl'] .modal-actions,
+[dir='rtl'] .org-detail-footer,
+[dir='rtl'] .org-detail-footer-right,
+[dir='rtl'] .org-form-footer,
+[dir='rtl'] .pagination-controls {
+  flex-direction: row-reverse;
+}
+
+[dir='rtl'] .form-options {
+  flex-direction: row-reverse;
+}
+
+[dir='rtl'] .client-list-header,
+[dir='rtl'] .client-list-actions,
+[dir='rtl'] .page-header,
+[dir='rtl'] .dash-header {
+  flex-direction: row-reverse;
+}
+
+[dir='rtl'] .action-buttons,
+[dir='rtl'] .org-actions,
+[dir='rtl'] .confirm-delete {
+  flex-direction: row-reverse;
+}
+
+[dir='rtl'] .cell-name,
+[dir='rtl'] .client-name,
+[dir='rtl'] .profile-card {
+  flex-direction: row-reverse;
+}
+
+[dir='rtl'] .settings-page-header,
+[dir='rtl'] .settings-card,
+[dir='rtl'] .lang-switcher {
+  flex-direction: row-reverse;
+}
+
+[dir='rtl'] .kpi-grid {
+  direction: rtl;
+}
+
+[dir='rtl'] .activity-item {
+  flex-direction: row-reverse;
+}
+
+[dir='rtl'] input,
+[dir='rtl'] select,
+[dir='rtl'] textarea {
+  text-align: right;
+  direction: rtl;
+}
+
+[dir='rtl'] .field-error,
+[dir='rtl'] .fp-error {
+  text-align: right;
+}
+
+[dir='rtl'] .form-msg--success,
+[dir='rtl'] .form-msg--error {
+  border-left: none;
+  border-right: 3px solid currentColor;
+  text-align: right;
+}
+
+[dir='rtl'] .kpi-top,
+[dir='rtl'] .chart-card-header {
+  flex-direction: row-reverse;
+}
+
+[dir='rtl'] .as-breadcrumb,
+[dir='rtl'] .as-profile-card,
+[dir='rtl'] .profile-left,
+[dir='rtl'] .profile-meta,
+[dir='rtl'] .profile-right {
+  flex-direction: row-reverse;
+}
+
+[dir='rtl'] .pagination,
+[dir='rtl'] .pagination-info {
+  flex-direction: row-reverse;
+}
+
+[dir='rtl'] .lightbox-header,
+[dir='rtl'] .settings-profile-pill {
+  flex-direction: row-reverse;
+}
