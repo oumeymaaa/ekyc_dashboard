@@ -22,6 +22,7 @@ const ar = {
     dashboard: 'لوحة التحكم',
     admins: 'المشرفون',
     organisations: 'المنظمات',
+    activities: 'النشاطات',
     settings: 'الإعدادات',
     ekyc: 'eKYC',
     logout: 'تسجيل الخروج',
@@ -149,6 +150,7 @@ const ar = {
     empty: {
       title: 'لم يتم العثور على مشرف',
       sub: 'أنشئ أول حساب مشرف للبدء.',
+      noOrg: 'قم أولاً بإنشاء منظمة بدون مشرف لتتمكن من إضافة مشرف.',
     },
     actions: {
       stats: '📊 إحصائيات',
@@ -295,6 +297,7 @@ const ar = {
     },
     empty: 'لم يتم العثور على منظمة.',
     adminViewDetail: 'عرض تفاصيل المسؤول',
+    noAdmin: 'لا يوجد مسؤول',
     actions: {
       details: '🔍 تفاصيل',
       edit: '✏️ تعديل',

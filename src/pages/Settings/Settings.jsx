@@ -3,20 +3,21 @@ import { useTranslation } from 'react-i18next'
 import Sidebar from '../../components/ui/Sidebar/Sidebar'
 import { getUser } from '../../services/auth.service'
 import ChangePasswordModal from '../../components/modals/ChangePasswordModal'
+import EditProfileModal from '../../components/modals/EditProfileModal'
 import { changeLanguage } from '../../i18n'
 import './Settings.css'
 
 function Settings({ onNavigate, onLogout }) {
   const { t, i18n } = useTranslation()
-  const user     = getUser()
-  const fullName = user ? `${user.firstName} ${user.lastName}` : t('settings.profile.personalInfo')
-  const initials = user
-    ? `${user.firstName?.[0] ?? ''}${user.lastName?.[0] ?? ''}`.toUpperCase()
-    : 'U'
-  const role = user?.role ?? 'admin'
-
-  const [modal, setModal] = useState(null) // 'change-password' | null
+  const [modal, setModal] = useState(null)
   const [langMenu, setLangMenu] = useState(false)
+  const [profile, setProfile] = useState(() => getUser())
+
+  const fullName = profile ? `${profile.firstName} ${profile.lastName}` : t('settings.profile.personalInfo')
+  const initials = profile
+    ? `${profile.firstName?.[0] ?? ''}${profile.lastName?.[0] ?? ''}`.toUpperCase()
+    : 'U'
+  const role = profile?.role ?? 'admin'
 
   const currentLang = i18n.language
 
@@ -43,6 +44,28 @@ function Settings({ onNavigate, onLogout }) {
               </div>
             </div>
           </div>
+
+          {/* ── Section: Profil (admin only) ── */}
+          {profile?.role === 'admin' && (
+          <section className="settings-section">
+            <h2 className="settings-section-title">Profil</h2>
+            <div className="settings-cards">
+              <div className="settings-card">
+                <div className="settings-card-icon settings-card-icon--blue">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </div>
+                <div className="settings-card-body">
+                  <p className="settings-card-label">
+                    {profile?.firstName ?? ''} {profile?.lastName ?? ''}
+                    <span className="settings-role-tag">Admin</span>
+                  </p>
+                  <p className="settings-card-desc">{profile?.email}</p>
+                </div>
+                <button className="settings-card-btn" onClick={() => setModal('edit-profile')}>Modifier</button>
+              </div>
+            </div>
+          </section>
+          )}
 
           {/* ── Section: Sécurité ── */}
           <section className="settings-section">
@@ -104,9 +127,16 @@ function Settings({ onNavigate, onLogout }) {
         </div>
       </main>
 
-      {/* ── Modal ── */}
+      {/* ── Modals ── */}
       {modal === 'change-password' && (
         <ChangePasswordModal onClose={() => setModal(null)} />
+      )}
+      {modal === 'edit-profile' && (
+        <EditProfileModal
+          user={profile}
+          onClose={() => setModal(null)}
+          onUpdate={(updated) => setProfile(updated)}
+        />
       )}
     </div>
   )

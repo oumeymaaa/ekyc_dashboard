@@ -21,6 +21,7 @@ function Sidebar({ activePage, onNavigate, onLogout, user: userProp }) {
     { key: 'dashboard',     icon: '📊', label: t('sidebar.dashboard')     },
     { key: 'admins',        icon: '👥', label: t('sidebar.admins')         },
     { key: 'organisations', icon: '🏢', label: t('sidebar.organisations')  },
+    { key: 'activities',    icon: '📋', label: t('sidebar.activities')     },
     { key: 'settings',      icon: '⚙️',  label: t('sidebar.settings')      },
   ]
 
@@ -48,12 +49,10 @@ function Sidebar({ activePage, onNavigate, onLogout, user: userProp }) {
         ) : (
           <div className="logo-icon">A</div>
         )}
-        <div className="logo-text">
-          <span className="logo-title">AdminPanel</span>
-          {role === 'admin' && organisation?.name_organisation && (
-            <span className="logo-subtitle">{organisation.name_organisation}</span>
-          )}
-        </div>
+        {role === 'admin'
+          ? <span className="logo-title">{organisation?.name_organisation ?? 'Admin'}</span>
+          : <span className="logo-title">AdminPanel</span>
+        }
       </div>
 
       <nav className="sidebar-nav">

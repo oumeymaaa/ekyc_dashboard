@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { getAdmins, createAdmin, updateAdmin, deleteAdmin } from '../../services/admin.service'
+import { getOrganisations } from '../../services/organisation.service'
 import CreateAdminModal from '../../components/modals/CreateAdminModal'
 import Sidebar from '../../components/ui/Sidebar/Sidebar'
 import './AdminList.css'
@@ -31,9 +32,28 @@ function AdminList({ onNavigate, onViewStats, onLogout }) {
   const [confirmId, setConfirmId] = useState(null)
   const [busyId,    setBusyId]    = useState(null)
   const [toast,     setToast]     = useState(null)
+  const [orgsNoAdmin, setOrgsNoAdmin] = useState([])
+
+  const fetchData = () => {
+    Promise.all([
+      getAdmins(),
+      getOrganisations().catch(() => []),
+    ]).then(([adminsData, orgsData]) => {
+      setAdmins(adminsData)
+      const orgs = Array.isArray(orgsData) ? orgsData : []
+      setOrgsNoAdmin(orgs.filter((o) => !o.admin))
+    }).catch(() => {}).finally(() => setLoading(false))
+  }
 
   useEffect(() => {
-    getAdmins().then(setAdmins).finally(() => setLoading(false))
+    fetchData()
+    const interval = setInterval(fetchData, 30000)
+    const onFocus = () => { fetchData() }
+    window.addEventListener('focus', onFocus)
+    return () => {
+      clearInterval(interval)
+      window.removeEventListener('focus', onFocus)
+    }
   }, [])
 
   const showToast = (message, type = 'success') => {
@@ -93,9 +113,11 @@ function AdminList({ onNavigate, onViewStats, onLogout }) {
               {loading ? '—' : t(admins.length !== 1 ? 'adminList.accounts_other' : 'adminList.accounts_one', { count: admins.length })}
             </p>
           </div>
-          <button className="btn-primary" onClick={() => setModal({ mode: 'create' })}>
-            {t('adminList.createAdmin')}
-          </button>
+          {orgsNoAdmin.length > 0 && (
+            <button className="btn-primary" onClick={() => setModal({ mode: 'create' })}>
+              {t('adminList.createAdmin')}
+            </button>
+          )}
         </div>
 
         <div className="table-wrapper">
@@ -108,10 +130,9 @@ function AdminList({ onNavigate, onViewStats, onLogout }) {
             <div className="state-center">
               <div className="empty-icon">👤</div>
               <p className="empty-title">{t('adminList.empty.title')}</p>
-              <p className="empty-sub">{t('adminList.empty.sub')}</p>
-               <button className="btn-primary" onClick={() => setModal({ mode: 'create' })}>
-                {t('adminList.createAdmin')}
-              </button>
+              <p className="empty-sub">
+                {orgsNoAdmin.length === 0 ? t('adminList.empty.noOrg') : t('adminList.empty.sub')}
+              </p>
             </div>
           ) : (
             <table className="admin-table">
@@ -174,20 +195,20 @@ function AdminList({ onNavigate, onViewStats, onLogout }) {
                       ) : (
                         <div className="action-buttons">
                           <button className="btn-action btn-stats"
-                           onClick={() => onViewStats(admin)}
+                            onClick={() => onViewStats(admin)}
                             title={t('adminList.actions.stats')}
                             disabled={admin?.status !== 'active'}>
-                            {t('adminList.actions.stats')}
-
+                            📊
                           </button>
                           <button className="btn-action btn-edit"
-                            onClick={() => setModal({ mode: 'edit', admin })} title={t('adminList.actions.edit')}>
-                            {t('adminList.actions.edit')}
+                            onClick={() => setModal({ mode: 'edit', admin })}
+                            title={t('adminList.actions.edit')}>
+                            ✏️
                           </button>
                           <button className="btn-action btn-delete"
-                           onClick={() => setConfirmId(admin.id)} title={t('adminList.actions.delete')}>
-                            {t('adminList.actions.delete')}
-
+                            onClick={() => setConfirmId(admin.id)}
+                            title={t('adminList.actions.delete')}>
+                            🗑️
                           </button>
                         </div>
                       )}

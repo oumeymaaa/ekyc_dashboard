@@ -4,9 +4,11 @@ import Login from './pages/Login/Login'
 import AdminList from './pages/AdminList/AdminList'
 import AdminStats from './pages/AdminStats/AdminStats'
 import Dashboard from './pages/Dashboard/Dashboard'
+import AdminDashboard from './pages/AdminDashboard/AdminDashboard'
 import ActivationCompte from './pages/ActivationCompte/ActivationCompte'
 import ClientList from './pages/ClientList/ClientList'
 import OrganisationList from './pages/OrganisationList/OrganisationList'   // ← ADD
+import ActivitiesPage from './pages/ActivitiesPage/ActivitiesPage'
 import KycRecordList from './pages/KycRecordList/KycRecordList'
 import ForgotPassword from './pages/Login/Forgotpassword'
 import ResetPassword from './pages/Login/ResetPassword'
@@ -50,17 +52,16 @@ function App() {
 
   const user = getUser()
   const role = user?.role
+  const DashboardPage = role === 'admin' ? AdminDashboard : Dashboard
 
   const [page, setPage] = useState(() => {
-        // Priority 1 — already logged in → always go to dashboard
-    if (isAuthenticated()) return 'dashboard'
     const token = getTokenFromUrl()
-        // Priority 2 — reset-password link (must NOT be authenticated)
+    // Priority 1 — activation link (must work even if already authenticated)
+    if (token && !isResetPasswordPath()) return 'activation-compte'
+    // Priority 2 — reset-password link
     if (token && isResetPasswordPath()) return 'reset-password'
-    
-    // Priority 3 — activation link
-    if (token) return 'activation-compte'
-    
+    // Priority 3 — already logged in
+    if (isAuthenticated()) return 'dashboard'
     return 'login'
   })
 
@@ -84,7 +85,7 @@ function App() {
   if (page === 'reset-password') {
     if (isAuthenticated()) {
       clearResetPasswordUrl()
-      return <Dashboard onNavigate={setPage} onLogout={handleLogout} />
+      return <DashboardPage onNavigate={setPage} onLogout={handleLogout} />
     }
     return (
       <ResetPassword
@@ -102,7 +103,7 @@ function App() {
   // =========================
   if (page === 'forgot-password') {
     if (isAuthenticated()) {
-      return <Dashboard onNavigate={setPage} onLogout={handleLogout} />
+      return <DashboardPage onNavigate={setPage} onLogout={handleLogout} />
     }
     return <ForgotPassword onBack={() => setPage('login')} />
   }
@@ -111,15 +112,14 @@ function App() {
   // ACTIVATION COMPTE PAGE
   // =========================
   if (page === 'activation-compte' && token) {
-    if (isAuthenticated()) {
-      return <Dashboard onNavigate={setPage} onLogout={handleLogout} />
-    }
     return (
       <ActivationCompte
         token={token}
         onActivated={() => {
-          clearTokenFromUrl()
-          setPage('login')
+          const url = new URL(window.location)
+          url.searchParams.delete('token')
+          url.searchParams.set('login', '1')
+          window.location.href = url.toString()
         }}
       />
     )
@@ -129,8 +129,10 @@ function App() {
   // LOGIN PAGE
   // =========================
   if (page === 'login') {
-    if (isAuthenticated()) {
-      return <Dashboard onNavigate={setPage} onLogout={handleLogout} />
+    // Force login page after activation (?login=1), bypass auth redirect
+    const forceLogin = new URLSearchParams(window.location.search).get('login') === '1'
+    if (isAuthenticated() && !forceLogin) {
+      return <DashboardPage onNavigate={setPage} onLogout={handleLogout} />
     }
     return (
       <Login
@@ -144,7 +146,7 @@ function App() {
   // DASHBOARD
   // =========================
   if (page === 'dashboard') {
-    return <Dashboard onNavigate={setPage} onLogout={handleLogout} />
+    return <DashboardPage onNavigate={setPage} onLogout={handleLogout} />
   }
 
   // =========================
@@ -152,7 +154,7 @@ function App() {
   // =========================
   if (page === 'admins') {
     if (role !== 'super_admin') {
-      return <Dashboard onNavigate={setPage} onLogout={handleLogout} />
+      return <DashboardPage onNavigate={setPage} onLogout={handleLogout} />
     }
     return (
       <AdminList
@@ -168,10 +170,25 @@ function App() {
   // =========================
   if (page === 'organisations') {
     if (role !== 'super_admin') {
-      return <Dashboard onNavigate={setPage} onLogout={handleLogout} />
+      return <DashboardPage onNavigate={setPage} onLogout={handleLogout} />
     }
     return (
       <OrganisationList
+        onNavigate={setPage}
+        onLogout={handleLogout}
+      />
+    )
+  }
+
+  // =========================
+  // ACTIVITIES — super_admin only
+  // =========================
+  if (page === 'activities') {
+    if (role !== 'super_admin') {
+      return <DashboardPage onNavigate={setPage} onLogout={handleLogout} />
+    }
+    return (
+      <ActivitiesPage
         onNavigate={setPage}
         onLogout={handleLogout}
       />
@@ -183,7 +200,7 @@ function App() {
   // =========================
   if (page === 'clients') {
     if (role !== 'admin') {
-      return <Dashboard onNavigate={setPage} onLogout={handleLogout} />
+      return <DashboardPage onNavigate={setPage} onLogout={handleLogout} />
     }
     return <ClientList onNavigate={setPage} onLogout={handleLogout} />
   }
@@ -207,7 +224,7 @@ function App() {
   // =========================
   if (page === 'admin-stats' && selectedAdmin) {
     if (role !== 'super_admin') {
-      return <Dashboard onNavigate={setPage} onLogout={handleLogout} />
+      return <DashboardPage onNavigate={setPage} onLogout={handleLogout} />
     }
     return (
       <AdminStats
@@ -221,7 +238,7 @@ function App() {
   // =========================
   // FALLBACK
   // =========================
-  return <Dashboard onNavigate={setPage} onLogout={handleLogout} />
+  return <DashboardPage onNavigate={setPage} onLogout={handleLogout} />
 }
 
 export default App

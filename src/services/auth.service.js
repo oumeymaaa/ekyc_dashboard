@@ -161,6 +161,23 @@ export async function resetPassword(token, password, confirm_password) {
   }
   return data
 }
+export async function updateProfile(data) {
+  const res = await fetch(`${API_URL}/auth/profile`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${getToken()}`,
+      'Accept-Language': getLang(),
+    },
+    body: JSON.stringify(data),
+  })
+  if (!res.ok) {
+    const err = await res.json()
+    throw new Error(err.message || 'Erreur lors de la mise à jour du profil')
+  }
+  return res.json()
+}
+
 export async function activateAccount(token) {
  const res = await fetch(`${API_URL}/auth/activate?token=${token}`, {
     headers: { 'Accept-Language': getLang() },

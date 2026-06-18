@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import './OrganisationDetailModal.css'
 
-const BASE_URL = 'http://localhost:3001'
+const BASE_URL = import.meta.env.VITE_API_URL
 
 function OrganisationDetailModal({ organisation, onClose, onEdit, onDelete }) {
   const { t, i18n } = useTranslation()
@@ -38,7 +38,6 @@ function OrganisationDetailModal({ organisation, onClose, onEdit, onDelete }) {
             }
             <div>
               <p className="org-detail-name">{organisation.name_organisation}</p>
-              <p className="org-detail-id">ID #{organisation.id}</p>
             </div>
           </div>
 

@@ -170,21 +170,20 @@
 .action-buttons {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 4px;
 }
 
 .btn-action {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  padding: 0.35rem 0.75rem;
-  border-radius: 7px;
-  font-size: 0.78rem;
-  font-weight: 600;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
   cursor: pointer;
-  border: 1.5px solid transparent;
-  transition: background 0.15s, border-color 0.15s, opacity 0.15s;
-  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, transform 0.15s;
 }
 
 .btn-action:disabled {
@@ -195,34 +194,28 @@
 .btn-stats {
   background: #f5f3ff;
   color: #6d28d9;
-  border-color: #ddd6fe;
 }
 
 .btn-stats:hover:not(:disabled) {
   background: #ede9fe;
-  border-color: #c4b5fd;
 }
 
 .btn-edit {
   background: #eff6ff;
   color: #1d4ed8;
-  border-color: #bfdbfe;
 }
 
 .btn-edit:hover:not(:disabled) {
   background: #dbeafe;
-  border-color: #93c5fd;
 }
 
 .btn-delete {
   background: #fff5f5;
   color: #dc2626;
-  border-color: #fecaca;
 }
 
 .btn-delete:hover:not(:disabled) {
   background: #fee2e2;
-  border-color: #fca5a5;
 }
 
 /* inline delete confirmation */

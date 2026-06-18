@@ -23,6 +23,7 @@ function ClientList({ onNavigate, onLogout }) {
   const [toast,   setToast]   = useState(null)
   const [filterKyc, setFilterKyc] = useState('all')
   const [page,      setPage]      = useState(1)
+  const [confirmClient, setConfirmClient] = useState(null)
 
   useEffect(() => {
     fetchClients()
@@ -82,16 +83,14 @@ function ClientList({ onNavigate, onLogout }) {
   }
 
   const handleDelete = async (client) => {
-    const confirmed = window.confirm(
-      `Supprimer définitivement ${client.firstName} ${client.lastName} et son dossier KYC ?`
-    )
-    if (!confirmed) return
     try {
       await deleteClient(client.id)
       await fetchClients()
+      setConfirmClient(null)
       showToast('Client supprimé avec succès.', 'success')
     } catch (err) {
       showToast(err.message || 'Erreur lors de la suppression du client.', 'error')
+      setConfirmClient(null)
     }
   }
 
@@ -264,27 +263,22 @@ function ClientList({ onNavigate, onLogout }) {
                               <div className="client-actions">
                                 {!client.isCodeUsed && !client.kyc && (
                                   <>
-                                    <button
-                                      className="btn-edit"
-                                      onClick={() => setModal({ mode: 'edit', client })}
-                                    >
-                                      ✏️ Modifier
-                                    </button>
-                                    <button
-                                      className="btn-delete"
-                                      onClick={() => handleDelete(client)}
-                                    >
-                                      🗑️ Supprimer
-                                    </button>
+                                    {confirmClient === client.id ? (
+                                      <div className="confirm-delete">
+                                        <span className="confirm-text">{t('adminList.actions.confirmDelete')}</span>
+                                        <button className="btn-action btn-confirm" onClick={() => handleDelete(client)}>✓</button>
+                                        <button className="btn-action btn-cancel-inline" onClick={() => setConfirmClient(null)}>✕</button>
+                                      </div>
+                                    ) : (
+                                      <>
+                                        <button className="btn-action btn-edit" title="Modifier" onClick={() => setModal({ mode: 'edit', client })}>✏️</button>
+                                        <button className="btn-action btn-delete" title="Supprimer" onClick={() => setConfirmClient(client.id)}>🗑️</button>
+                                      </>
+                                    )}
                                   </>
                                 )}
                                 {client.kyc && (
-                                  <button
-                                    className="btn-consulter"
-                                    onClick={() => setDossier({ clientId: client.id })}
-                                  >
-                                {t('clientList.consultFile')}
-                                  </button>
+                                  <button className="btn-action btn-consulter" title="Consulter le dossier" onClick={() => setDossier({ clientId: client.id })}>📁</button>
                                 )}
                               </div>
                             </td>

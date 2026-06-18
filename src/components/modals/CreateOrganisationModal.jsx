@@ -20,7 +20,7 @@ function CreateOrganisationModal({ mode, initial, onClose, onSubmit }) {
     admin_phone:      initial?.admin_phone      ?? '',
   })
   const [logoFile,    setLogoFile]    = useState(null)
- const [logoPreview, setLogoPreview] = useState(() => getLogoUrl(initial?.logo_organisation))
+  const [logoPreview, setLogoPreview] = useState(() => getLogoUrl(initial))
   const [loading,     setLoading]     = useState(false)
   const [errors,      setErrors]      = useState({})
 

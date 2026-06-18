@@ -30,7 +30,16 @@ function OrganisationList({ onNavigate, onLogout }) {
 
   const [modal, setModal] = useState(null)
 
-  useEffect(() => { fetchOrganisations() }, [])
+  useEffect(() => {
+    fetchOrganisations()
+    const interval = setInterval(fetchOrganisations, 30000)
+    const onFocus = () => { fetchOrganisations() }
+    window.addEventListener('focus', onFocus)
+    return () => {
+      clearInterval(interval)
+      window.removeEventListener('focus', onFocus)
+    }
+  }, [])
   useEffect(() => { setPage(1) }, [search])
 
   /* ── Toast ────────────────────────────────── */
@@ -212,21 +221,24 @@ function OrganisationList({ onNavigate, onLogout }) {
                                 >
                                   {org.admin.first_name} {org.admin.last_name}
                                 </span>
-                                : <span className="org-empty-cell">{t('common.noData')}</span>}
+                                : <span className="org-empty-cell">{t('organisationList.noAdmin')}</span>}
                             </td>
 
                             {/* Actions */}
                             <td>
                               <div className="org-actions">
-                                <button className="btn-consulter"
+                                <button className="btn-action btn-consulter"
+                                  title={t('organisationList.actions.details')}
                                   onClick={() => setModal({ mode: 'detail', org })}>
-                                  {t('organisationList.actions.details')}
+                                  🔍
                                 </button>
-                                <button className="btn-edit"
+                                <button className="btn-action btn-edit"
+                                  title={t('organisationList.actions.edit')}
                                   onClick={() => setModal({ mode: 'edit', org })}>
-                                  {t('organisationList.actions.edit')}
+                                  ✏️
                                 </button>
-                                <button className="btn-delete"
+                                <button className="btn-action btn-delete"
+                                  title={t('organisationList.actions.delete')}
                                   onClick={() => setModal({ mode: 'delete', org })}>
                                   🗑️
                                 </button>

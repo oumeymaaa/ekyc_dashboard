@@ -1,0 +1,145 @@
+.ap-page {
+  display: flex;
+  min-height: 100vh;
+  background: #f5f6fa;
+  color: #1e1b4b;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.ap-main {
+  flex: 1;
+  padding: 36px 40px;
+  overflow-y: auto;
+}
+
+.ap-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 28px;
+}
+
+.ap-header h1 {
+  font-size: 26px;
+  font-weight: 700;
+  margin: 0 0 6px 0;
+  letter-spacing: -.3px;
+}
+
+.ap-subtitle {
+  font-size: 14px;
+  color: #8b8fa3;
+  margin: 0;
+}
+
+.ap-total {
+  font-size: 13px;
+  font-weight: 600;
+  color: #6366f1;
+  background: #eef2ff;
+  padding: 6px 16px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.ap-loading,
+.ap-empty {
+  text-align: center;
+  padding: 60px 0;
+  color: #9ca3af;
+  font-size: 15px;
+}
+
+.ap-table-wrap {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.04), 0 4px 16px rgba(0,0,0,.04);
+  overflow: hidden;
+}
+
+.ap-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ap-table th {
+  padding: 14px 18px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #8b8fa3;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  text-align: left;
+  border-bottom: 1px solid #eff0f4;
+  background: #fafbff;
+}
+
+.ap-table td {
+  padding: 13px 18px;
+  font-size: 13px;
+  border-bottom: 1px solid #eff0f4;
+  vertical-align: middle;
+}
+
+.ap-table tr:last-child td {
+  border-bottom: none;
+}
+
+.ap-table tr:hover td {
+  background: #f8f9ff;
+}
+
+.ap-cell-admin {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ap-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0f3460, #533483);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ap-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.ap-cell-target {
+  color: #6b7280;
+}
+
+.ap-cell-date {
+  color: #6b7280;
+  white-space: nowrap;
+}
+
+.ap-time {
+  margin-left: 8px;
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+@media (max-width: 900px) {
+  .ap-main { padding: 24px 16px; }
+  .ap-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .ap-table th:nth-child(3),
+  .ap-table td:nth-child(3) { display: none; }
+}
+
+@media (max-width: 600px) {
+  .ap-table th:nth-child(4),
+  .ap-table td:nth-child(4) { display: none; }
+}

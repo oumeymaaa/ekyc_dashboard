@@ -106,15 +106,18 @@ function AdminStats({ admin, onNavigate, onLogout }) {
     : '?'
 
   const timeAgo = (iso) => {
-    const diff = Math.floor((Date.now() - new Date(iso)) / 1000)
+    const d = new Date(iso.endsWith('Z') ? iso : iso + 'Z')
+    const diff = Math.floor((Date.now() - d.getTime()) / 1000)
     if (diff < 60)    return t('dashboard.timeAgo.seconds', { n: diff })
     if (diff < 3600)  return t('dashboard.timeAgo.minutes', { n: Math.floor(diff / 60) })
     if (diff < 86400) return t('dashboard.timeAgo.hours',   { n: Math.floor(diff / 3600) })
     return t('dashboard.timeAgo.days', { n: Math.floor(diff / 86400) })
   }
 
-  const formatDate = (iso) =>
-    new Date(iso).toLocaleDateString(locale, { day: '2-digit', month: 'long', year: 'numeric' })
+  const formatDate = (iso) => {
+    const d = new Date(iso.endsWith('Z') ? iso : iso + 'Z')
+    return d.toLocaleDateString(locale, { day: '2-digit', month: 'long', year: 'numeric' })
+  }
 
   if (loading) {
     return (

@@ -77,13 +77,15 @@ function CreateClientModal({ onClose, onSubmit, client = null }) {
 
           />
 
-          <div className="field">
-            <label htmlFor="sendVia">{t('createClientModal.sendVia')}</label>
-            <select id="sendVia" name="sendVia" value={form.sendVia} onChange={handleChange} className="select-input">
-              <option value={1}>Email</option>
-              <option value={2}>SMS</option>
-            </select>
-          </div>
+          {!isEdit && (
+            <div className="field">
+              <label htmlFor="sendVia">{t('createClientModal.sendVia')}</label>
+              <select id="sendVia" name="sendVia" value={form.sendVia} onChange={handleChange} className="select-input">
+                <option value={1}>Email</option>
+                <option value={2}>SMS</option>
+              </select>
+            </div>
+          )}
 
           {!isEdit && (
             <div className="info-banner">

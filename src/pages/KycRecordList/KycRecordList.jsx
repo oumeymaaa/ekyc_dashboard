@@ -26,6 +26,13 @@ function KycRecordList({ onNavigate, onLogout }) {
 
   useEffect(() => {
     fetchRecords()
+    const interval = setInterval(fetchRecords, 30000)
+    const onFocus = () => { fetchRecords() }
+    window.addEventListener('focus', onFocus)
+    return () => {
+      clearInterval(interval)
+      window.removeEventListener('focus', onFocus)
+    }
   }, [])
 
   const showToast = (message, type = 'success') => {

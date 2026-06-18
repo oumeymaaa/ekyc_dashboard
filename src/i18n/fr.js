@@ -22,6 +22,7 @@ const fr = {
     dashboard: 'Dashboard',
     admins: 'Admins',
     organisations: 'Organisations',
+    activities: 'Activités',
     settings: 'Paramètres',
     ekyc: 'eKYC',
     logout: 'Déconnexion',
@@ -149,6 +150,7 @@ const fr = {
     empty: {
       title: 'Aucun admin trouvé',
       sub: 'Créez le premier compte admin pour commencer.',
+      noOrg: "Créez d'abord une organisation sans admin pour pouvoir ajouter un admin.",
     },
     actions: {
       stats: '📊 Stats',
@@ -295,6 +297,7 @@ const fr = {
     },
     empty: 'Aucune organisation trouvée.',
     adminViewDetail: "Voir les détails de l'admin",
+    noAdmin: 'Aucun admin',
     actions: {
       details: '🔍 Détails',
       edit: '✏️ Modifier',

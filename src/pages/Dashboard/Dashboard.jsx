@@ -61,7 +61,8 @@ function Dashboard({ onNavigate, onLogout }) {
   const [loading, setLoading]               = useState(true)
 
   const timeAgo = (iso) => {
-    const diff = Math.floor((Date.now() - new Date(iso)) / 1000)
+    const d = new Date(iso.endsWith('Z') ? iso : iso + 'Z')
+    const diff = Math.floor((Date.now() - d.getTime()) / 1000)
     if (diff < 60)    return t('dashboard.timeAgo.seconds', { n: diff })
     if (diff < 3600)  return t('dashboard.timeAgo.minutes', { n: Math.floor(diff / 60) })
     if (diff < 86400) return t('dashboard.timeAgo.hours',   { n: Math.floor(diff / 3600) })
@@ -70,12 +71,12 @@ function Dashboard({ onNavigate, onLogout }) {
 
 
   useEffect(() => {
-    Promise.all([
+    const loadData = () => Promise.all([
       getStats(),
       getDashboardStats().catch(() => null),
       getKycDistribution().catch(() => null),
       getEvolution().catch(() => null),
-      getActivity().catch(() => null),
+      getActivity(5).catch(() => null),
       getScoreDistribution().catch(() => null),
     ]).then(([mockData, apiData, kycDist, evolution, activity, scoreDist]) => {
       setStats(mockData)
@@ -84,8 +85,17 @@ function Dashboard({ onNavigate, onLogout }) {
       setEvolution(evolution)
       setActivity(activity)
       setScoreDist(scoreDist)
-    }).finally(() => setLoading(false))
-    }, [])
+    }).catch(() => {}).finally(() => setLoading(false))
+
+    loadData()
+    const interval = setInterval(loadData, 60000)
+    const onFocus = () => { loadData() }
+    window.addEventListener('focus', onFocus)
+    return () => {
+      clearInterval(interval)
+      window.removeEventListener('focus', onFocus)
+    }
+  }, [])
 
   if (loading) {
     return (
@@ -136,7 +146,6 @@ function Dashboard({ onNavigate, onLogout }) {
         actionLabel: item.actionLabel,
         target:      item.clientName,
         timestamp:   item.performedAt,
-        timeAgoStr:  item.timeAgo,
       }))
     : recentActivity
 
