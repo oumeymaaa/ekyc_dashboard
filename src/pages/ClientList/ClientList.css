@@ -82,6 +82,24 @@ body {
   border-color: #6366f1;
 }
 
+.btn-secondary {
+  padding: 0.75rem 1.25rem;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  background: white;
+  color: #374151;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.btn-secondary:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+}
+
 /* ───────────────────────────────────────────── */
 /* STATES */
 /* ───────────────────────────────────────────── */

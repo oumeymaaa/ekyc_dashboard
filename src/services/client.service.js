@@ -89,3 +89,22 @@ export async function deleteClient(id) {
   if (!res.ok) throw new Error(data?.message || 'Erreur lors de la suppression du client.')
   return data
 }
+
+export async function exportClientsCsv() {
+  const res = await fetch(`${API_URL}/clients/export/csv`, {
+    headers: getHeaders(),
+  })
+  if (!res.ok) throw new Error('Erreur lors de l\'export.')
+  const disposition = res.headers.get('Content-Disposition') || ''
+  const parts = disposition.split('filename=').filter(Boolean)
+  const filename = parts.length ? parts.pop().replace(/"/g, '') : 'export.xls'
+  const blob = await res.blob()
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+  URL.revokeObjectURL(url)
+}

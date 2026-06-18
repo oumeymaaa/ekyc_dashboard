@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import './ClientList.css'
 
-import { getClients, createClient, updateClient, deleteClient } from '../../services/client.service'
+import { getClients, createClient, updateClient, deleteClient, exportClientsCsv } from '../../services/client.service'
 
 import Sidebar from '../../components/ui/Sidebar/Sidebar'
 import CreateClientModal from '../../components/modals/CreateClientModal'
@@ -174,6 +174,9 @@ function ClientList({ onNavigate, onLogout }) {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
+              <button className="btn-secondary" onClick={exportClientsCsv}>
+                Exporter
+              </button>
               <button className="btn-primary" onClick={() => setModal({ mode: 'create' })}>
                 {t('clientList.newClient')}
               </button>
