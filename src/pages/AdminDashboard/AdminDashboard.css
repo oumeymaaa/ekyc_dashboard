@@ -543,6 +543,72 @@
 
 @keyframes admin-spin { to { transform: rotate(360deg); } }
 
+/* ── Rejection reasons ── */
+.admin-rejection-card {
+  background: var(--adm-card);
+  border-radius: 16px;
+  padding: 20px 24px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.05);
+  margin-bottom: 20px;
+}
+
+.admin-rejection-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.admin-rejection-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.admin-rejection-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.admin-rejection-label {
+  font-size: .85rem;
+  font-weight: 600;
+  color: var(--adm-text);
+}
+
+.admin-rejection-count {
+  font-size: .85rem;
+  font-weight: 700;
+  color: var(--adm-primary);
+}
+
+.admin-rejection-track {
+  height: 8px;
+  background: #f1f5f9;
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.admin-rejection-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--adm-primary2), var(--adm-primary));
+  transition: width .6s ease;
+}
+
+.admin-rejection-pct {
+  font-size: .72rem;
+  color: #9ca3af;
+  align-self: flex-end;
+}
+
+.admin-rejection-empty {
+  color: #9ca3af;
+  font-size: .85rem;
+  text-align: center;
+  padding: 2rem 0;
+}
+
 /* ── Responsive ── */
 @media (max-width: 1100px) {
   .admin-today    { grid-template-columns: repeat(3, 1fr); }

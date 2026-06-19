@@ -123,6 +123,7 @@ const en = {
     empty: {
       noClients: 'No clients yet',
       noPending: 'No pending files',
+      noRejectionData: 'No rejection reasons recorded',
     },
     viewLink: 'View',
     pendingSubtitle: 'clients awaiting KYC validation',
@@ -138,6 +139,8 @@ const en = {
       clients: 'Clients',
       validated: 'Validated',
       rejected: 'Rejected',
+      rejectionReasons: 'Rejection Reasons',
+      rejectionCount: 'rejections',
     },
     activity: {
       title: 'Activities',

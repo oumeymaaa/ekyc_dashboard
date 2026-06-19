@@ -38,6 +38,14 @@ export async function getScoreDistribution(adminId) {
   return res.json()
 }
 
+export async function getRejectionReasons(adminId) {
+  const res = await fetch(`${API_URL}/dashboard/rejection-reasons${qs(adminId)}`, {
+    headers: getHeaders(),
+  })
+  if (!res.ok) throw new Error('Failed to fetch rejection reasons')
+  return res.json()
+}
+
 export async function getActivity(limit = 10, adminId) {
   const base = `${API_URL}/dashboard/activity?limit=${limit}`
   const url  = adminId ? `${base}&adminId=${adminId}` : base

@@ -8,7 +8,7 @@ import {
   Tooltip, Legend, ResponsiveContainer,
 } from 'recharts'
 import { getUser } from '../../services/auth.service'
-import { getDashboardStats, getKycDistribution, getEvolution, getScoreDistribution } from '../../services/dashboard.service'
+import { getDashboardStats, getKycDistribution, getEvolution, getScoreDistribution, getRejectionReasons } from '../../services/dashboard.service'
 import { getClients } from '../../services/client.service'
 import Sidebar from '../../components/ui/Sidebar/Sidebar'
 import './AdminDashboard.css'
@@ -22,6 +22,7 @@ function AdminDashboard({ onNavigate, onLogout }) {
   const [kycDistData, setKycDist]     = useState(null)
   const [evolutionData, setEvolution] = useState(null)
   const [scoreData, setScoreData]     = useState(null)
+  const [rejectionData, setRejectionData] = useState(null)
   const [clients, setClients]         = useState([])
   const [loading, setLoading]         = useState(true)
 
@@ -31,12 +32,14 @@ function AdminDashboard({ onNavigate, onLogout }) {
       getKycDistribution(adminId).catch(() => null),
       getEvolution(adminId).catch(() => null),
       getScoreDistribution(adminId).catch(() => null),
+      getRejectionReasons(adminId).catch(() => null),
       getClients().catch(() => []),
-    ]).then(([kpi, kyc, evo, score, cl]) => {
+    ]).then(([kpi, kyc, evo, score, reasons, cl]) => {
       setKpiStats(kpi)
       setKycDist(kyc)
       setEvolution(evo)
       setScoreData(score)
+      setRejectionData(reasons)
       setClients(cl ?? [])
     }).catch(() => {}).finally(() => setLoading(false))
 
@@ -375,6 +378,34 @@ function AdminDashboard({ onNavigate, onLogout }) {
               </BarChart>
             </ResponsiveContainer>
           </div>
+        </div>
+
+        {/* ═══ Rejection reasons ═══ */}
+        <div className="admin-rejection-card">
+          <div className="admin-chart-header">
+            <h3>{t('dashboard.charts.rejectionReasons')}</h3>
+            <span className="admin-chart-badge">
+              {rejectionData?.total ?? 0} {t('dashboard.charts.rejectionCount')}
+            </span>
+          </div>
+          {rejectionData?.reasons?.length > 0 ? (
+            <div className="admin-rejection-list">
+              {rejectionData.reasons.map((item, i) => (
+                <div key={i} className="admin-rejection-item">
+                  <div className="admin-rejection-top">
+                    <span className="admin-rejection-label">{item.reason}</span>
+                    <span className="admin-rejection-count">{item.count}</span>
+                  </div>
+                  <div className="admin-rejection-track">
+                    <div className="admin-rejection-fill" style={{ width: `${item.percentage}%` }} />
+                  </div>
+                  <span className="admin-rejection-pct">{item.percentage}%</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="admin-rejection-empty">{t('dashboard.empty.noRejectionData')}</p>
+          )}
         </div>
 
         </div>{/* admin-main-inner */}

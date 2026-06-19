@@ -123,6 +123,7 @@ const ar = {
     empty: {
       noClients: 'لا يوجد عملاء بعد',
       noPending: 'لا توجد ملفات قيد الانتظار',
+      noRejectionData: 'لا توجد أسباب رفض مسجلة',
     },
     viewLink: 'عرض',
     pendingSubtitle: 'عملاء في انتظار التحقق KYC',
@@ -138,6 +139,8 @@ const ar = {
       clients: 'العملاء',
       validated: 'معتمد',
       rejected: 'مرفوض',
+      rejectionReasons: 'أسباب الرفض',
+      rejectionCount: 'رفض',
     },
     activity: {
       title: 'النشاطات',
