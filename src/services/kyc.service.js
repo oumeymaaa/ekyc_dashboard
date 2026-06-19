@@ -36,16 +36,15 @@ export async function getKycRecordByClient(clientId) {
 
 
 /* ── PATCH /kyc-records/:id/status ──────────────── */
-export async function updateKycStatus(recordId, status) {
+export async function updateKycStatus(recordId, status, rejection_reasons) {
+  const body = { status };
+  if (rejection_reasons?.length) body.rejection_reasons = rejection_reasons;
   const res = await fetch(
     `${BASE_URL}/kyc-records/${recordId}/status`,
     {
       method: 'PATCH',
-     
       headers: getHeaders(),
-
-    
-      body: JSON.stringify({ status }),
+      body: JSON.stringify(body),
     }
   )
   if (!res.ok) {

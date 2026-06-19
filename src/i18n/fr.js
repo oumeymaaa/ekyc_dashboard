@@ -26,6 +26,12 @@ const fr = {
     settings: 'Paramètres',
     ekyc: 'eKYC',
     logout: 'Déconnexion',
+    role: {
+      admin: 'Admin',
+      super_admin: 'Super Admin',
+    },
+    logoAlt: 'Logo',
+    fallbackOrgName: 'Admin',
   },
 
   login: {
@@ -81,7 +87,11 @@ const fr = {
     title: 'Tableau de bord',
     subtitle: "Vue d'ensemble",
     updatedOn: 'mise à jour {{date}}',
+    updatedAt: 'Mis à jour à',
     loading: 'Chargement des statistiques...',
+    loadingDashboard: 'Chargement de votre tableau de bord…',
+    greeting: 'Bonjour, {{name}}',
+    activityOverview: 'Voici un aperçu de votre activité et de vos statistiques',
     vsPreviousMonth: 'vs mois dernier',
     total: 'total',
     kpi: {
@@ -90,6 +100,32 @@ const fr = {
       kycRejected: 'KYC rejetés',
       avgFacialScore: 'Score moyen facial',
     },
+    today: {
+      newClients: 'Nouveaux clients aujourd\'hui',
+      kycValidated: 'KYC validés aujourd\'hui',
+      kycRejected: 'KYC rejetés aujourd\'hui',
+    },
+    metrics: {
+      validationRate: 'Taux validation',
+      pending: 'En attente',
+      newThisMonth: 'Nouveaux (ce mois)',
+      kycCompletion: 'Complétion KYC',
+    },
+    section: {
+      recentClients: 'Derniers clients',
+      pendingFiles: 'Dossiers en attente',
+    },
+    tableHeader: {
+      client: 'Client',
+      email: 'Email',
+      kyc: 'KYC',
+    },
+    empty: {
+      noClients: 'Aucun client pour le moment',
+      noPending: 'Aucun dossier en attente',
+    },
+    viewLink: 'Voir',
+    pendingSubtitle: 'clients en attente de validation KYC',
     charts: {
       clientEvolution: 'Évolution clients & KYC',
       last6Months: '4 derniers mois',
@@ -104,6 +140,8 @@ const fr = {
       rejected: 'Rejetés',
     },
     activity: {
+      title: 'Activités',
+      subtitle: 'Toutes les actions effectuées par les administrateurs',
       create: 'Création client',
       update: 'Modification client',
       validate_kyc: 'KYC validé',
@@ -234,10 +272,23 @@ const fr = {
     },
     empty: 'Aucun client trouvé.',
     consultFile: '🔍 Consulter dossier',
+    consultTooltip: 'Consulter le dossier',
+    export: 'Exporter',
+    filter: {
+      all: 'Tous',
+      pending: 'En attente',
+      validated: 'Validé',
+      invalid: 'Non valide',
+      noKyc: 'Aucun KYC',
+    },
     loadError: 'Erreur lors du chargement des clients.',
     toast: {
       created: 'Client créé avec succès.',
       createError: 'Erreur lors de la création du client.',
+      updated: 'Client modifié avec succès.',
+      updateError: 'Erreur lors de la modification du client.',
+      deleted: 'Client supprimé avec succès.',
+      deleteError: 'Erreur lors de la suppression du client.',
       statusUpdated: 'Statut mis à jour avec succès.',
     },
     pagination: {
@@ -358,13 +409,25 @@ const fr = {
   },
 
   kycDossierModal: {
-    title: 'KYC Verification',
-    subtitle: 'Identity validation & document comparison',
-    cinData: '📄 CIN Data',
-    identityComparison: '🧠 Identity Comparison',
-    cinDocument: 'CIN Document',
+    title: 'Vérification KYC',
+    subtitle: 'Validation d\'identité et comparaison de documents',
+    cinData: '📄 Données CIN',
+    identityComparison: '🧠 Comparaison d\'identité',
+    cinDocument: 'Document CIN',
     selfie: 'Selfie',
-    faceMatch: 'Face Match',
+    faceDetected: 'Visage détecté',
+    noCinImage: 'Aucune image CIN',
+    noSelfieImage: 'Aucune image selfie',
+    noFaceDetected: 'Aucun visage détecté',
+    faceMatch: 'Correspondance faciale',
+    history: 'Historique ({{count}})',
+    empty: 'Aucun dossier KYC trouvé pour ce client.',
+    status: {
+      archivedRejected: 'Rejeté (archivé)',
+      valid: 'Valide',
+      invalid: 'Non valide',
+      pending: 'En attente',
+    },
     approve: 'Approuver',
     reject: 'Rejeter',
     approved: '✅ Approuvé',
@@ -375,6 +438,8 @@ const fr = {
     birth: 'Naissance',
     place: 'Lieu',
     address: 'Adresse',
+    rejectReason: 'Motif du rejet (au moins 1) :',
+    confirmReject: 'Confirmer le rejet',
   },
 
   adminDetailModal: {
@@ -433,6 +498,19 @@ const fr = {
       medium: 'Moyen',
       good: 'Bon',
       strong: 'Fort',
+    },
+  },
+
+  activities: {
+    count: '{{count}} actions',
+    refresh: 'Rafraîchir',
+    empty: 'Aucune activité pour le moment',
+    unknownAdmin: 'Inconnu',
+    table: {
+      admin: 'Admin',
+      action: 'Action',
+      target: 'Cible',
+      date: 'Date',
     },
   },
 

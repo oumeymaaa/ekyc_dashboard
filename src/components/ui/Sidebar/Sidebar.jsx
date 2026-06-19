@@ -50,7 +50,7 @@ function Sidebar({ activePage, onNavigate, onLogout, user: userProp }) {
           <div className="logo-icon">A</div>
         )}
         {role === 'admin'
-          ? <span className="logo-title">{organisation?.name_organisation ?? 'Admin'}</span>
+          ?           <span className="logo-title">{organisation?.name_organisation ?? t('sidebar.fallbackOrgName')}</span>
           : <span className="logo-title">AdminPanel</span>
         }
       </div>
@@ -72,7 +72,7 @@ function Sidebar({ activePage, onNavigate, onLogout, user: userProp }) {
         <div className="avatar">{initials}</div>
         <div className="user-info">
           <span className="user-name">{fullName}</span>
-          <span className="user-role">{role}</span>
+          <span className="user-role">{t(`sidebar.role.${role}`, role)}</span>
         </div>
       </div>
 

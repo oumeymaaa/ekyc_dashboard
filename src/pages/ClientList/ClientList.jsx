@@ -175,7 +175,7 @@ function ClientList({ onNavigate, onLogout }) {
                 onChange={(e) => setSearch(e.target.value)}
               />
               <button className="btn-secondary" onClick={exportClientsCsv}>
-                Exporter
+                {t('clientList.export')}
               </button>
               <button className="btn-primary" onClick={() => setModal({ mode: 'create' })}>
                 {t('clientList.newClient')}
@@ -186,11 +186,11 @@ function ClientList({ onNavigate, onLogout }) {
           {/* KYC Status filter */}
           <div className="kyc-filter-bar">
             {[
-              { value: 'all',        label: 'Tous' },
-              { value: 'en_attente', label: 'En attente' },
-              { value: 'valide',     label: 'Validé' },
-              { value: 'non_valide', label: 'Non valide' },
-              { value: 'none',       label: 'Aucun KYC' },
+              { value: 'all',        label: t('clientList.filter.all') },
+              { value: 'en_attente', label: t('clientList.filter.pending') },
+              { value: 'valide',     label: t('clientList.filter.validated') },
+              { value: 'non_valide', label: t('clientList.filter.invalid') },
+              { value: 'none',       label: t('clientList.filter.noKyc') },
             ].map((f) => (
               <button
                 key={f.value}
@@ -274,14 +274,14 @@ function ClientList({ onNavigate, onLogout }) {
                                       </div>
                                     ) : (
                                       <>
-                                        <button className="btn-action btn-edit" title="Modifier" onClick={() => setModal({ mode: 'edit', client })}>✏️</button>
-                                        <button className="btn-action btn-delete" title="Supprimer" onClick={() => setConfirmClient(client.id)}>🗑️</button>
+                                        <button className="btn-action btn-edit" title={t('common.edit')} onClick={() => setModal({ mode: 'edit', client })}>✏️</button>
+                                        <button className="btn-action btn-delete" title={t('common.delete')} onClick={() => setConfirmClient(client.id)}>🗑️</button>
                                       </>
                                     )}
                                   </>
                                 )}
                                 {client.kyc && (
-                                  <button className="btn-action btn-consulter" title="Consulter le dossier" onClick={() => setDossier({ clientId: client.id })}>📁</button>
+                                  <button className="btn-action btn-consulter" title={t('clientList.consultTooltip')} onClick={() => setDossier({ clientId: client.id })}>📁</button>
                                 )}
                               </div>
                             </td>

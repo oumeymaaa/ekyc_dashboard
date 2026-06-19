@@ -133,6 +133,8 @@ function Dashboard({ onNavigate, onLogout }) {
     reject_kyc:          { label: t('dashboard.activity.reject_kyc'),   color: '#ef4444', bg: '#fff5f5' },
     creation_client:     { color: '#3b82f6', bg: '#eff6ff' },
     modification_client: { color: '#8b5cf6', bg: '#f5f3ff' },
+    modification_profil: { color: '#f59e0b', bg: '#fffbeb' },
+    deletion_client:     { color: '#ef4444', bg: '#fef2f2' },
     kyc_valide:          { color: '#22c55e', bg: '#f0fdf4' },
     kyc_rejete:          { color: '#ef4444', bg: '#fff5f5' },
   }

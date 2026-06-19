@@ -157,7 +157,7 @@ function AdminDashboard({ onNavigate, onLogout }) {
         <main className="admin-main">
           <div className="admin-loading">
             <div className="admin-spinner" />
-            <p>Chargement de votre tableau de bord…</p>
+            <p>{t('dashboard.loadingDashboard')}</p>
           </div>
         </main>
       </div>
@@ -174,12 +174,12 @@ function AdminDashboard({ onNavigate, onLogout }) {
         {/* ═══ Header ═══ */}
         <div className="admin-header">
           <div className="admin-welcome">
-            <h1>Bonjour, <span>{user?.firstName}</span></h1>
-            <p>Voici un aperçu de votre activité et de vos statistiques</p>
+            <h1>{t('dashboard.greeting', { name: user?.firstName })}</h1>
+            <p>{t('dashboard.activityOverview')}</p>
           </div>
           <div className="admin-header-right">
             <div className="date">{dateStr}</div>
-            <div>Mis à jour à {timeStr}</div>
+            <div>{t('dashboard.updatedAt')} {timeStr}</div>
           </div>
         </div>
 
@@ -191,7 +191,7 @@ function AdminDashboard({ onNavigate, onLogout }) {
             </div>
             <div className="admin-today-body">
               <div className="admin-today-value">{today.newToday}</div>
-              <div className="admin-today-label">Nouveaux clients aujourd'hui</div>
+              <div className="admin-today-label">{t('dashboard.today.newClients')}</div>
             </div>
           </div>
           <div className="admin-today-card">
@@ -200,7 +200,7 @@ function AdminDashboard({ onNavigate, onLogout }) {
             </div>
             <div className="admin-today-body">
               <div className="admin-today-value">{today.validatedToday}</div>
-              <div className="admin-today-label">KYC validés aujourd'hui</div>
+              <div className="admin-today-label">{t('dashboard.today.kycValidated')}</div>
             </div>
           </div>
           <div className="admin-today-card">
@@ -209,7 +209,7 @@ function AdminDashboard({ onNavigate, onLogout }) {
             </div>
             <div className="admin-today-body">
               <div className="admin-today-value">{today.rejectedToday}</div>
-              <div className="admin-today-label">KYC rejetés aujourd'hui</div>
+              <div className="admin-today-label">{t('dashboard.today.kycRejected')}</div>
             </div>
           </div>
         </div>
@@ -220,7 +220,7 @@ function AdminDashboard({ onNavigate, onLogout }) {
             { icon: '👥', value: total, label: t('dashboard.kpi.totalClients'), color: '#6366f1', bg: '#eef2ff', delta: kpiStats?.totalClients.delta ?? 0, deltaLabel: kpiStats?.totalClients.deltaLabel },
             { icon: '✅', value: validated, label: t('dashboard.kpi.kycValidated'), color: '#22c55e', bg: '#f0fdf4', delta: kpiStats?.kycValidated.delta ?? 0, deltaLabel: kpiStats?.kycValidated.deltaLabel },
             { icon: '❌', value: rejected, label: t('dashboard.kpi.kycRejected'), color: '#ef4444', bg: '#fff5f5', delta: kpiStats?.kycRejected.delta ?? 0, deltaLabel: kpiStats?.kycRejected.deltaLabel },
-            { icon: '🎯', value: avgScore, label: t('dashboard.kpi.avgFacialScore'), color: '#8b5cf6', bg: '#f5f3ff', delta: kpiStats?.avgFacialScore.delta ?? 0, deltaLabel: kpiStats?.avgFacialScore.deltaLabel, suffix: '%' },
+            { icon: '🎯', value: avgScore, label: t('dashboard.kpi.avgFacialScore'), color: '#8b5cf6', bg: '#f5f3ff', delta: kpiStats?.avgFacialScore.delta ?? 0, deltaLabel: kpiStats?.avgFacialScore.deltaLabel },
           ].map((k) => (
             <div className="admin-kpi" key={k.label}>
               <div className="admin-kpi-top">
@@ -241,10 +241,10 @@ function AdminDashboard({ onNavigate, onLogout }) {
         {/* ═══ Secondary Metrics ═══ */}
         <div className="admin-metrics">
           {[
-            { icon: '📊', value: `${validationRate}%`, label: 'Taux validation', color: validated > rejected ? '#22c55e' : '#ef4444', bg: validated > rejected ? '#f0fdf4' : '#fff5f5' },
-            { icon: '⏳', value: pending, label: 'En attente', color: '#f59e0b', bg: '#fffbeb' },
-            { icon: '📅', value: thisMonthClients, label: 'Nouveaux (ce mois)', color: '#3b82f6', bg: '#eff6ff' },
-            { icon: '📈', value: `${conversionRate}%`, label: 'Complétion KYC', color: '#8b5cf6', bg: '#f5f3ff' },
+            { icon: '📊', value: `${validationRate}%`, label: t('dashboard.metrics.validationRate'), color: validated > rejected ? '#22c55e' : '#ef4444', bg: validated > rejected ? '#f0fdf4' : '#fff5f5' },
+            { icon: '⏳', value: pending, label: t('dashboard.metrics.pending'), color: '#f59e0b', bg: '#fffbeb' },
+            { icon: '📅', value: thisMonthClients, label: t('dashboard.metrics.newThisMonth'), color: '#3b82f6', bg: '#eff6ff' },
+            { icon: '📈', value: `${conversionRate}%`, label: t('dashboard.metrics.kycCompletion'), color: '#8b5cf6', bg: '#f5f3ff' },
           ].map((m) => (
             <div className="admin-metric" key={m.label}>
               <div className="admin-metric-icon" style={{ background: m.bg, color: m.color }}>{m.icon}</div>
@@ -260,16 +260,16 @@ function AdminDashboard({ onNavigate, onLogout }) {
         <div className="admin-mixed-row">
           <div className="admin-clients-card">
             <div className="admin-clients-header">
-              <h3>Derniers clients</h3>
-              <span className="badge">{recentClients.length} récents</span>
+              <h3>{t('dashboard.section.recentClients')}</h3>
+              {recentClients.length > 0 && <span className="badge">{recentClients.length}</span>}
             </div>
             <table className="admin-client-table">
               <thead>
-                <tr>
-                  <th>Client</th>
-                  <th>Email</th>
-                  <th>KYC</th>
-                </tr>
+                  <tr>
+                    <th>{t('dashboard.tableHeader.client')}</th>
+                    <th>{t('dashboard.tableHeader.email')}</th>
+                    <th>{t('dashboard.tableHeader.kyc')}</th>
+                  </tr>
               </thead>
               <tbody>
                 {recentClients.map(c => {
@@ -283,7 +283,7 @@ function AdminDashboard({ onNavigate, onLogout }) {
                   )
                 })}
                 {recentClients.length === 0 && (
-                  <tr><td colSpan={3} style={{ textAlign: 'center', color: '#9ca3af', padding: '24px 0' }}>Aucun client pour le moment</td></tr>
+                  <tr><td colSpan={3} style={{ textAlign: 'center', color: '#9ca3af', padding: '24px 0' }}>{t('dashboard.empty.noClients')}</td></tr>
                 )}
               </tbody>
             </table>
@@ -291,21 +291,21 @@ function AdminDashboard({ onNavigate, onLogout }) {
 
           <div className="admin-pending-card">
             <div className="admin-pending-header">
-              <h3>Dossiers en attente</h3>
-              <span className="admin-chart-badge">{pending} total</span>
+              <h3>{t('dashboard.section.pendingFiles')}</h3>
+              <span className="admin-chart-badge">{pending} {t('dashboard.total')}</span>
             </div>
             <div className="admin-pending-big">{pending}</div>
-            <p className="admin-pending-sub">clients en attente de validation KYC</p>
+            <p className="admin-pending-sub">{t('dashboard.pendingSubtitle')}</p>
             <ul className="admin-pending-list">
               {pendingClients.length === 0 && (
-                <li style={{ color: '#9ca3af', textAlign: 'center', padding: '16px 0', fontSize: 13 }}>Aucun dossier en attente</li>
+                <li style={{ color: '#9ca3af', textAlign: 'center', padding: '16px 0', fontSize: 13 }}>{t('dashboard.empty.noPending')}</li>
               )}
               {pendingClients.map(c => (
                 <li key={c.id} className="admin-pending-item">
                   <span className="admin-pending-item-name">{c.firstName} {c.lastName}</span>
-                  <span className="admin-pending-item-link" onClick={() => onNavigate && onNavigate('clients')}>
-                    Voir →
-                  </span>
+                    <span className="admin-pending-item-link" onClick={() => onNavigate && onNavigate('clients')}>
+                      {t('dashboard.viewLink')} →
+                    </span>
                 </li>
               ))}
             </ul>

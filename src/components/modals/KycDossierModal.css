@@ -125,11 +125,18 @@
 
 .img-block img {
   width: 100%;
-  height: 500px; /* 🔥 BIG KYC VIEW */
+  height: 500px;
   object-fit: contain;
-  background: #0f172a;
+  background: #f1f5f9;
   border-radius: 10px;
   cursor: zoom-in;
+}
+
+.img-block img.img-error {
+  object-fit: none;
+  padding: 40px;
+  background: #f1f5f9;
+  cursor: default;
 }
 
 /* ───────────────── ACTIONS ───────────────── */
@@ -358,6 +365,51 @@
 }
 
 /* ================= RESPONSIVE ================= */
+/* ================= REJECT FORM ================= */
+.reject-form {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 14px;
+  padding: 1.2rem;
+  margin-top: 24px;
+}
+
+.reject-form h4 {
+  margin: 0 0 0.75rem;
+  font-size: 0.95rem;
+  color: #991b1b;
+}
+
+.reject-reason-label {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0;
+  font-size: 0.95rem;
+  cursor: pointer;
+  color: #1e293b;
+}
+
+.reject-reason-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #ef4444;
+}
+
+.reject-form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 1rem;
+}
+
+.cancel-btn {
+  background: #64748b !important;
+}
+
+.cancel-btn:hover {
+  background: #475569 !important;
+}
+
 @media (max-width: 768px) {
   .kyc-grid {
     grid-template-columns: 1fr;

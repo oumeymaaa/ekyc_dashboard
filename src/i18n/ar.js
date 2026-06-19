@@ -26,6 +26,12 @@ const ar = {
     settings: 'الإعدادات',
     ekyc: 'eKYC',
     logout: 'تسجيل الخروج',
+    role: {
+      admin: 'مشرف',
+      super_admin: 'مشرف عام',
+    },
+    logoAlt: 'الشعار',
+    fallbackOrgName: 'مشرف',
   },
 
   login: {
@@ -81,7 +87,11 @@ const ar = {
     title: 'لوحة التحكم',
     subtitle: 'نظرة عامة',
     updatedOn: 'تحديث {{date}}',
+    updatedAt: 'آخر تحديث',
     loading: 'جارٍ تحميل الإحصائيات...',
+    loadingDashboard: 'جارٍ تحميل لوحة التحكم…',
+    greeting: 'مرحباً، {{name}}',
+    activityOverview: 'نظرة عامة على نشاطك وإحصائياتك',
     vsPreviousMonth: 'مقارنة بالشهر الماضي',
     total: 'الإجمالي',
     kpi: {
@@ -90,6 +100,32 @@ const ar = {
       kycRejected: 'KYC مرفوض',
       avgFacialScore: 'متوسط نقاط التعرف',
     },
+    today: {
+      newClients: 'عملاء جدد اليوم',
+      kycValidated: 'KYC معتمد اليوم',
+      kycRejected: 'KYC مرفوض اليوم',
+    },
+    metrics: {
+      validationRate: 'نسبة التحقق',
+      pending: 'قيد الانتظار',
+      newThisMonth: 'جدد (هذا الشهر)',
+      kycCompletion: 'إنجاز KYC',
+    },
+    section: {
+      recentClients: 'آخر العملاء',
+      pendingFiles: 'الملفات قيد الانتظار',
+    },
+    tableHeader: {
+      client: 'العميل',
+      email: 'البريد الإلكتروني',
+      kyc: 'KYC',
+    },
+    empty: {
+      noClients: 'لا يوجد عملاء بعد',
+      noPending: 'لا توجد ملفات قيد الانتظار',
+    },
+    viewLink: 'عرض',
+    pendingSubtitle: 'عملاء في انتظار التحقق KYC',
     charts: {
       clientEvolution: 'تطور العملاء وKYC',
       last6Months: 'آخر 4 أشهر',
@@ -104,6 +140,8 @@ const ar = {
       rejected: 'مرفوض',
     },
     activity: {
+      title: 'النشاطات',
+      subtitle: 'جميع الإجراءات التي قام بها المشرفون',
       create: 'إنشاء عميل',
       update: 'تعديل عميل',
       validate_kyc: 'KYC معتمد',
@@ -234,10 +272,23 @@ const ar = {
     },
     empty: 'لم يتم العثور على عميل.',
     consultFile: '🔍 عرض الملف',
+    consultTooltip: 'عرض الملف',
+    export: 'تصدير',
+    filter: {
+      all: 'الكل',
+      pending: 'قيد الانتظار',
+      validated: 'صالح',
+      invalid: 'غير صالح',
+      noKyc: 'لا يوجد KYC',
+    },
     loadError: 'خطأ أثناء تحميل العملاء.',
     toast: {
       created: 'تم إنشاء العميل بنجاح.',
       createError: 'خطأ أثناء إنشاء العميل.',
+      updated: 'تم تعديل العميل بنجاح.',
+      updateError: 'خطأ أثناء تعديل العميل.',
+      deleted: 'تم حذف العميل بنجاح.',
+      deleteError: 'خطأ أثناء حذف العميل.',
       statusUpdated: 'تم تحديث الحالة بنجاح.',
     },
     pagination: {
@@ -364,7 +415,19 @@ const ar = {
     identityComparison: '🧠 مقارنة الهوية',
     cinDocument: 'وثيقة بطاقة الهوية',
     selfie: 'صورة شخصية',
+    faceDetected: 'الوجه المكتشف',
+    noCinImage: 'لا توجد صورة بطاقة',
+    noSelfieImage: 'لا توجد صورة شخصية',
+    noFaceDetected: 'لم يتم اكتشاف وجه',
     faceMatch: 'مطابقة الوجه',
+    history: 'السجل ({{count}})',
+    empty: 'لم يتم العثور على ملف KYC لهذا العميل.',
+    status: {
+      archivedRejected: 'مرفوض (مؤرشف)',
+      valid: 'صالح',
+      invalid: 'غير صالح',
+      pending: 'قيد الانتظار',
+    },
     approve: 'قبول',
     reject: 'رفض',
     approved: '✅ تمت الموافقة',
@@ -375,6 +438,8 @@ const ar = {
     birth: 'تاريخ الميلاد',
     place: 'مكان الميلاد',
     address: 'العنوان',
+    rejectReason: 'سبب الرفض (واحد على الأقل):',
+    confirmReject: 'تأكيد الرفض',
   },
 
   adminDetailModal: {
@@ -433,6 +498,19 @@ const ar = {
       medium: 'متوسط',
       good: 'جيد',
       strong: 'قوي',
+    },
+  },
+
+  activities: {
+    count: '{{count}} إجراء',
+    refresh: 'تحديث',
+    empty: 'لا توجد نشاطات بعد',
+    unknownAdmin: 'غير معروف',
+    table: {
+      admin: 'المشرف',
+      action: 'الإجراء',
+      target: 'الهدف',
+      date: 'التاريخ',
     },
   },
 

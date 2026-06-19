@@ -13,24 +13,27 @@ const imgUrl = (path) => {
   return `${API_BASE}${path.startsWith('/') ? '' : '/'}${path}`
 }
 
-const statusLabel = (status, deletedAt) => {
-  if (deletedAt) return { label: 'Rejeté (archivé)', cls: 'non-valide' }
+const statusLabel = (status, deletedAt, t) => {
+  if (deletedAt) return { label: t('kycDossierModal.status.archivedRejected'), cls: 'non-valide' }
   switch (status) {
-    case 'valide':     return { label: 'Valide',      cls: 'valide' }
-    case 'non_valide': return { label: 'Non valide',  cls: 'non-valide' }
-    case 'en_attente': return { label: 'En attente',  cls: 'en-attente' }
-    default:           return { label: status,        cls: 'unknown' }
+    case 'valide':     return { label: t('kycDossierModal.status.valid'),   cls: 'valide' }
+    case 'non_valide': return { label: t('kycDossierModal.status.invalid'), cls: 'non-valide' }
+    case 'en_attente': return { label: t('kycDossierModal.status.pending'), cls: 'en-attente' }
+    default:           return { label: status,                              cls: 'unknown' }
   }
 }
 
 function KycDossierModal({ clientId, onClose, onUpdated }) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const [records, setRecords]     = useState([])
   const [selectedIdx, setSelectedIdx] = useState(0)
   const [loading, setLoading]     = useState(true)
   const [error, setError]         = useState('')
   const [updating, setUpdating]   = useState(false)
   const [zoomImage, setZoomImage] = useState(null)
+  const [brokenImages, setBrokenImages] = useState({})
+  const [showRejectForm, setShowRejectForm] = useState(false)
+  const [rejectReasons, setRejectReasons] = useState([])
 
   useEffect(() => {
     fetchHistory()
@@ -52,20 +55,36 @@ function KycDossierModal({ clientId, onClose, onUpdated }) {
 
   const record = records[selectedIdx] ?? null
   const { label: statusText, cls: statusCls } = record
-    ? statusLabel(record.status, record.deletedAt)
+    ? statusLabel(record.status, record.deletedAt, t)
     : { label: '', cls: '' }
 
-  const handleStatusChange = async (status) => {
+  const handleImgError = (key) => setBrokenImages((prev) => ({ ...prev, [key]: true }))
+
+  const handleStatusChange = async (status, reasons) => {
     try {
       setUpdating(true)
-      await updateKycStatus(record.id, status)
+      await updateKycStatus(record.id, status, reasons)
       await fetchHistory()
       onUpdated?.()
+      setShowRejectForm(false)
+      setRejectReasons([])
     } catch (err) {
       setError(err.message)
     } finally {
       setUpdating(false)
     }
+  }
+
+  const REJECTION_REASONS = [
+    { key: 'donnees_errones', label: "Données erronées" },
+    { key: 'selfie_non_conforme', label: 'Selfie non conforme' },
+    { key: 'document_flou', label: 'Document flou' },
+  ]
+
+  const toggleReason = (key) => {
+    setRejectReasons((prev) =>
+      prev.includes(key) ? prev.filter((r) => r !== key) : [...prev, key]
+    )
   }
 
   return (
@@ -86,7 +105,7 @@ function KycDossierModal({ clientId, onClose, onUpdated }) {
             {error   && <div className="kyc-error">{error}</div>}
 
             {!loading && records.length === 0 && (
-              <div className="kyc-state">Aucun dossier KYC trouvé pour ce client.</div>
+              <div className="kyc-state">{t('kycDossierModal.empty')}</div>
             )}
 
             {record && (
@@ -94,10 +113,10 @@ function KycDossierModal({ clientId, onClose, onUpdated }) {
                 {/* ─── HISTORY SIDEBAR ─── */}
                 {records.length > 1 && (
                   <aside className="kyc-history-sidebar">
-                    <h4>Historique ({records.length})</h4>
+                    <h4>{t('kycDossierModal.history', { count: records.length })}</h4>
                     <ul>
                       {records.map((r, i) => {
-                        const { label, cls } = statusLabel(r.status, r.deletedAt)
+                        const { label, cls } = statusLabel(r.status, r.deletedAt, t)
                         return (
                           <li
                             key={r.id}
@@ -108,7 +127,7 @@ function KycDossierModal({ clientId, onClose, onUpdated }) {
                             <div>
                               <div className="history-status">{label}</div>
                               <div className="history-date">
-                                {new Date(r.createdAt).toLocaleDateString('fr-FR')}
+                                {new Date(r.createdAt).toLocaleDateString(i18n.language === 'ar' ? 'ar-TN' : i18n.language === 'en' ? 'en-GB' : 'fr-FR')}
                               </div>
                             </div>
                           </li>
@@ -124,7 +143,7 @@ function KycDossierModal({ clientId, onClose, onUpdated }) {
                     <div>
                       <span className={`kyc-status-badge ${statusCls}`}>{statusText}</span>
                       <span className="kyc-date">
-                        {new Date(record.createdAt).toLocaleDateString('fr-FR')}
+                        {new Date(record.createdAt).toLocaleDateString(i18n.language === 'ar' ? 'ar-TN' : i18n.language === 'en' ? 'en-GB' : 'fr-FR')}
                       </span>
                     </div>
                   </div>
@@ -172,41 +191,73 @@ function KycDossierModal({ clientId, onClose, onUpdated }) {
                     <div className="card image-card">
                     <h4>{t('kycDossierModal.identityComparison')}</h4>
                       <div className="img-block">
-                        <div className="img-title">CIN Document</div>
-                        {imgUrl(record.cinImageUrl) ? (
-                          <img src={imgUrl(record.cinImageUrl)} onClick={() => setZoomImage(imgUrl(record.cinImageUrl))} />
+                        <div className="img-title">{t('kycDossierModal.cinDocument')}</div>
+                        {imgUrl(record.cinImageUrl) && !brokenImages.cin ? (
+                          <img src={imgUrl(record.cinImageUrl)} className={brokenImages.cin ? 'img-error' : ''} onError={() => handleImgError('cin')} onClick={() => setZoomImage(imgUrl(record.cinImageUrl))} />
                         ) : (
-                          <div className="no-img-block">Aucune image CIN</div>
+                          <div className="no-img-block">{t('kycDossierModal.noCinImage')}</div>
                         )}
                       </div>
                       <div className="img-block">
-                        <div className="img-title">Selfie</div>
-                        {imgUrl(record.selfieImageUrl) ? (
-                          <img src={imgUrl(record.selfieImageUrl)} onClick={() => setZoomImage(imgUrl(record.selfieImageUrl))} />
+                        <div className="img-title">{t('kycDossierModal.selfie')}</div>
+                        {imgUrl(record.selfieImageUrl) && !brokenImages.selfie ? (
+                          <img src={imgUrl(record.selfieImageUrl)} className={brokenImages.selfie ? 'img-error' : ''} onError={() => handleImgError('selfie')} onClick={() => setZoomImage(imgUrl(record.selfieImageUrl))} />
                         ) : (
-                          <div className="no-img-block">Aucune image selfie</div>
+                          <div className="no-img-block">{t('kycDossierModal.noSelfieImage')}</div>
                         )}
                       </div>
                       <div className="img-block">
-                        <div className="img-title">Visage détecté</div>
-                        {imgUrl(record.faceImageUrl) ? (
-                          <img src={imgUrl(record.faceImageUrl)} onClick={() => setZoomImage(imgUrl(record.faceImageUrl))} />
+                        <div className="img-title">{t('kycDossierModal.faceDetected')}</div>
+                        {imgUrl(record.faceImageUrl) && !brokenImages.face ? (
+                          <img src={imgUrl(record.faceImageUrl)} className={brokenImages.face ? 'img-error' : ''} onError={() => handleImgError('face')} onClick={() => setZoomImage(imgUrl(record.faceImageUrl))} />
                         ) : (
-                          <div className="no-img-block">Aucun visage détecté</div>
+                          <div className="no-img-block">{t('kycDossierModal.noFaceDetected')}</div>
                         )}
                       </div>
                     </div>
                   </div>
 
                   {/* Actions */}
-                  {record.status === 'en_attente' && !record.deletedAt && (
+                  {record.status === 'en_attente' && !record.deletedAt && !showRejectForm && (
                     <div className="actions">
                       <button className="approve-btn" disabled={updating} onClick={() => handleStatusChange('valide')}>
-                        Approuver
+                        {t('kycDossierModal.approve')}
                       </button>
-                      <button className="reject-btn" disabled={updating} onClick={() => handleStatusChange('non_valide')}>
-                        Rejeter
+                      <button className="reject-btn" disabled={updating} onClick={() => setShowRejectForm(true)}>
+                        {t('kycDossierModal.reject')}
                       </button>
+                    </div>
+                  )}
+
+                  {showRejectForm && (
+                    <div className="reject-form">
+                      <h4>{t('kycDossierModal.rejectReason')}</h4>
+                      {REJECTION_REASONS.map((r) => (
+                        <label key={r.key} className="reject-reason-label">
+                          <input
+                            type="checkbox"
+                            checked={rejectReasons.includes(r.key)}
+                            onChange={() => toggleReason(r.key)}
+                          />
+                          {r.label}
+                        </label>
+                      ))}
+                      <div className="reject-form-actions">
+                        <button
+                          className="approve-btn"
+                          disabled={updating || rejectReasons.length === 0}
+                          onClick={() => handleStatusChange('non_valide', rejectReasons)}
+                        >
+                          {t('kycDossierModal.confirmReject')}
+                        </button>
+                        <button
+                          className="reject-btn cancel-btn"
+                          disabled={updating}
+                          onClick={() => { setShowRejectForm(false); setRejectReasons([]) }}
+                        >
+                          {t('common.cancel')}
+                        </button>
+                      </div>
                     </div>
                   )}
                   {record.status === 'valide' && (

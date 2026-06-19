@@ -26,6 +26,12 @@ const en = {
     settings: 'Settings',
     ekyc: 'eKYC',
     logout: 'Logout',
+    role: {
+      admin: 'Admin',
+      super_admin: 'Super Admin',
+    },
+    logoAlt: 'Logo',
+    fallbackOrgName: 'Admin',
   },
 
   login: {
@@ -81,7 +87,11 @@ const en = {
     title: 'Dashboard',
     subtitle: 'Overview',
     updatedOn: 'updated {{date}}',
+    updatedAt: 'Updated at',
     loading: 'Loading statistics...',
+    loadingDashboard: 'Loading your dashboard…',
+    greeting: 'Hello, {{name}}',
+    activityOverview: 'Here is an overview of your activity and statistics',
     vsPreviousMonth: 'vs last month',
     total: 'total',
     kpi: {
@@ -90,6 +100,32 @@ const en = {
       kycRejected: 'KYC rejected',
       avgFacialScore: 'Average facial score',
     },
+    today: {
+      newClients: 'New clients today',
+      kycValidated: 'KYC validated today',
+      kycRejected: 'KYC rejected today',
+    },
+    metrics: {
+      validationRate: 'Validation rate',
+      pending: 'Pending',
+      newThisMonth: 'New (this month)',
+      kycCompletion: 'KYC completion',
+    },
+    section: {
+      recentClients: 'Recent clients',
+      pendingFiles: 'Pending files',
+    },
+    tableHeader: {
+      client: 'Client',
+      email: 'Email',
+      kyc: 'KYC',
+    },
+    empty: {
+      noClients: 'No clients yet',
+      noPending: 'No pending files',
+    },
+    viewLink: 'View',
+    pendingSubtitle: 'clients awaiting KYC validation',
     charts: {
       clientEvolution: 'Client & KYC Evolution',
       last6Months: 'Last 4 months',
@@ -104,6 +140,8 @@ const en = {
       rejected: 'Rejected',
     },
     activity: {
+      title: 'Activities',
+      subtitle: 'All actions performed by administrators',
       create: 'Client created',
       update: 'Client updated',
       validate_kyc: 'KYC validated',
@@ -234,10 +272,23 @@ const en = {
     },
     empty: 'No client found.',
     consultFile: '🔍 View file',
+    consultTooltip: 'View file',
+    export: 'Export',
+    filter: {
+      all: 'All',
+      pending: 'Pending',
+      validated: 'Validated',
+      invalid: 'Invalid',
+      noKyc: 'No KYC',
+    },
     loadError: 'Error loading clients.',
     toast: {
       created: 'Client created successfully.',
       createError: 'Error while creating the client.',
+      updated: 'Client updated successfully.',
+      updateError: 'Error while updating the client.',
+      deleted: 'Client deleted successfully.',
+      deleteError: 'Error while deleting the client.',
       statusUpdated: 'Status updated successfully.',
     },
     pagination: {
@@ -364,7 +415,19 @@ const en = {
     identityComparison: '🧠 Identity Comparison',
     cinDocument: 'CIN Document',
     selfie: 'Selfie',
+    faceDetected: 'Detected face',
+    noCinImage: 'No CIN image',
+    noSelfieImage: 'No selfie image',
+    noFaceDetected: 'No face detected',
     faceMatch: 'Face Match',
+    history: 'History ({{count}})',
+    empty: 'No KYC file found for this client.',
+    status: {
+      archivedRejected: 'Rejected (archived)',
+      valid: 'Valid',
+      invalid: 'Invalid',
+      pending: 'Pending',
+    },
     approve: 'Approve',
     reject: 'Reject',
     approved: '✅ Approved',
@@ -375,6 +438,8 @@ const en = {
     birth: 'Birth',
     place: 'Place',
     address: 'Address',
+    rejectReason: 'Rejection reason (at least 1):',
+    confirmReject: 'Confirm rejection',
   },
 
   adminDetailModal: {
@@ -433,6 +498,19 @@ const en = {
       medium: 'Medium',
       good: 'Good',
       strong: 'Strong',
+    },
+  },
+
+  activities: {
+    count: '{{count}} actions',
+    refresh: 'Refresh',
+    empty: 'No activity yet',
+    unknownAdmin: 'Unknown',
+    table: {
+      admin: 'Admin',
+      action: 'Action',
+      target: 'Target',
+      date: 'Date',
     },
   },
 
