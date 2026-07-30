@@ -93,18 +93,20 @@ function AdminDashboard({ onNavigate, onLogout }) {
     }).slice(0, 5)
   }, [clients])
 
-  const total    = kpiStats?.totalClients.value   ?? 0
-  const validated = kpiStats?.kycValidated.value  ?? 0
-  const rejected  = kpiStats?.kycRejected.value   ?? 0
-  const pending   = (kycDistData?.pending?.count   ?? 0)
-  const avgScore  = kpiStats?.avgFacialScore.value ?? 0
+  const total      = kpiStats?.totalClients.value   ?? 0
+  const totalAll   = kpiStats?.totalClientsAll      ?? 0
+  const validated  = kpiStats?.kycValidated.value  ?? 0
+  const rejected   = kpiStats?.kycRejected.value   ?? 0
+  const pending    = (kycDistData?.pending?.count   ?? 0)
+  const avgScore   = kpiStats?.avgFacialScore.value ?? 0
 
   const validationRate = (validated + rejected) > 0
     ? Math.round((validated / (validated + rejected)) * 100)
     : 0
 
-  const conversionRate = total > 0
-    ? Math.round(((validated + rejected) / total) * 100)
+  const completedKyc = (kycDistData?.valid?.count ?? 0) + (kycDistData?.invalid?.count ?? 0)
+  const conversionRate = totalAll > 0
+    ? Math.round((completedKyc / totalAll) * 100)
     : 0
 
   const evo = evolutionData ?? []

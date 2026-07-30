@@ -64,8 +64,12 @@ function AdminList({ onNavigate, onViewStats, onLogout }) {
   const handleCreate = async (formData) => {
     try {
       await createAdmin(formData)
-      const updated = await getAdmins()
-      setAdmins(updated)
+      const [adminsData, orgsData] = await Promise.all([
+        getAdmins(),
+        getOrganisations().catch(() => []),
+      ])
+      setAdmins(adminsData)
+      setOrgsNoAdmin((Array.isArray(orgsData) ? orgsData : []).filter((o) => !o.admin))
       setModal(null)
       showToast(t('adminList.toast.created'))
     } catch (err) {
@@ -91,7 +95,12 @@ function AdminList({ onNavigate, onViewStats, onLogout }) {
     setBusyId(id)
     try {
       await deleteAdmin(id)
-      setAdmins((prev) => prev.filter((a) => a.id !== id))
+      const [adminsData, orgsData] = await Promise.all([
+        getAdmins(),
+        getOrganisations().catch(() => []),
+      ])
+      setAdmins(adminsData)
+      setOrgsNoAdmin((Array.isArray(orgsData) ? orgsData : []).filter((o) => !o.admin))
       showToast(t('adminList.toast.deleted'))
     } catch (err) {
       showToast(err.message || t('adminList.toast.deleteError'), 'error')

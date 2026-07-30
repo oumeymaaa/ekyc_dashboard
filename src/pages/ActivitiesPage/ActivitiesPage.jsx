@@ -1,8 +1,11 @@
-import { useEffect, useState, useRef, useCallback } from 'react'
+import { useEffect, useState, useRef, useCallback, useMemo } from 'react'
+const PAGE_SIZE = 10
 import { useTranslation } from 'react-i18next'
 import Sidebar from '../../components/ui/Sidebar/Sidebar'
 import { getActivity } from '../../services/dashboard.service'
 import './ActivitiesPage.css'
+
+const ACTIONS = ['creation_client', 'modification_client', 'modification_profil', 'deletion_client', 'kyc_valide', 'kyc_rejete']
 
 const ACTION_META = {
   creation_client:     { color: '#3b82f6', bg: '#eff6ff' },
@@ -16,6 +19,8 @@ const ACTION_META = {
 function ActivitiesPage({ onNavigate, onLogout }) {
   const { t, i18n } = useTranslation()
   const [activities, setActivities] = useState([])
+  const [filterAction, setFilterAction] = useState('all')
+  const [page, setPage] = useState(0)
   const [loading, setLoading] = useState(true)
   const intervalRef = useRef(null)
 
@@ -38,6 +43,22 @@ function ActivitiesPage({ onNavigate, onLogout }) {
     return () => window.removeEventListener('focus', onFocus)
   }, [fetchActivities])
 
+  const filtered = useMemo(() => {
+    const f = filterAction === 'all' ? activities : activities.filter(a => a.action === filterAction)
+    return f
+  }, [activities, filterAction])
+
+  const totalPages = useMemo(() => {
+    const n = Math.ceil(filtered.length / PAGE_SIZE)
+    return n || 1
+  }, [filtered])
+
+  const paginated = useMemo(() =>
+    filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE),
+  [filtered, page])
+
+  useEffect(() => { setPage(0) }, [filterAction])
+
   const locale = i18n.language === 'ar' ? 'ar-TN' : i18n.language === 'en' ? 'en-GB' : 'fr-FR'
   const dir = i18n.language === 'ar' ? 'rtl' : 'ltr'
 
@@ -53,15 +74,31 @@ function ActivitiesPage({ onNavigate, onLogout }) {
           </div>
           <div className="ap-header-actions">
             <span className="ap-total">{t('activities.count', { count: activities.length })}</span>
-            <button className="ap-refresh-btn" onClick={fetchActivities} title={t('activities.refresh')}>
-              ↻
-            </button>
           </div>
+        </div>
+
+        <div className="ap-filter-row">
+          {ACTIONS.map(action => (
+            <button
+              key={action}
+              className={`ap-filter-btn${filterAction === action ? ' active' : ''}`}
+              style={filterAction === action ? { color: ACTION_META[action].color, background: ACTION_META[action].bg, borderColor: ACTION_META[action].color } : {}}
+              onClick={() => setFilterAction(action)}
+            >
+              {t(`activities.actions.${action}`)}
+            </button>
+          ))}
+          <button
+            className={`ap-filter-btn${filterAction === 'all' ? ' active' : ''}`}
+            onClick={() => setFilterAction('all')}
+          >
+            {t('activities.all')}
+          </button>
         </div>
 
         {loading ? (
           <div className="ap-loading">{t('common.loading')}</div>
-        ) : activities.length === 0 ? (
+        ) : filtered.length === 0 ? (
           <div className="ap-empty">{t('activities.empty')}</div>
         ) : (
           <div className="ap-table-wrap">
@@ -75,7 +112,7 @@ function ActivitiesPage({ onNavigate, onLogout }) {
                   </tr>
               </thead>
               <tbody>
-                {activities.map((item) => {
+                {paginated.map((item) => {
                   const meta = ACTION_META[item.action] ?? { color: '#6b7280', bg: '#f3f4f6' }
                   const ts = new Date(item.performedAt)
                   return (
@@ -99,6 +136,13 @@ function ActivitiesPage({ onNavigate, onLogout }) {
                 })}
               </tbody>
             </table>
+            {totalPages > 1 && (
+              <div className="ap-pagination">
+                <button disabled={page === 0} onClick={() => setPage(p => p - 1)}>‹</button>
+                <span className="ap-page-info">{page + 1} / {totalPages}</span>
+                <button disabled={page >= totalPages - 1} onClick={() => setPage(p => p + 1)}>›</button>
+              </div>
+            )}
           </div>
         )}
       </main>

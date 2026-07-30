@@ -56,7 +56,6 @@ export async function createClient(form) {
       last_name: form.lastName,
       email: form.email,
       phone: form.phone,
-      send_via: form.sendVia,
     }),
   })
   const data = await res.json()
@@ -107,4 +106,12 @@ export async function exportClientsCsv() {
   a.click()
   document.body.removeChild(a)
   URL.revokeObjectURL(url)
+}
+
+export async function getNotificationLogs(clientId) {
+  const res = await fetch(`${API_URL}/notification-logs/client/${clientId}`, {
+    headers: getHeaders(),
+  })
+  if (!res.ok) throw new Error('Erreur lors du chargement des notifications.')
+  return res.json()
 }

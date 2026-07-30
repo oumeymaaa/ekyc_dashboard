@@ -23,6 +23,7 @@ const ar = {
     admins: 'المشرفون',
     organisations: 'المنظمات',
     activities: 'النشاطات',
+    consents: 'الموافقات',
     settings: 'الإعدادات',
     ekyc: 'eKYC',
     logout: 'تسجيل الخروج',
@@ -238,8 +239,7 @@ const ar = {
     lastName: 'اللقب',
     email: 'البريد الإلكتروني',
     phone: 'الهاتف',
-    sendVia: 'إرسال الرمز عبر',
-    infoBanner: 'سيتم إرسال رمز وصول مُنشأ تلقائيًا إلى العميل عبر القناة المحددة.',
+    infoBanner: 'سيتم إرسال رمز وصول مُنشأ تلقائيًا إلى العميل عبر البريد الإلكتروني.',
     btnCreate: 'إنشاء وإرسال',
     btnSave: 'حفظ',
     btnCreating: 'جارٍ الإنشاء...',
@@ -443,6 +443,9 @@ const ar = {
     address: 'العنوان',
     rejectReason: 'سبب الرفض (واحد على الأقل):',
     confirmReject: 'تأكيد الرفض',
+    coherence: 'تناسق البيانات',
+    firstName: 'الاسم',
+    lastName: 'اللقب',
   },
 
   adminDetailModal: {
@@ -505,10 +508,19 @@ const ar = {
   },
 
   activities: {
+    all: 'الكل',
     count: '{{count}} إجراء',
     refresh: 'تحديث',
     empty: 'لا توجد نشاطات بعد',
     unknownAdmin: 'غير معروف',
+    actions: {
+      creation_client: 'إنشاء عميل',
+      modification_client: 'تعديل عميل',
+      modification_profil: 'تعديل الملف',
+      deletion_client: 'حذف عميل',
+      kyc_valide: 'KYC مقبول',
+      kyc_rejete: 'KYC مرفوض',
+    },
     table: {
       admin: 'المشرف',
       action: 'الإجراء',
@@ -551,6 +563,22 @@ const ar = {
     fetchClientsFailed: 'خطأ أثناء تحميل العملاء.',
     createClientFailed: 'خطأ أثناء إنشاء العميل.',
     httpError: 'خطأ {{status}}.',
+  },
+
+  consentList: {
+    title: 'الموافقات',
+    subtitle: 'سجل موافقات العملاء',
+    filterAll: 'الكل',
+    filterAccepted: 'مقبول',
+    filterWithdrawn: 'مرفوض',
+    empty: 'لم يتم تسجيل أي موافقات.',
+    noMatch: 'لا توجد موافقات لهذه الحالة.',
+    client: 'العميل',
+    email: 'البريد الإلكتروني',
+    status: 'الحالة',
+    ip: 'عنوان IP',
+    date: 'التاريخ',
+    exportCsv: 'استخراج CSV',
   },
 
   activation: {

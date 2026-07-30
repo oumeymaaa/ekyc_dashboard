@@ -23,6 +23,7 @@ const fr = {
     admins: 'Admins',
     organisations: 'Organisations',
     activities: 'Activités',
+    consents: 'Consentements',
     settings: 'Paramètres',
     ekyc: 'eKYC',
     logout: 'Déconnexion',
@@ -238,8 +239,7 @@ const fr = {
     lastName: 'Nom',
     email: 'Email',
     phone: 'Téléphone',
-    sendVia: 'Envoyer le code via',
-    infoBanner: 'Un code d\'accès généré automatiquement sera envoyé au client via le canal sélectionné.',
+    infoBanner: 'Un code d\'accès généré automatiquement sera envoyé par email au client.',
     btnCreate: 'Créer et envoyer',
     btnSave: 'Enregistrer',
     btnCreating: 'Création...',
@@ -443,6 +443,9 @@ const fr = {
     address: 'Adresse',
     rejectReason: 'Motif du rejet (au moins 1) :',
     confirmReject: 'Confirmer le rejet',
+    coherence: 'Cohérence des données',
+    firstName: 'Prénom',
+    lastName: 'Nom',
   },
 
   adminDetailModal: {
@@ -505,10 +508,19 @@ const fr = {
   },
 
   activities: {
+    all: 'Toutes',
     count: '{{count}} actions',
     refresh: 'Rafraîchir',
     empty: 'Aucune activité pour le moment',
     unknownAdmin: 'Inconnu',
+    actions: {
+      creation_client: 'Création client',
+      modification_client: 'Modification client',
+      modification_profil: 'Modification profil',
+      deletion_client: 'Suppression client',
+      kyc_valide: 'KYC valide',
+      kyc_rejete: 'KYC rejeté',
+    },
     table: {
       admin: 'Admin',
       action: 'Action',
@@ -551,6 +563,22 @@ const fr = {
     fetchClientsFailed: 'Erreur lors du chargement des clients.',
     createClientFailed: 'Erreur lors de la création du client.',
     httpError: 'Erreur {{status}}.',
+  },
+
+  consentList: {
+    title: 'Consentements',
+    subtitle: 'Historique des consentements clients',
+    filterAll: 'Tous',
+    filterAccepted: 'Accepté',
+    filterWithdrawn: 'Rejeté',
+    empty: 'Aucun consentement enregistré.',
+    noMatch: 'Aucun consentement pour ce statut.',
+    client: 'Client',
+    email: 'Email',
+    status: 'Statut',
+    ip: 'Adresse IP',
+    date: 'Date',
+    exportCsv: 'Export CSV',
   },
 
   activation: {

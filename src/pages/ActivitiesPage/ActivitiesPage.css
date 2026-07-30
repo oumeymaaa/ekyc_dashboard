@@ -32,6 +32,34 @@
   margin: 0;
 }
 
+.ap-filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.ap-filter-btn {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all .15s;
+}
+
+.ap-filter-btn:hover {
+  border-color: #9ca3af;
+  background: #f9fafb;
+}
+
+.ap-filter-btn.active {
+  border-color: currentColor;
+}
+
 .ap-total {
   font-size: 13px;
   font-weight: 600;
@@ -130,6 +158,59 @@
   margin-left: 8px;
   font-size: 11px;
   color: #9ca3af;
+}
+
+.ap-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  padding: 20px 0 16px;
+}
+
+.ap-pagination button {
+  min-width: 36px;
+  height: 36px;
+  border: 1px solid #e2e4e9;
+  border-radius: 8px;
+  background: #fff;
+  color: #6b7280;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 2px rgba(0,0,0,.03);
+}
+
+.ap-pagination button:hover:not(:disabled):not(.active) {
+  border-color: #c7c9d1;
+  background: #f8f9ff;
+  color: #4f46e5;
+}
+
+.ap-pagination button.active {
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  border-color: transparent;
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(99,102,241,.35);
+}
+
+.ap-pagination button:disabled {
+  opacity: .3;
+  cursor: default;
+  border-color: #f0f0f2;
+  background: #fafafa;
+}
+
+.ap-pagination .ap-page-info {
+  font-size: 12px;
+  color: #9ca3af;
+  margin: 0 8px;
+  user-select: none;
 }
 
 @media (max-width: 900px) {

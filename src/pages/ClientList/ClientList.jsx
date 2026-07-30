@@ -7,6 +7,7 @@ import { getClients, createClient, updateClient, deleteClient, exportClientsCsv 
 import Sidebar from '../../components/ui/Sidebar/Sidebar'
 import CreateClientModal from '../../components/modals/CreateClientModal'
 import KycDossierModal   from '../../components/modals/KycDossierModal'
+import NotificationLogModal from '../../components/modals/NotificationLogModal'
 
 const PAGE_SIZE = 10
 
@@ -20,6 +21,7 @@ function ClientList({ onNavigate, onLogout }) {
   const [search,  setSearch]  = useState('')
   const [modal,   setModal]   = useState(null)
   const [dossier, setDossier] = useState(null)
+  const [notifClient, setNotifClient] = useState(null)
   const [toast,   setToast]   = useState(null)
   const [filterKyc, setFilterKyc] = useState('all')
   const [page,      setPage]      = useState(1)
@@ -167,15 +169,18 @@ function ClientList({ onNavigate, onLogout }) {
             </div>
 
             <div className="client-list-actions">
-              <input
-                className="client-search"
-                type="text"
-                placeholder={t('clientList.search')}
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-              <button className="btn-secondary" onClick={exportClientsCsv}>
-                {t('clientList.export')}
+              <div className="consent-search-wrap">
+                <span className="consent-search-icon">🔍</span>
+                <input
+                  className="consent-search"
+                  type="text"
+                  placeholder={t('clientList.search')}
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+              </div>
+              <button className="consent-btn consent-btn-primary" onClick={exportClientsCsv}>
+                <span>📥</span> {t('clientList.export')}
               </button>
               <button className="btn-primary" onClick={() => setModal({ mode: 'create' })}>
                 {t('clientList.newClient')}
@@ -283,6 +288,7 @@ function ClientList({ onNavigate, onLogout }) {
                                 {client.kyc && (
                                   <button className="btn-action btn-consulter" title={t('clientList.consultTooltip')} onClick={() => setDossier({ clientId: client.id })}>📁</button>
                                 )}
+                                <button className="btn-action btn-notif" title="Notifications" onClick={() => setNotifClient(client)}>🔔</button>
                               </div>
                             </td>
 
@@ -352,6 +358,15 @@ function ClientList({ onNavigate, onLogout }) {
             fetchClients()
             showToast(t('clientList.toast.statusUpdated'), 'success')
           }}
+        />
+      )}
+
+      {/* Notification log modal */}
+      {notifClient && (
+        <NotificationLogModal
+          clientId={notifClient.id}
+          clientName={`${notifClient.firstName} ${notifClient.lastName}`}
+          onClose={() => setNotifClient(null)}
         />
       )}
 

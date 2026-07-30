@@ -9,9 +9,8 @@ function CreateClientModal({ onClose, onSubmit, client = null }) {
 
   const [form, setForm] = useState(
     isEdit
-     ? { firstName: client.firstName, lastName: client.lastName, email: client.email, phone: client.phone || '', sendVia: client.sendVia ?? 1 }
-      : { firstName: '', lastName: '', email: '', phone: '', sendVia: 1 }
-
+      ? { firstName: client.firstName, lastName: client.lastName, email: client.email, phone: client.phone || '' }
+      : { firstName: '', lastName: '', email: '', phone: '' }
   )
 
   const [loading, setLoading] = useState(false)
@@ -37,10 +36,9 @@ function CreateClientModal({ onClose, onSubmit, client = null }) {
   const handleChange = (e) => {
     let { name, value } = e.target
 
-    // ✅ strip anything that isn't a digit for phone
     if (name === 'phone') value = value.replace(/\D/g, '').slice(0, 8)
 
-    setForm({ ...form, [name]: name === 'sendVia' ? Number(value) : value })
+    setForm({ ...form, [name]: value })
     if (errors[name]) setErrors({ ...errors, [name]: undefined })
   }
 
@@ -78,20 +76,9 @@ function CreateClientModal({ onClose, onSubmit, client = null }) {
           />
 
           {!isEdit && (
-            <div className="field">
-              <label htmlFor="sendVia">{t('createClientModal.sendVia')}</label>
-              <select id="sendVia" name="sendVia" value={form.sendVia} onChange={handleChange} className="select-input">
-                <option value={1}>Email</option>
-                <option value={2}>SMS</option>
-              </select>
-            </div>
-          )}
-
-          {!isEdit && (
             <div className="info-banner">
               <span className="info-icon">📧</span>
               <p>{t('createClientModal.infoBanner')}</p>
-
             </div>
           )}
 

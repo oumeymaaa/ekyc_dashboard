@@ -23,6 +23,7 @@ const en = {
     admins: 'Admins',
     organisations: 'Organisations',
     activities: 'Activities',
+    consents: 'Consents',
     settings: 'Settings',
     ekyc: 'eKYC',
     logout: 'Logout',
@@ -238,8 +239,7 @@ const en = {
     lastName: 'Last name',
     email: 'Email',
     phone: 'Phone',
-    sendVia: 'Send code via',
-    infoBanner: 'An automatically generated access code will be sent to the client via the selected channel.',
+    infoBanner: 'An automatically generated access code will be sent to the client by email.',
     btnCreate: 'Create and send',
     btnSave: 'Save',
     btnCreating: 'Creating...',
@@ -443,6 +443,9 @@ const en = {
     address: 'Address',
     rejectReason: 'Rejection reason (at least 1):',
     confirmReject: 'Confirm rejection',
+    coherence: 'Data coherence',
+    firstName: 'First name',
+    lastName: 'Last name',
   },
 
   adminDetailModal: {
@@ -505,10 +508,19 @@ const en = {
   },
 
   activities: {
+    all: 'All',
     count: '{{count}} actions',
     refresh: 'Refresh',
     empty: 'No activity yet',
     unknownAdmin: 'Unknown',
+    actions: {
+      creation_client: 'Client creation',
+      modification_client: 'Client modification',
+      modification_profil: 'Profile modification',
+      deletion_client: 'Client deletion',
+      kyc_valide: 'Valid KYC',
+      kyc_rejete: 'Rejected KYC',
+    },
     table: {
       admin: 'Admin',
       action: 'Action',
@@ -551,6 +563,22 @@ const en = {
     fetchClientsFailed: 'Failed to load clients.',
     createClientFailed: 'Failed to create client.',
     httpError: 'Error {{status}}.',
+  },
+
+  consentList: {
+    title: 'Consents',
+    subtitle: 'Client consent history',
+    filterAll: 'All',
+    filterAccepted: 'Accepted',
+    filterWithdrawn: 'Rejected',
+    empty: 'No consents recorded.',
+    noMatch: 'No consents for this status.',
+    client: 'Client',
+    email: 'Email',
+    status: 'Status',
+    ip: 'IP Address',
+    date: 'Date',
+    exportCsv: 'Export CSV',
   },
 
   activation: {

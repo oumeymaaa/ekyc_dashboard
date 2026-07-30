@@ -176,6 +176,58 @@ function KycDossierModal({ clientId, onClose, onUpdated }) {
                     </div>
                   </div>
 
+                  {/* Coherence */}
+                  {record.coherenceVerification && (
+                    <div className="coherence-section">
+                      <div className="coherence-header">
+                        <div className="coherence-header-left">
+                          <h4>{t('kycDossierModal.coherence')}</h4>
+                        </div>
+                        <div className={`coherence-score-ring`}>
+                          <svg width="52" height="52" viewBox="0 0 52 52">
+                            <circle className="bg" cx="26" cy="26" r="22" />
+                            <circle
+                              className="fg"
+                              cx="26" cy="26" r="22"
+                              style={{
+                                stroke: record.coherenceVerification.score_global >= 0.5
+                                  ? record.coherenceVerification.score_global >= 1 ? '#16a34a' : '#d97706'
+                                  : '#dc2626',
+                                strokeDasharray: `${2 * Math.PI * 22}`,
+                                strokeDashoffset: `${2 * Math.PI * 22 * (1 - record.coherenceVerification.score_global)}`,
+                              }}
+                            />
+                          </svg>
+                          <span className={`score-text ${record.coherenceVerification.score_global >= 0.5 ? (record.coherenceVerification.score_global >= 1 ? 'coherent' : 'partial') : 'incoherent'}`}>
+                            {Math.round(record.coherenceVerification.score_global * 100)}%
+                          </span>
+                        </div>
+                      </div>
+                      <div className="coherence-details">
+                        {[
+                          { label: t('kycDossierModal.lastName'), field: record.coherenceVerification.nom },
+                          { label: t('kycDossierModal.firstName'), field: record.coherenceVerification.prenom },
+                        ].map(({ label, field }) => (
+                          <div key={label} className={`coherence-field ${field.match ? 'match' : 'no-match'}`}>
+                            <span className="field-label">{label}</span>
+                            <div className="field-values">
+                              <span className="field-value admin">{field.admin}</span>
+                              <span className="field-arrow">→</span>
+                              <span className="field-value ocr">{field.ocr}</span>
+                              {field.ocrTransliterated && (
+                                <>
+                                  <span className="field-arrow">→</span>
+                                  <span className="field-value transliterated">{field.ocrTransliterated}</span>
+                                </>
+                              )}
+                            </div>
+                            <span className="field-check">{field.match ? '✓' : '✗'}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   {/* Grid */}
                   <div className="kyc-grid">
                     <div className="card">

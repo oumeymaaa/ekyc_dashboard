@@ -13,6 +13,7 @@ import KycRecordList from './pages/KycRecordList/KycRecordList'
 import ForgotPassword from './pages/Login/Forgotpassword'
 import ResetPassword from './pages/Login/ResetPassword'
 import Settings from './pages/Settings/Settings'
+import ConsentList from './pages/ConsentList/ConsentList'
 
 import {
   isAuthenticated,
@@ -217,6 +218,16 @@ function App() {
   // =========================
   if (page === 'settings') {
     return <Settings onNavigate={setPage} onLogout={handleLogout} />
+  }
+
+  // =========================
+  // CONSENTS — admin only
+  // =========================
+  if (page === 'consents') {
+    if (role !== 'admin') {
+      return <DashboardPage onNavigate={setPage} onLogout={handleLogout} />
+    }
+    return <ConsentList onNavigate={setPage} onLogout={handleLogout} />
   }
 
   // =========================

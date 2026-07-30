@@ -3,7 +3,7 @@ import './Sidebar.css'
 import { logout, getUser } from '../../../services/auth.service'
 
 
-const BASE_URL = 'http://localhost:3001'
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
 function Sidebar({ activePage, onNavigate, onLogout, user: userProp }) {
     const { t, i18n } = useTranslation()
@@ -28,6 +28,7 @@ function Sidebar({ activePage, onNavigate, onLogout, user: userProp }) {
   const ADMIN_NAV = [
     { key: 'dashboard', icon: '📊', label: t('sidebar.dashboard') },
     { key: 'clients',   icon: '🪪', label: t('sidebar.ekyc')      },
+    { key: 'consents',  icon: '🔒', label: t('sidebar.consents')  },
     { key: 'settings',  icon: '⚙️',  label: t('sidebar.settings') },
   ]
   const NAV_ITEMS = role === 'admin' ? ADMIN_NAV : SUPER_ADMIN_NAV
