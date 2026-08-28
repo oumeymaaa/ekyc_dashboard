@@ -5,12 +5,14 @@ import { getUser } from '../../services/auth.service'
 import ChangePasswordModal from '../../components/modals/ChangePasswordModal'
 import EditProfileModal from '../../components/modals/EditProfileModal'
 import { changeLanguage } from '../../i18n'
+import { getTheme, applyTheme } from '../../theme'
 import './Settings.css'
 
 function Settings({ onNavigate, onLogout }) {
   const { t, i18n } = useTranslation()
   const [modal, setModal] = useState(null)
   const [langMenu, setLangMenu] = useState(false)
+  const [theme, setTheme] = useState(() => getTheme())
   const [profile, setProfile] = useState(() => getUser())
 
   const fullName = profile ? `${profile.firstName} ${profile.lastName}` : t('settings.profile.personalInfo')
@@ -18,6 +20,12 @@ function Settings({ onNavigate, onLogout }) {
     ? `${profile.firstName?.[0] ?? ''}${profile.lastName?.[0] ?? ''}`.toUpperCase()
     : 'U'
   const role = profile?.role ?? 'admin'
+
+  const toggleTheme = () => {
+    const next = theme === 'dark' ? 'light' : 'dark'
+    setTheme(next)
+    applyTheme(next)
+  }
 
   const currentLang = i18n.language
 
@@ -121,11 +129,29 @@ function Settings({ onNavigate, onLogout }) {
                 </button>
               </div>
 
+            {/* Card — thème */}
+              <div className="settings-card">
+                <div className="settings-card-icon settings-card-icon--gray">🌙</div>
+                <div className="settings-card-body">
+                  <p className="settings-card-label">
+                    {t('settings.preferences.theme')}
+                  </p>
+                  <p className="settings-card-desc">{t('settings.preferences.themeDesc')}</p>
+                </div>
+                <button
+                  className="settings-theme-switch"
+                  role="switch"
+                  aria-checked={theme === 'dark'}
+                  aria-label={theme === 'dark' ? t('settings.theme.dark') : t('settings.theme.light')}
+                  title={theme === 'dark' ? t('settings.theme.dark') : t('settings.theme.light')}
+                  onClick={toggleTheme}
+                >
+                  {theme === 'dark' ? '🌙' : '☀️'}
+                </button>
+              </div>
+
             </div>
           </section>
-
-        </div>
-      </main>
 
       {/* ── Modals ── */}
       {modal === 'change-password' && (
@@ -138,6 +164,8 @@ function Settings({ onNavigate, onLogout }) {
           onUpdate={(updated) => setProfile(updated)}
         />
       )}
+    </div>
+    </main>
     </div>
   )
 }

@@ -1,4 +1,4 @@
-const en = {
+﻿const en = {
   common: {
     loading: 'Loading...',
     error: 'Error',
@@ -26,7 +26,7 @@ const en = {
     consents: 'Consents',
     settings: 'Settings',
     ekyc: 'eKYC',
-    logout: 'Logout',
+    logout: 'Log out',
     role: {
       admin: 'Admin',
       super_admin: 'Super Admin',
@@ -91,6 +91,11 @@ const en = {
     updatedAt: 'Updated at',
     loading: 'Loading statistics...',
     loadingDashboard: 'Loading your dashboard…',
+    toast: {
+      newKycOne: 'new pending KYC file',
+      newKycMany: 'new pending KYC files',
+      view: 'View',
+    },
     greeting: 'Hello, {{name}}',
     activityOverview: 'Here is an overview of your activity and statistics',
     vsPreviousMonth: 'vs last month',
@@ -274,6 +279,7 @@ const en = {
       invalid: 'Invalid',
     },
     empty: 'No client found.',
+    emptySub: 'Create your first client or adjust the search filters.',
     consultFile: '🔍 View file',
     consultTooltip: 'View file',
     export: 'Export',
@@ -326,6 +332,13 @@ const en = {
       en_attente: 'Pending',
     },
     empty: 'No KYC file found.',
+    emptySub: 'Verification files submitted by clients will appear here.',
+    filter: {
+      all: 'All',
+      pending: 'Pending',
+      validated: 'Validated',
+      invalid: 'Invalid',
+    },
     consultFile: '🔍 View file',
     loadError: 'Error loading KYC files.',
     toast: {
@@ -350,6 +363,7 @@ const en = {
       actions: 'Actions',
     },
     empty: 'No organisation found.',
+    emptySub: 'Create your first organisation to start managing clients.',
     adminViewDetail: 'View admin details',
     noAdmin: 'No admin',
     actions: {
@@ -473,6 +487,12 @@ const en = {
       title: '🌐 Preferences',
       language: 'Language',
       languageDesc: 'Choose the interface language',
+      theme: 'Theme',
+      themeDesc: 'Switch the interface to dark or light mode',
+    },
+    theme: {
+      light: '☀️ Light',
+      dark: '🌙 Dark',
     },
     btnEdit: 'Edit',
     languages: {

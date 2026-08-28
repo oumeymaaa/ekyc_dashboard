@@ -10,6 +10,7 @@ import {
 } from '../../services/organisation.service'
 
 import Sidebar from '../../components/ui/Sidebar/Sidebar'
+import EmptyState from '../../components/ui/EmptyState/EmptyState'
 import OrganisationFormModal from '../../components/modals/CreateOrganisationModal'
 import OrganisationDetailModal from '../../components/modals/OrganisationDetailModal'
 import AdminDetailModal from '../../components/modals/AdminDetailModal'
@@ -159,7 +160,20 @@ function OrganisationList({ onNavigate, onLogout }) {
             </div>
           </div>
 
-          {loading && <div className="client-state">{t('common.loading')}</div>}
+          {loading && (
+            <div className="sk-table">
+              <div className="sk-table-header" />
+              {[0, 1, 2, 3, 4, 5].map((i) => (
+                <div key={i} className="sk-table-row">
+                  <div className="sk-seg"><div className="sk sk-line sk-w40" /><div className="sk sk-line sk-w20" /></div>
+                  <div className="sk-seg"><div className="sk sk-line sk-w60" /></div>
+                  <div className="sk-seg"><div className="sk sk-line sk-w45" /></div>
+                  <div className="sk-seg"><div className="sk sk-line sk-w30" /></div>
+                  <div className="sk-seg"><div className="sk sk-line sk-w50" /></div>
+                </div>
+              ))}
+            </div>
+          )}
           {error && <div className="client-state error">{error}</div>}
 
           {!loading && !error && (
@@ -180,8 +194,8 @@ function OrganisationList({ onNavigate, onLogout }) {
                   <tbody>
                     {paginated.length === 0 ? (
                       <tr>
-                        <td colSpan={6} className="client-empty">
-                          {t('organisationList.empty')}
+                        <td colSpan={6}>
+                          <EmptyState icon="🏢" title={t('organisationList.empty')} subtitle={t('organisationList.emptySub')} />
                         </td>
                       </tr>
                     ) : (

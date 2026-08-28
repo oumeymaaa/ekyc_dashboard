@@ -1,0 +1,291 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   Dark theme — activé via <html data-theme="dark">
+   Sélecteur `html[data-theme='dark']` pour gagner en spécificité
+   sur les CSS existants qui utilisent des couleurs en dur.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── Variables des pages qui utilisent des CSS vars (AdminDashboard, ConsentList) ── */
+html[data-theme='dark'] {
+  --adm-bg:       #0f172a;
+  --adm-card:     #1e293b;
+  --adm-primary:  #818cf8;
+  --adm-primary2: #6366f1;
+  --adm-text:     #e2e8f0;
+  --adm-muted:    #94a3b8;
+  --adm-border:   #334155;
+  --adm-shadow:   0 1px 3px rgba(0,0,0,.5), 0 8px 24px rgba(0,0,0,.4);
+}
+html[data-theme='dark'] {
+  --cns-bg:       #0f172a;
+  --cns-card:     #1e293b;
+  --cns-primary:  #818cf8;
+  --cns-primary2: #6366f1;
+  --cns-text:     #e2e8f0;
+  --cns-muted:    #94a3b8;
+  --cns-border:   #334155;
+  --cns-shadow:   0 1px 3px rgba(0,0,0,.5), 0 8px 24px rgba(0,0,0,.4);
+}
+
+/* ── Fonds d'écran ── */
+html[data-theme='dark'] body,
+html[data-theme='dark'] .page-content,
+html[data-theme='dark'] .dash-page,
+html[data-theme='dark'] .admin-page,
+html[data-theme='dark'] .as-page,
+html[data-theme='dark'] .ap-page {
+  background: #0f172a;
+  color: #e2e8f0;
+}
+
+/* ── Titres / textes principaux ── */
+html[data-theme='dark'] .dash-header h1,
+html[data-theme='dark'] .page-header h1,
+html[data-theme='dark'] .client-list-title,
+html[data-theme='dark'] .settings-page-title,
+html[data-theme='dark'] .settings-pill-name,
+html[data-theme='dark'] .settings-card-label,
+html[data-theme='dark'] .profile-name,
+html[data-theme='dark'] .profile-stat-value,
+html[data-theme='dark'] .kpi-value,
+html[data-theme='dark'] .donut-total,
+html[data-theme='dark'] .chart-card-header h2,
+html[data-theme='dark'] .client-fullname {
+  color: #f1f5f9;
+}
+
+/* ── Textes secondaires / muted ── */
+html[data-theme='dark'] .dash-subtitle,
+html[data-theme='dark'] .page-subtitle,
+html[data-theme='dark'] .client-list-sub,
+html[data-theme='dark'] .settings-page-sub,
+html[data-theme='dark'] .settings-section-title,
+html[data-theme='dark'] .settings-pill-role,
+html[data-theme='dark'] .settings-card-desc,
+html[data-theme='dark'] .profile-email,
+html[data-theme='dark'] .profile-stat-label,
+html[data-theme='dark'] .kpi-sub,
+html[data-theme='dark'] .donut-label,
+html[data-theme='dark'] .chart-badge,
+html[data-theme='dark'] .cell-email,
+html[data-theme='dark'] .cell-date,
+html[data-theme='dark'] .client-email-sub,
+html[data-theme='dark'] .activity-time,
+html[data-theme='dark'] .activity-target,
+html[data-theme='dark'] .ap-cell-date,
+html[data-theme='dark'] .ap-time,
+html[data-theme='dark'] .pagination-info,
+html[data-theme='dark'] .pagination-total,
+html[data-theme='dark'] .page-ellipsis {
+  color: #94a3b8;
+}
+
+/* ── Cartes / panneaux / tooltips / pagination ── */
+html[data-theme='dark'] .kpi-card,
+html[data-theme='dark'] .chart-card,
+html[data-theme='dark'] .as-profile-card,
+html[data-theme='dark'] .table-wrapper,
+html[data-theme='dark'] .client-table-wrapper,
+html[data-theme='dark'] .consent-table-wrap,
+html[data-theme='dark'] .ap-table-wrap,
+html[data-theme='dark'] .settings-card,
+html[data-theme='dark'] .settings-profile-pill,
+html[data-theme='dark'] .pagination,
+html[data-theme='dark'] .page-nav,
+html[data-theme='dark'] .chart-tooltip,
+html[data-theme='dark'] .admin-chart-tooltip {
+  background: #1e293b;
+  border-color: #334155;
+  box-shadow: 0 1px 3px rgba(0,0,0,.5), 0 8px 24px rgba(0,0,0,.4);
+}
+
+/* ── Tables ── */
+html[data-theme='dark'] .admin-table thead,
+html[data-theme='dark'] .client-table thead,
+html[data-theme='dark'] .consent-table thead,
+html[data-theme='dark'] .ap-table thead,
+html[data-theme='dark'] .notify-table th {
+  background: #1e293b;
+}
+html[data-theme='dark'] .admin-table th,
+html[data-theme='dark'] .client-table th,
+html[data-theme='dark'] .consent-table th,
+html[data-theme='dark'] .ap-table th,
+html[data-theme='dark'] .notify-table th {
+  color: #94a3b8;
+}
+html[data-theme='dark'] .admin-table td,
+html[data-theme='dark'] .client-table td,
+html[data-theme='dark'] .consent-table td,
+html[data-theme='dark'] .ap-table td,
+html[data-theme='dark'] .notify-table td {
+  color: #cbd5e1;
+  border-color: #334155;
+}
+html[data-theme='dark'] .admin-table tbody tr:hover,
+html[data-theme='dark'] .client-table tbody tr:hover,
+html[data-theme='dark'] .consent-table tbody tr:hover,
+html[data-theme='dark'] .ap-table tr:hover td,
+html[data-theme='dark'] .notify-table tbody tr:hover {
+  background: #16213e;
+}
+html[data-theme='dark'] .activity-item {
+  border-color: #334155;
+}
+html[data-theme='dark'] .activity-text {
+  color: #cbd5e1;
+}
+
+/* ── Formulaires (inputs, selects, search) ── */
+html[data-theme='dark'] .form-group input,
+html[data-theme='dark'] .form-group select,
+html[data-theme='dark'] .field input,
+html[data-theme='dark'] .field select,
+html[data-theme='dark'] .modal-field input,
+html[data-theme='dark'] .modal-field select,
+html[data-theme='dark'] .org-input,
+html[data-theme='dark'] .client-search,
+html[data-theme='dark'] .consent-search,
+html[data-theme='dark'] .map-search-input,
+html[data-theme='dark'] .select-input,
+html[data-theme='dark'] .input-password input {
+  background: #0f172a;
+  color: #e2e8f0;
+  border-color: #475569;
+}
+html[data-theme='dark'] .form-group input::placeholder,
+html[data-theme='dark'] .field input::placeholder,
+html[data-theme='dark'] .modal-field input::placeholder,
+html[data-theme='dark'] .org-input::placeholder,
+html[data-theme='dark'] .client-search::placeholder,
+html[data-theme='dark'] .consent-search::placeholder,
+html[data-theme='dark'] .map-search-input::placeholder,
+html[data-theme='dark'] .input-password input::placeholder {
+  color: #64748b;
+}
+
+/* ── Modales ── */
+html[data-theme='dark'] .modal-box,
+html[data-theme='dark'] .kyc-modal,
+html[data-theme='dark'] .lightbox-box {
+  background: #1e293b;
+  color: #e2e8f0;
+}
+html[data-theme='dark'] .modal-header,
+html[data-theme='dark'] .kyc-header,
+html[data-theme='dark'] .lightbox-header {
+  background: #1e293b;
+  border-color: #334155;
+}
+html[data-theme='dark'] .modal-title,
+html[data-theme='dark'] .modal-header h2,
+html[data-theme='dark'] .lightbox-header h2,
+html[data-theme='dark'] .kyc-header h2 {
+  color: #f8fafc;
+}
+html[data-theme='dark'] .modal-subtitle,
+html[data-theme='dark'] .kyc-header p {
+  color: #94a3b8;
+}
+html[data-theme='dark'] .detail-row,
+html[data-theme='dark'] .org-detail-divider,
+html[data-theme='dark'] .org-detail-footer {
+  border-color: #334155;
+}
+html[data-theme='dark'] .detail-label,
+html[data-theme='dark'] .cin-label {
+  color: #94a3b8;
+}
+html[data-theme='dark'] .detail-value,
+html[data-theme='dark'] .org-detail-name,
+html[data-theme='dark'] .org-detail-value,
+html[data-theme='dark'] .cin-value,
+html[data-theme='dark'] .org-confirm-body {
+  color: #e2e8f0;
+}
+html[data-theme='dark'] .org-detail-field {
+  background: #0f172a;
+}
+html[data-theme='dark'] .org-detail-id {
+  color: #64748b;
+}
+
+/* ── Cartes internes KYC ── */
+html[data-theme='dark'] .card,
+html[data-theme='dark'] .img-block,
+html[data-theme='dark'] .coherence-section {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+/* ── Boutons neutres / filtres / langues ── */
+html[data-theme='dark'] .btn-cancel,
+html[data-theme='dark'] .btn-cancel-inline,
+html[data-theme='dark'] .settings-lang-btn,
+html[data-theme='dark'] .consent-filter-btn,
+html[data-theme='dark'] .kyc-filter-btn,
+html[data-theme='dark'] .ap-filter-btn,
+html[data-theme='dark'] .page-btn {
+  background: #0f172a;
+  color: #e2e8f0;
+  border-color: #475569;
+}
+html[data-theme='dark'] .page-btn:hover,
+html[data-theme='dark'] .ap-filter-btn:hover,
+html[data-theme='dark'] .consent-filter-btn:hover,
+html[data-theme='dark'] .kyc-filter-btn:hover {
+  background: #1e293b;
+}
+html[data-theme='dark'] .access-code {
+  background: #334155;
+  color: #e2e8f0;
+}
+html[data-theme='dark'] .consent-ip {
+  background: #334155;
+  color: #94a3b8;
+}
+
+/* ── Divers ── */
+html[data-theme='dark'] .spinner,
+html[data-theme='dark'] .as-spinner,
+html[data-theme='dark'] .consent-spinner,
+html[data-theme='dark'] .sp-spinner {
+  border-color: #334155;
+}
+html[data-theme='dark'] .org-avatar-cell,
+html[data-theme='dark'] .map-container {
+  border-color: #334155;
+}
+html[data-theme='dark'] .no-img,
+html[data-theme='dark'] .org-empty-cell {
+  color: #64748b;
+}
+html[data-theme='dark'] .profile-divider {
+  background: #334155;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   Toggle "thème" dans Paramètres (visible clair + sombre)
+   ═══════════════════════════════════════════════════════════ */
+.settings-theme-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 50px;
+  background: #fff;
+  color: #374151;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s, border-color .2s, color .2s;
+}
+html[data-theme='dark'] .settings-theme-switch {
+  background: #0f172a;
+  border-color: #475569;
+  color: #e2e8f0;
+}
+.settings-theme-switch:hover {
+  border-color: #6366f1;
+}

@@ -7,7 +7,6 @@ import {
   XAxis, YAxis, CartesianGrid,
   Tooltip, Legend, ResponsiveContainer,
 } from 'recharts'
-import { getStats } from '../../services/statsService'
 import { getDashboardStats, getKycDistribution, getEvolution, getActivity, getScoreDistribution } from '../../services/dashboard.service'
 import Sidebar from '../../components/ui/Sidebar/Sidebar'
 import './Dashboard.css'
@@ -52,7 +51,6 @@ function ChartTooltip({ active, payload, label }) {
 /* ── Dashboard ──────────────────────────────────── */
 function Dashboard({ onNavigate, onLogout }) {
  const { t, i18n } = useTranslation()
-  const [stats, setStats]         = useState(null)
   const [kpiStats, setKpiStats]   = useState(null)
   const [kycDistData, setKycDist]   = useState(null)
   const [evolutionData, setEvolution]   = useState(null)
@@ -72,14 +70,12 @@ function Dashboard({ onNavigate, onLogout }) {
 
   useEffect(() => {
     const loadData = () => Promise.all([
-      getStats(),
       getDashboardStats().catch(() => null),
       getKycDistribution().catch(() => null),
       getEvolution().catch(() => null),
       getActivity(5).catch(() => null),
       getScoreDistribution().catch(() => null),
-    ]).then(([mockData, apiData, kycDist, evolution, activity, scoreDist]) => {
-      setStats(mockData)
+    ]).then(([apiData, kycDist, evolution, activity, scoreDist]) => {
       setKpiStats(apiData)
       setKycDist(kycDist)
       setEvolution(evolution)
@@ -102,29 +98,59 @@ function Dashboard({ onNavigate, onLogout }) {
       <div className="dash-page" dir={i18n.language === 'ar' ? 'rtl' : 'ltr'} style={{ flexDirection: i18n.language === 'ar' ? 'row-reverse' : 'row' }}>
         <Sidebar activePage="dashboard" onNavigate={onNavigate} onLogout={onLogout} />
         <main className="dash-main">
-          <div className="dash-loading">
-            <div className="dash-spinner" />
-            <p>{t('dashboard.loading')}</p>
+          <div className="dash-header">
+            <div className="sk sk-line sk-w40" style={{ height: 26 }} />
+          </div>
+          <div className="kpi-grid">
+            {[0, 1, 2, 3].map((i) => (
+              <div key={i} className="sk-card">
+                <div className="sk sk-line sk-w20" />
+                <div className="sk sk-block sk-h36 sk-w60" />
+                <div className="sk sk-block sk-h30 sk-w80" />
+              </div>
+            ))}
+          </div>
+          <div className="sk-grid">
+            <div className="sk-card">
+              <div className="sk sk-line sk-w40" />
+              <div className="sk sk-block sk-h160" />
+            </div>
+            <div className="sk-card">
+              <div className="sk sk-line sk-w40" />
+              <div className="sk sk-block sk-h160" />
+            </div>
           </div>
         </main>
       </div>
     )
   }
 
-  const { overview, clientsOverTime, kycDistribution, scoreDistribution, recentActivity } = stats
+  const overview = {
+    totalClients:   kpiStats?.totalClients?.value ?? 0,
+    kycValidated:   kpiStats?.kycValidated?.value ?? 0,
+    kycRejected:    kpiStats?.kycRejected?.value ?? 0,
+    kycPending:     kpiStats?.kycPending?.value ?? 0,
+    avgFacialScore: kpiStats?.avgFacialScore?.value ?? 0,
+    trends: {
+      totalClients:   { value: kpiStats?.totalClients?.delta ?? 0 },
+      kycValidated:   { value: kpiStats?.kycValidated?.delta ?? 0 },
+      kycRejected:    { value: kpiStats?.kycRejected?.delta ?? 0 },
+      avgFacialScore: { value: kpiStats?.avgFacialScore?.delta ?? 0 },
+    },
+  }
   const kycTotal = overview.kycValidated + overview.kycRejected + overview.kycPending
 
   const kycDistributionForChart = kycDistData ? [
     { name: t('dashboard.charts.validated'),    value: kycDistData.valid.count,    fill: '#22c55e' },
     { name: t('clientList.kycStatus.pending'),  value: kycDistData.pending.count,  fill: '#f59e0b' },
     { name: t('dashboard.charts.rejected'),     value: kycDistData.invalid.count,  fill: '#ef4444' },
-  ] : kycDistribution
+  ] : []
   const kycTotalForChart = kycDistData?.total ?? kycTotal
 
   const SCORE_FILLS = ['#ef4444', '#f97316', '#f59e0b', '#3b82f6', '#22c55e']
   const scoreDistributionForChart = scoreDistApiData
     ? scoreDistApiData.buckets.map((b, i) => ({ ...b, fill: SCORE_FILLS[i] }))
-    : scoreDistribution
+    : []
 
   const ACTION_META = {
     create:              { label: t('dashboard.activity.create'),       color: '#3b82f6', bg: '#eff6ff' },
@@ -149,7 +175,7 @@ function Dashboard({ onNavigate, onLogout }) {
         target:      item.clientName,
         timestamp:   item.performedAt,
       }))
-    : recentActivity
+    : []
 
   const locale = i18n.language === 'ar' ? 'ar-TN' : i18n.language === 'en' ? 'en-GB' : 'fr-FR'
   const dateStr = new Date().toLocaleDateString(locale, { day: '2-digit', month: 'long', year: 'numeric' })
@@ -204,7 +230,7 @@ function Dashboard({ onNavigate, onLogout }) {
               <span className="chart-badge">{t('dashboard.charts.last6Months')}</span>
             </div>
             <ResponsiveContainer width="100%" height={240}>
-              <AreaChart data={evolutionData ?? clientsOverTime} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
+              <AreaChart data={evolutionData ?? []} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="gradClients" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%"  stopColor="#0f3460" stopOpacity={0.2} />
@@ -274,8 +300,8 @@ function Dashboard({ onNavigate, onLogout }) {
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f1f5" vertical={false} />
                 <XAxis dataKey="range" tick={{ fontSize: 12, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 12, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
-               <Tooltip cursor={{ fill: '#f8f9fc' }} formatter={(v) => [v.toLocaleString(), t('dashboard.charts.clients')]} />
-                <Bar dataKey="count" name={t('dashboard.charts.clients')} radius={[6, 6, 0, 0]} />
+               <Tooltip cursor={{ fill: '#f8f9fc' }} formatter={(v) => [v.toLocaleString(), t('dashboard.charts.files')]} />
+                <Bar dataKey="count" name={t('dashboard.charts.files')} radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>

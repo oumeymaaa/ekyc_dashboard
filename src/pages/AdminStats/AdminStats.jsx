@@ -8,7 +8,6 @@ import {
   XAxis, YAxis, CartesianGrid,
   Tooltip, Legend, ResponsiveContainer,
 } from 'recharts'
-import { getAdminStats } from '../../services/statsService'
 import {
   getDashboardStats,
   getKycDistribution,
@@ -72,7 +71,6 @@ function ChartTooltip({ active, payload, label }) {
 function AdminStats({ admin, onNavigate, onLogout }) {
   const { t, i18n } = useTranslation()
 
-  const [stats,         setStats]         = useState(null)
   const [kpiData,       setKpiData]       = useState(null)
   const [kycDistData,   setKycDistData]   = useState(null)
   const [evolutionData, setEvolutionData] = useState(null)
@@ -84,14 +82,12 @@ function AdminStats({ admin, onNavigate, onLogout }) {
   useEffect(() => {
     const id = admin.id
     Promise.all([
-      getAdminStats(id).catch(() => null),
       getDashboardStats(id).catch(() => null),
       getKycDistribution(id).catch(() => null),
       getEvolution(id).catch(() => null),
       getScoreDistribution(id).catch(() => null),
       getActivity(5, id).catch(() => null),
-    ]).then(([mockData, kpi, kycDist, evolution, score, activity]) => {
-      setStats(mockData)
+    ]).then(([kpi, kycDist, evolution, score, activity]) => {
       setKpiData(kpi)
       setKycDistData(kycDist)
       setEvolutionData(evolution)
@@ -133,25 +129,33 @@ function AdminStats({ admin, onNavigate, onLogout }) {
     )
   }
 
-  const overview          = stats?.overview          ?? { totalClients: 0, kycValidated: 0, kycRejected: 0, kycPending: 0, avgFacialScore: 0, trends: { totalClients: { value: 0, direction: 'up' }, kycValidated: { value: 0, direction: 'up' }, kycRejected: { value: 0, direction: 'up' }, avgFacialScore: { value: 0, direction: 'up' } } }
-  const clientsOverTime   = stats?.clientsOverTime   ?? []
-  const kycDistribution   = stats?.kycDistribution   ?? []
-  const scoreDistribution = stats?.scoreDistribution ?? []
-  const recentActivity    = stats?.recentActivity    ?? []
-  const kycTotalMock      = overview.kycValidated + overview.kycRejected + overview.kycPending
+  const overview = {
+    totalClients:   kpiData?.totalClients?.value ?? 0,
+    kycValidated:   kpiData?.kycValidated?.value ?? 0,
+    kycRejected:    kpiData?.kycRejected?.value ?? 0,
+    kycPending:     kpiData?.kycPending?.value ?? 0,
+    avgFacialScore: kpiData?.avgFacialScore?.value ?? 0,
+    trends: {
+      totalClients:   { value: kpiData?.totalClients?.delta ?? 0, direction: 'up' },
+      kycValidated:   { value: kpiData?.kycValidated?.delta ?? 0, direction: 'up' },
+      kycRejected:    { value: kpiData?.kycRejected?.delta ?? 0, direction: 'up' },
+      avgFacialScore: { value: kpiData?.avgFacialScore?.delta ?? 0, direction: 'up' },
+    },
+  }
+  const kycTotalMock = overview.kycValidated + overview.kycRejected + overview.kycPending
 
   const kycDistributionForChart = kycDistData ? [
     { name: t('dashboard.charts.validated'),   value: kycDistData.valid.count,   fill: '#22c55e' },
     { name: t('clientList.kycStatus.pending'), value: kycDistData.pending.count, fill: '#f59e0b' },
     { name: t('dashboard.charts.rejected'),    value: kycDistData.invalid.count, fill: '#ef4444' },
-  ] : kycDistribution
+  ] : []
   const kycTotalForChart = kycDistData?.total ?? kycTotalMock
 
-  const evolutionForChart = evolutionData ?? clientsOverTime
+  const evolutionForChart = evolutionData ?? []
 
   const scoreDistributionForChart = scoreData
     ? scoreData.buckets.map((b, i) => ({ ...b, fill: SCORE_FILLS[i] }))
-    : scoreDistribution
+    : []
 
   const ACTION_META = {
     create:              { label: t('dashboard.activity.create'),       ...ACTION_COLORS.create },
@@ -174,7 +178,7 @@ function AdminStats({ admin, onNavigate, onLogout }) {
         timestamp:   item.performedAt,
         timeAgoStr:  item.timeAgo,
       }))
-    : recentActivity
+    : []
 
   const orgName             = admin.organisation?.name_organisation ?? admin.organization ?? '—'
   const totalClientsDisplay = kpiData?.totalClients.value ?? overview.totalClients
@@ -341,8 +345,8 @@ function AdminStats({ admin, onNavigate, onLogout }) {
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f1f5" vertical={false} />
                 <XAxis dataKey="range" tick={{ fontSize: 12, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 12, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
-                <Tooltip cursor={{ fill: '#f8f9fc' }} formatter={(v) => [v, t('dashboard.charts.clients')]} />
-                <Bar dataKey="count" name={t('dashboard.charts.clients')} radius={[6, 6, 0, 0]} />
+                <Tooltip cursor={{ fill: '#f8f9fc' }} formatter={(v) => [v, t('dashboard.charts.files')]} />
+                <Bar dataKey="count" name={t('dashboard.charts.files')} radius={[6, 6, 0, 0]} />
                 </BarChart>
             </ResponsiveContainer>
           </div>

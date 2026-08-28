@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Sidebar from '../../components/ui/Sidebar/Sidebar'
+import { getHeaders } from '../../services/api'
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 import './ConsentList.css'
 
@@ -18,7 +19,7 @@ function ConsentList({ onNavigate, onLogout }) {
   const fetchConsents = async () => {
     setLoading(true)
     try {
-      const res = await fetch(`${API_BASE}/consent`)
+      const res = await fetch(`${API_BASE}/consent`, { headers: getHeaders() })
       const data = await res.json()
       setConsents(data)
     } catch (err) {

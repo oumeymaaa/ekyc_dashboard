@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useRef, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   AreaChart, Area,
@@ -8,8 +8,9 @@ import {
   Tooltip, Legend, ResponsiveContainer,
 } from 'recharts'
 import { getUser } from '../../services/auth.service'
-import { getDashboardStats, getKycDistribution, getEvolution, getScoreDistribution, getRejectionReasons } from '../../services/dashboard.service'
+import { getDashboardStats, getKycDistribution, getEvolution, getScoreDistribution, getRejectionReasons, getTodayStats } from '../../services/dashboard.service'
 import { getClients } from '../../services/client.service'
+import { setNavIntent } from '../../utils/navIntent'
 import Sidebar from '../../components/ui/Sidebar/Sidebar'
 import './AdminDashboard.css'
 
@@ -23,8 +24,26 @@ function AdminDashboard({ onNavigate, onLogout }) {
   const [evolutionData, setEvolution] = useState(null)
   const [scoreData, setScoreData]     = useState(null)
   const [rejectionData, setRejectionData] = useState(null)
-  const [clients, setClients]         = useState([])
+  const [todayStats, setTodayStats]       = useState(null)
+  const [clients, setClients]             = useState([])
   const [loading, setLoading]         = useState(true)
+  const [newKycArrivals, setNewKycArrivals] = useState(0)
+  const pendingRef   = useRef(null)
+  const arrivalsRef  = useRef(0)
+
+  const applyPending = useCallback((p) => {
+    if (pendingRef.current === null) { pendingRef.current = p; return }
+    const prev = pendingRef.current
+    pendingRef.current = p
+    if (p > prev) {
+      arrivalsRef.current += (p - prev)
+      setNewKycArrivals(arrivalsRef.current)
+    } else if (p < prev) {
+      const handled = Math.min(prev - p, arrivalsRef.current)
+      arrivalsRef.current -= handled
+      setNewKycArrivals(arrivalsRef.current)
+    }
+  }, [])
 
   useEffect(() => {
     const loadData = () => Promise.all([
@@ -33,14 +52,21 @@ function AdminDashboard({ onNavigate, onLogout }) {
       getEvolution(adminId).catch(() => null),
       getScoreDistribution(adminId).catch(() => null),
       getRejectionReasons(adminId).catch(() => null),
+      getTodayStats(adminId).catch(() => null),
       getClients().catch(() => []),
-    ]).then(([kpi, kyc, evo, score, reasons, cl]) => {
+    ]).then(([kpi, kyc, evo, score, reasons, today, cl]) => {
       setKpiStats(kpi)
       setKycDist(kyc)
       setEvolution(evo)
       setScoreData(score)
       setRejectionData(reasons)
+      if (today) setTodayStats(today)
       setClients(cl ?? [])
+      const newPending = kyc?.pending?.count ?? 0
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('[KYC-detection] poll60 newPending =', newPending)
+      }
+      applyPending(newPending)
     }).catch(() => {}).finally(() => setLoading(false))
 
     loadData()
@@ -53,12 +79,29 @@ function AdminDashboard({ onNavigate, onLogout }) {
     }
   }, [adminId])
 
+  useEffect(() => {
+    if (!adminId) return
+    let cancelled = false
+    const tick = async () => {
+      const dist = await getKycDistribution(adminId).catch(() => null)
+      if (cancelled || !dist) return
+      const p = dist.pending?.count ?? 0
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('[KYC-detection] poll8s pending =', p)
+      }
+      applyPending(p)
+    }
+    tick()
+    const id = setInterval(tick, 5000)
+    return () => { cancelled = true; clearInterval(id) }
+  }, [adminId, applyPending])
+
   const locale = i18n.language === 'ar' ? 'ar-TN' : i18n.language === 'en' ? 'en-GB' : 'fr-FR'
   const dateStr = new Date().toLocaleDateString(locale, { day: '2-digit', month: 'long', year: 'numeric' })
   const timeStr = new Date().toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })
 
   /* ── Derived stats ── */
-  const today = useMemo(() => {
+  const derivedToday = useMemo(() => {
     const now = new Date()
     const todayKey = now.toISOString().slice(0, 10)
     const newToday = clients.filter(c => c.createdAt?.startsWith(todayKey)).length
@@ -79,6 +122,8 @@ function AdminDashboard({ onNavigate, onLogout }) {
     return { newToday, kycToday, validatedToday, rejectedToday }
   }, [clients])
 
+  const today = todayStats ?? derivedToday
+
   const recentClients = useMemo(() => {
     return [...clients]
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
@@ -94,7 +139,6 @@ function AdminDashboard({ onNavigate, onLogout }) {
   }, [clients])
 
   const total      = kpiStats?.totalClients.value   ?? 0
-  const totalAll   = kpiStats?.totalClientsAll      ?? 0
   const validated  = kpiStats?.kycValidated.value  ?? 0
   const rejected   = kpiStats?.kycRejected.value   ?? 0
   const pending    = (kycDistData?.pending?.count   ?? 0)
@@ -102,11 +146,6 @@ function AdminDashboard({ onNavigate, onLogout }) {
 
   const validationRate = (validated + rejected) > 0
     ? Math.round((validated / (validated + rejected)) * 100)
-    : 0
-
-  const completedKyc = (kycDistData?.valid?.count ?? 0) + (kycDistData?.invalid?.count ?? 0)
-  const conversionRate = totalAll > 0
-    ? Math.round((completedKyc / totalAll) * 100)
     : 0
 
   const evo = evolutionData ?? []
@@ -160,9 +199,29 @@ function AdminDashboard({ onNavigate, onLogout }) {
       <div className="admin-dash" dir={i18n.language === 'ar' ? 'rtl' : 'ltr'} style={{ flexDirection: i18n.language === 'ar' ? 'row-reverse' : 'row' }}>
         <Sidebar activePage="dashboard" onNavigate={onNavigate} onLogout={onLogout} />
         <main className="admin-main">
-          <div className="admin-loading">
-            <div className="admin-spinner" />
-            <p>{t('dashboard.loadingDashboard')}</p>
+          <div className="admin-main-inner">
+            <div className="admin-header">
+              <div className="sk sk-line sk-w40" style={{ height: 26 }} />
+            </div>
+            <div className="admin-kpi-grid">
+              {[0, 1, 2, 3, 4].map((i) => (
+                <div key={i} className="sk-card">
+                  <div className="sk sk-line sk-w20" />
+                  <div className="sk sk-block sk-h36 sk-w60" />
+                  <div className="sk sk-block sk-h30 sk-w80" />
+                </div>
+              ))}
+            </div>
+            <div className="sk-grid">
+              <div className="sk-card">
+                <div className="sk sk-line sk-w40" />
+                <div className="sk sk-block sk-h180" />
+              </div>
+              <div className="sk-card">
+                <div className="sk sk-line sk-w40" />
+                <div className="sk sk-block sk-h180" />
+              </div>
+            </div>
           </div>
         </main>
       </div>
@@ -249,7 +308,6 @@ function AdminDashboard({ onNavigate, onLogout }) {
             { icon: '📊', value: `${validationRate}%`, label: t('dashboard.metrics.validationRate'), color: validated > rejected ? '#22c55e' : '#ef4444', bg: validated > rejected ? '#f0fdf4' : '#fff5f5' },
             { icon: '⏳', value: pending, label: t('dashboard.metrics.pending'), color: '#f59e0b', bg: '#fffbeb' },
             { icon: '📅', value: thisMonthClients, label: t('dashboard.metrics.newThisMonth'), color: '#3b82f6', bg: '#eff6ff' },
-            { icon: '📈', value: `${conversionRate}%`, label: t('dashboard.metrics.kycCompletion'), color: '#8b5cf6', bg: '#f5f3ff' },
           ].map((m) => (
             <div className="admin-metric" key={m.label}>
               <div className="admin-metric-icon" style={{ background: m.bg, color: m.color }}>{m.icon}</div>
@@ -375,8 +433,8 @@ function AdminDashboard({ onNavigate, onLogout }) {
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f1f5" vertical={false} />
                 <XAxis dataKey="range" tick={{ fontSize: 12, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 12, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
-                <Tooltip cursor={{ fill: '#f8f9fc' }} formatter={(v) => [v.toLocaleString(), t('dashboard.charts.clients')]} />
-                <Bar dataKey="count" name={t('dashboard.charts.clients')} radius={[6, 6, 0, 0]} />
+                <Tooltip cursor={{ fill: '#f8f9fc' }} formatter={(v) => [v.toLocaleString(), t('dashboard.charts.files')]} />
+                <Bar dataKey="count" name={t('dashboard.charts.files')} radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -412,6 +470,18 @@ function AdminDashboard({ onNavigate, onLogout }) {
 
         </div>{/* admin-main-inner */}
       </main>
+
+      {newKycArrivals > 0 && (
+        <div className="toast toast-success toast-kpi">
+          <span className="toast-icon">🆕</span>
+          <span className="toast-msg">
+            {newKycArrivals} {newKycArrivals === 1 ? t('dashboard.toast.newKycOne') : t('dashboard.toast.newKycMany')}
+          </span>
+          <button className="toast-btn" onClick={() => { setNavIntent('clientsFilter', 'en_attente'); onNavigate && onNavigate('clients') }}>
+            {t('dashboard.toast.view')}
+          </button>
+        </div>
+      )}
     </div>
   )
 }

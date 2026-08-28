@@ -1,4 +1,4 @@
-const fr = {
+﻿const fr = {
   common: {
     loading: 'Chargement...',
     error: 'Erreur',
@@ -26,7 +26,7 @@ const fr = {
     consents: 'Consentements',
     settings: 'Paramètres',
     ekyc: 'eKYC',
-    logout: 'Déconnexion',
+    logout: 'Se déconnecter',
     role: {
       admin: 'Admin',
       super_admin: 'Super Admin',
@@ -91,6 +91,11 @@ const fr = {
     updatedAt: 'Mis à jour à',
     loading: 'Chargement des statistiques...',
     loadingDashboard: 'Chargement de votre tableau de bord…',
+    toast: {
+      newKycOne: 'nouveau dossier KYC en attente',
+      newKycMany: 'nouveaux dossiers KYC en attente',
+      view: 'Voir',
+    },
     greeting: 'Bonjour, {{name}}',
     activityOverview: 'Voici un aperçu de votre activité et de vos statistiques',
     vsPreviousMonth: 'vs mois dernier',
@@ -274,6 +279,7 @@ const fr = {
       invalid: 'Non valide',
     },
     empty: 'Aucun client trouvé.',
+    emptySub: 'Créez votre premier client ou modifiez les filtres de recherche.',
     consultFile: '🔍 Consulter dossier',
     consultTooltip: 'Consulter le dossier',
     export: 'Exporter',
@@ -326,6 +332,13 @@ const fr = {
       en_attente: 'En attente',
     },
     empty: 'Aucun dossier KYC trouvé.',
+    emptySub: 'Les dossiers de vérification soumis par les clients apparaîtront ici.',
+    filter: {
+      all: 'Tous',
+      pending: 'En attente',
+      validated: 'Validé',
+      invalid: 'Non valide',
+    },
     consultFile: '🔍 Consulter dossier',
     loadError: 'Erreur lors du chargement des dossiers KYC.',
     toast: {
@@ -350,6 +363,7 @@ const fr = {
       actions: 'Actions',
     },
     empty: 'Aucune organisation trouvée.',
+    emptySub: 'Créez votre première organisation pour commencer à gérer des clients.',
     adminViewDetail: "Voir les détails de l'admin",
     noAdmin: 'Aucun admin',
     actions: {
@@ -473,6 +487,12 @@ const fr = {
       title: '🌐 Préférences',
       language: 'Langue',
       languageDesc: "Choisissez la langue de l'interface",
+      theme: 'Thème',
+      themeDesc: "Passez l'interface en mode sombre ou clair",
+    },
+    theme: {
+      light: '☀️ Clair',
+      dark: '🌙 Sombre',
     },
     btnEdit: 'Modifier',
     languages: {

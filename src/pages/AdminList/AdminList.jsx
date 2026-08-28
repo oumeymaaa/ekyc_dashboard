@@ -131,9 +131,17 @@ function AdminList({ onNavigate, onViewStats, onLogout }) {
 
         <div className="table-wrapper">
           {loading ? (
-            <div className="state-center">
-              <div className="spinner" />
-              <p>{t('common.loading')}</p>
+            <div className="sk-table">
+              <div className="sk-table-header" />
+              {[0, 1, 2, 3, 4, 5].map((i) => (
+                <div key={i} className="sk-table-row">
+                  <div className="sk-seg"><div className="sk sk-line sk-w40" /><div className="sk sk-line sk-w25" /></div>
+                  <div className="sk-seg"><div className="sk sk-line sk-w60" /></div>
+                  <div className="sk-seg"><div className="sk sk-line sk-w45" /></div>
+                  <div className="sk-seg"><div className="sk sk-line sk-w30" /></div>
+                  <div className="sk-seg"><div className="sk sk-line sk-w50" /></div>
+                </div>
+              ))}
             </div>
           ) : admins.length === 0 ? (
             <div className="state-center">

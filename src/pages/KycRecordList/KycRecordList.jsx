@@ -2,14 +2,17 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import './KycRecordList.css'
 
+import { consumeNavIntent } from '../../utils/navIntent'
+
 import { getKycRecords } from '../../services/kyc.service'
 import { createClient } from '../../services/client.service'
 
 import Sidebar from '../../components/ui/Sidebar/Sidebar'
+import EmptyState from '../../components/ui/EmptyState/EmptyState'
 import KycDossierModal from '../../components/modals/KycDossierModal'
 import CreateClientModal from '../../components/modals/CreateClientModal'
 
-const PYTHON_BASE_URL = 'http://192.168.1.6:8000'
+const PYTHON_BASE_URL = 'http://192.168.1.9:8000'
 
 function KycRecordList({ onNavigate, onLogout }) {
     const { t, i18n } = useTranslation()
@@ -19,6 +22,7 @@ function KycRecordList({ onNavigate, onLogout }) {
   const [loading, setLoading]   = useState(true)
   const [error, setError]       = useState('')
   const [search, setSearch]     = useState('')
+  const [statusFilter, setStatusFilter] = useState(() => consumeNavIntent('kycFilter') ?? 'all')
   const [lightbox, setLightbox] = useState(null)
   const [dossier, setDossier]   = useState(null)
   const [modal, setModal]       = useState(null)   // ← create client modal
@@ -67,6 +71,7 @@ function KycRecordList({ onNavigate, onLogout }) {
 
   /* ── Filter ──────────────────────────────────────── */
   const filtered = records.filter((r) => {
+    if (statusFilter !== 'all' && r.status !== statusFilter) return false
     const q = search.toLowerCase()
     const client = r.client || {}
     return (
@@ -123,6 +128,17 @@ function KycRecordList({ onNavigate, onLogout }) {
             </div>
 
             <div className="client-list-actions">
+              <select
+                className="client-search kyc-status-select"
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+              >
+                <option value="all">{t('kycRecordList.filter.all')}</option>
+                <option value="en_attente">{t('kycRecordList.filter.pending')}</option>
+                <option value="valide">{t('kycRecordList.filter.validated')}</option>
+                <option value="non_valide">{t('kycRecordList.filter.invalid')}</option>
+              </select>
+
               <input
                 className="client-search"
                 type="text"
@@ -139,7 +155,20 @@ function KycRecordList({ onNavigate, onLogout }) {
           </div>
 
           {/* States */}
-          {loading && <div className="client-state">{t('common.loading')}</div>}
+          {loading && (
+            <div className="sk-table">
+              <div className="sk-table-header" />
+              {[0, 1, 2, 3, 4, 5].map((i) => (
+                <div key={i} className="sk-table-row">
+                  <div className="sk-seg"><div className="sk sk-line sk-w40" /><div className="sk sk-line sk-w25" /></div>
+                  <div className="sk-seg"><div className="sk sk-line sk-w45" /></div>
+                  <div className="sk-seg"><div className="sk sk-line sk-w30" /></div>
+                  <div className="sk-seg"><div className="sk sk-line sk-w50" /></div>
+                  <div className="sk-seg"><div className="sk sk-line sk-w35" /></div>
+                </div>
+              ))}
+            </div>
+          )}
           {error   && <div className="client-state error">{error}</div>}
 
           {/* Table */}
@@ -162,8 +191,8 @@ function KycRecordList({ onNavigate, onLogout }) {
                 <tbody>
                   {filtered.length === 0 ? (
                     <tr>
-                      <td colSpan={10} className="client-empty">
-                        {t('kycRecordList.empty')}
+                      <td colSpan={10}>
+                        <EmptyState icon="📄" title={t('kycRecordList.empty')} subtitle={t('kycRecordList.emptySub')} />
                       </td>
                     </tr>
                   ) : (

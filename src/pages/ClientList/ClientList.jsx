@@ -5,6 +5,8 @@ import './ClientList.css'
 import { getClients, createClient, updateClient, deleteClient, exportClientsCsv } from '../../services/client.service'
 
 import Sidebar from '../../components/ui/Sidebar/Sidebar'
+import EmptyState from '../../components/ui/EmptyState/EmptyState'
+import { consumeNavIntent } from '../../utils/navIntent'
 import CreateClientModal from '../../components/modals/CreateClientModal'
 import KycDossierModal   from '../../components/modals/KycDossierModal'
 import NotificationLogModal from '../../components/modals/NotificationLogModal'
@@ -23,7 +25,7 @@ function ClientList({ onNavigate, onLogout }) {
   const [dossier, setDossier] = useState(null)
   const [notifClient, setNotifClient] = useState(null)
   const [toast,   setToast]   = useState(null)
-  const [filterKyc, setFilterKyc] = useState('all')
+  const [filterKyc, setFilterKyc] = useState(() => consumeNavIntent('clientsFilter') ?? 'all')
   const [page,      setPage]      = useState(1)
   const [confirmClient, setConfirmClient] = useState(null)
 
@@ -207,7 +209,20 @@ function ClientList({ onNavigate, onLogout }) {
             ))}
           </div>
 
-          {loading && <div className="client-state">{t('common.loading')}</div>}
+          {loading && (
+            <div className="sk-table">
+              <div className="sk-table-header" />
+              {[0, 1, 2, 3, 4, 5].map((i) => (
+                <div key={i} className="sk-table-row">
+                  <div className="sk-seg"><div className="sk sk-line sk-w40" /><div className="sk sk-line sk-w20" /></div>
+                  <div className="sk-seg"><div className="sk sk-line sk-w60" /></div>
+                  <div className="sk-seg"><div className="sk sk-line sk-w45" /></div>
+                  <div className="sk-seg"><div className="sk sk-line sk-w30" /></div>
+                  <div className="sk-seg"><div className="sk sk-line sk-w50" /></div>
+                </div>
+              ))}
+            </div>
+          )}
           {error   && <div className="client-state error">{error}</div>}
 
           {!loading && !error && (
@@ -230,8 +245,8 @@ function ClientList({ onNavigate, onLogout }) {
                   <tbody>
                     {paginated.length === 0 ? (
                       <tr>
-                        <td colSpan={8} className="client-empty">
-                          {t('clientList.empty')}
+                        <td colSpan={8}>
+                          <EmptyState icon="👥" title={t('clientList.empty')} subtitle={t('clientList.emptySub')} />
                         </td>
                       </tr>
                     ) : (

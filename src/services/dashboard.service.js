@@ -46,6 +46,14 @@ export async function getRejectionReasons(adminId) {
   return res.json()
 }
 
+export async function getTodayStats(adminId) {
+  const res = await fetch(`${API_URL}/dashboard/today-stats${qs(adminId)}`, {
+    headers: getHeaders(),
+  })
+  if (!res.ok) throw new Error('Failed to fetch today stats')
+  return res.json()
+}
+
 export async function getActivity(limit = 10, adminId) {
   const base = `${API_URL}/dashboard/activity?limit=${limit}`
   const url  = adminId ? `${base}&adminId=${adminId}` : base

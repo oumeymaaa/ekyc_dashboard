@@ -1,4 +1,4 @@
-const ar = {
+﻿const ar = {
   common: {
     loading: 'جارٍ التحميل...',
     error: 'خطأ',
@@ -91,6 +91,11 @@ const ar = {
     updatedAt: 'آخر تحديث',
     loading: 'جارٍ تحميل الإحصائيات...',
     loadingDashboard: 'جارٍ تحميل لوحة التحكم…',
+    toast: {
+      newKycOne: 'ملف KYC جديد في الانتظار',
+      newKycMany: 'ملفات KYC جديدة في الانتظار',
+      view: 'عرض',
+    },
     greeting: 'مرحباً، {{name}}',
     activityOverview: 'نظرة عامة على نشاطك وإحصائياتك',
     vsPreviousMonth: 'مقارنة بالشهر الماضي',
@@ -274,6 +279,7 @@ const ar = {
       invalid: 'غير صالح',
     },
     empty: 'لم يتم العثور على عميل.',
+    emptySub: 'أنشئ أول عميل لك أو عدّل فلاتر البحث.',
     consultFile: '🔍 عرض الملف',
     consultTooltip: 'عرض الملف',
     export: 'تصدير',
@@ -326,6 +332,13 @@ const ar = {
       en_attente: 'قيد الانتظار',
     },
     empty: 'لم يتم العثور على ملفات KYC.',
+    emptySub: 'ستظهر ملفات التحقق المرسلة من العملاء هنا.',
+    filter: {
+      all: 'الكل',
+      pending: 'قيد الانتظار',
+      validated: 'صالح',
+      invalid: 'غير صالح',
+    },
     consultFile: '🔍 عرض الملف',
     loadError: 'خطأ أثناء تحميل ملفات KYC.',
     toast: {
@@ -350,6 +363,7 @@ const ar = {
       actions: 'إجراءات',
     },
     empty: 'لم يتم العثور على منظمة.',
+    emptySub: 'أنشئ منظمتك الأولى لبدء إدارة العملاء.',
     adminViewDetail: 'عرض تفاصيل المسؤول',
     noAdmin: 'لا يوجد مسؤول',
     actions: {
@@ -473,6 +487,12 @@ const ar = {
       title: '🌐 التفضيلات',
       language: 'اللغة',
       languageDesc: 'اختر لغة الواجهة',
+      theme: 'المظهر',
+      themeDesc: 'التبديل بين الوضع الفاتح والداكن للواجهة',
+    },
+    theme: {
+      light: '☀️ فاتح',
+      dark: '🌙 داكن',
     },
     btnEdit: 'تعديل',
     languages: {

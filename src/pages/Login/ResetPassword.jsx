@@ -70,7 +70,7 @@ function ResetPassword({ onSuccess, tokenProp }) {
       errors.password = t('resetPassword.passwordInvalid')
     }
     if (password !== confirmPassword) {
-      errors.confirm_password = t('resetPassword.passwordMismatch')
+      errors.confirmPassword = t('resetPassword.passwordMismatch')
     }
     return errors
   }
