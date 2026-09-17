@@ -452,7 +452,7 @@
     loading: 'Loading...',
     cin: 'CIN',
     name: 'Name',
-    birth: 'Birth',
+    birth: 'Date of birth',
     place: 'Place',
     address: 'Address',
     rejectReason: 'Rejection reason (at least 1):',

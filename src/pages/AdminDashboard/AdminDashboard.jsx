@@ -11,6 +11,7 @@ import { getUser } from '../../services/auth.service'
 import { getDashboardStats, getKycDistribution, getEvolution, getScoreDistribution, getRejectionReasons, getTodayStats } from '../../services/dashboard.service'
 import { getClients } from '../../services/client.service'
 import { setNavIntent } from '../../utils/navIntent'
+import { formatRejectionReason } from '../../constants/rejectionReasons'
 import Sidebar from '../../components/ui/Sidebar/Sidebar'
 import './AdminDashboard.css'
 
@@ -453,7 +454,7 @@ function AdminDashboard({ onNavigate, onLogout }) {
               {rejectionData.reasons.map((item, i) => (
                 <div key={i} className="admin-rejection-item">
                   <div className="admin-rejection-top">
-                    <span className="admin-rejection-label">{item.reason}</span>
+                    <span className="admin-rejection-label">{formatRejectionReason(item.reason)}</span>
                     <span className="admin-rejection-count">{item.count}</span>
                   </div>
                   <div className="admin-rejection-track">

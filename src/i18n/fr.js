@@ -452,7 +452,7 @@
     loading: 'Chargement...',
     cin: 'CIN',
     name: 'Nom',
-    birth: 'Naissance',
+    birth: 'Date de naissance',
     place: 'Lieu',
     address: 'Adresse',
     rejectReason: 'Motif du rejet (au moins 1) :',

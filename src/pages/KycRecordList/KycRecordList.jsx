@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import './KycRecordList.css'
 
 import { consumeNavIntent } from '../../utils/navIntent'
+import { formatBirthDate } from '../../utils/formatDate'
 
 import { getKycRecords } from '../../services/kyc.service'
 import { createClient } from '../../services/client.service'
@@ -258,7 +259,7 @@ function KycRecordList({ onNavigate, onLogout }) {
                               <span className="cin-row"><b>{t('kycDossierModal.name')} :</b> {cin.firstName} {cin.lastName}</span>
                               <span className="cin-row">
                                 <b>{t('kycDossierModal.birth')} :</b>{' '}
-                                {cin.birthDate ? new Date(cin.birthDate).toLocaleDateString(locale) : '-'}
+                                {cin.birthDate ? formatBirthDate(cin.birthDate, locale) : '-'}
                               </span>
 
                             </div>

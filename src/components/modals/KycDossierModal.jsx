@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next'
 import './KycDossierModal.css'
 
 import { getKycRecordByClient, updateKycStatus } from '../../services/kyc.service'
+import { formatBirthDate } from '../../utils/formatDate'
+import { REJECTION_REASONS } from '../../constants/rejectionReasons'
 
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001'
@@ -74,12 +76,6 @@ function KycDossierModal({ clientId, onClose, onUpdated }) {
       setUpdating(false)
     }
   }
-
-  const REJECTION_REASONS = [
-    { key: 'donnees_errones', label: "Données erronées" },
-    { key: 'selfie_non_conforme', label: 'Selfie non conforme' },
-    { key: 'document_flou', label: 'Document flou' },
-  ]
 
   const toggleReason = (key) => {
     setRejectReasons((prev) =>
@@ -235,7 +231,7 @@ function KycDossierModal({ clientId, onClose, onUpdated }) {
                       <div className="info">
                       <p><b>{t('kycDossierModal.cin')}:</b> {record.cinData?.cin}</p>
                       <p><b>{t('kycDossierModal.name')}:</b> {record.cinData?.firstName} {record.cinData?.lastName}</p>
-                      <p><b>{t('kycDossierModal.birth')}:</b> {record.cinData?.birthDate}</p>
+                      <p><b>{t('kycDossierModal.birth')}:</b> {formatBirthDate(record.cinData?.birthDate, i18n.language)}</p>
                       <p><b>{t('kycDossierModal.place')}:</b> {record.cinData?.lieu}</p>
                        </div>
                     </div>
